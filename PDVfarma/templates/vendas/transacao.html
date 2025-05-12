@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Transação - PDV Farma</title>
+    <link rel="stylesheet" href="css/style_telas.css">
+</head>
+<body>
+    <header>
+        <h1>Caixa - PDV Farma</h1>
+    </header>
+
+    <div id="content-container">
+        <!-- Tela de Transação de Produtos -->
+        <section id="tela-transacao" class="content-screen active-screen">
+            <h2>Transação de Produtos</h2>
+            <div class="input-group">
+                <label for="produto">Buscar Produto:</label>
+                <input type="text" id="produto" placeholder="Digite o nome ou código do produto" oninput="buscarProduto()">
+                <button onclick="adicionarProduto()">Adicionar Produto</button>
+            </div>
+
+            <div class="transacao-info">
+                <h3>Produtos na Transação</h3>
+                <table id="tabela-produtos">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Código</th>
+                            <th>Preço</th>
+                            <th>Quantidade</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-produtos">
+                        <!-- Lista de produtos adicionados -->
+                    </tbody>
+                </table>
+                <p><strong>Subtotal: R$ <span id="subtotal">0.00</span></strong></p>
+                <div class="pagamento">
+                    <label for="valor-pago">Valor Pago:</label>
+                    <input type="number" id="valor-pago" placeholder="Digite o valor pago" oninput="atualizarTotalPagar()">
+                    <p><strong>Total a Pagar: R$ <span id="total-pagar">0.00</span></strong></p>
+                </div>
+                <button onclick="finalizarCompra()">Finalizar Compra </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Rodapé com botões de navegação -->
+    <footer>
+        <div class="footer-buttons">
+      
+            <a href="transacao.html"><button>Transação</button></a>
+            <a href="estoque.html"><button>Estoque</button></a>
+            <a href="historico.html"><button>Histórico</button></a>
+            <a href="index.html"><button>inicio</button></a>
+        </div>
+        <p>© 2025 PDV Farma. Todos os direitos reservados</p>
+    </footer>
+
+   
+   
+</body>
+</html>

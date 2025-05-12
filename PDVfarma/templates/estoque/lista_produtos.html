@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Produtos</title>
+</head>
+<body>
+    <h1>Produtos</h1>
+
+    <!-- Link para Adicionar Produto -->
+    <a href="{% url 'criar_produto' %}">Adicionar Produto</a>
+
+    <!-- Formulário de busca -->
+    <form method="GET">
+        <input type="text" name="q" value="{{ query }}" placeholder="Buscar produtos...">
+        <input type="hidden" name="categoria" value="{{ categoria }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+ <!-- Formulário de filtro por categoria -->
+<form method="GET">
+    <input type="text" name="q" value="{{ query }}" style="display:none;">
+    <select name="categoria">
+        <option value="">Selecione uma categoria</option>
+        {% for valor, nome_legivel in categorias %}
+    <option value="{{ valor }}" {% if categoria == valor %}selected{% endif %}>{{ nome_legivel }}</option>
+    {% endfor %}
+    </select>
+    <button type="submit">Filtrar</button>
+</form>
+
+    <ul>
+    {% for produto in page_obj %}
+        <li>
+            {{ produto.nome }} - {{ produto.get_categoria_display }} 
+            <a href="{% url 'atualizar_produto' produto.id %}">Editar</a> |
+            <form method="post" action="{% url 'deletar_produto' produto.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Deletar</button>
+            </form>
+        </li>
+    {% empty %}
+        <li>Nenhum produto encontrado.</li>
+    {% endfor %}
+</ul>
+
+    <!-- Paginação -->
+    <div class="paginacao">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&categoria={{ categoria }}">Anterior</a>
+        {% endif %}
+    
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&categoria={{ categoria }}">Próxima</a>
+        {% endif %}
+    </div>
+    
+</body>
+</html>

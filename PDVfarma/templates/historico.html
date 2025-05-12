@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Compras - PDV Farma</title>
+    <link rel="stylesheet" href="css/style_telas.css">
+</head>
+<body>
+    <header>
+        <h1>Histórico de Compras - PDV Farma</h1>
+    </header>
+
+    <section id="historico">
+        <h2>Histórico de Compras</h2>
+
+        <!-- Filtro de Data -->
+        <div class="filtro">
+            <label for="data-inicio">Data Início:</label>
+            <input type="date" id="data-inicio" name="data-inicio">
+
+            <label for="data-fim">Data Fim:</label>
+            <input type="date" id="data-fim" name="data-fim">
+
+            <button onclick="filtrarCompras()">Filtrar</button>
+        </div>
+
+        <!-- Tabela de Histórico de Compras -->
+        <table id="tabela-historico">
+            <thead>
+                <tr>
+
+                    <th>Data da Compra</th>
+                    <th>Valor Total</th>
+                    <th>Troco</th>
+                    
+                </tr>
+            </thead>
+            <tbody id="lista-historico">
+                <!-- Lista de compras do histórico será preenchida aqui -->
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <div class="footer-buttons">
+            <a href="transacao.html"><button>Transação</button></a>
+            <a href="estoque.html"><button>Estoque</button></a>
+            <a href="historico.html"><button>Histórico</button></a>
+            <a href="index.html"><button>inicio</button></a>
+        </div>
+        <p>© 2025 PDV Farma. Todos os direitos reservados</p>
+    </footer>
+
+    <script src="historico.js"></script>
+</body>
+</html>
