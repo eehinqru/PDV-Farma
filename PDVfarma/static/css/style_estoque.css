@@ -1,0 +1,286 @@
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #2d2d2d;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+}
+
+/* Área da logo com fundo #025255 */
+.sidebar-top {
+    background-color: #025255; /* sua cor personalizada */
+    height: 60px;              /* mesma altura da topbar */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+}
+
+
+.sidebar-top .logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+
+.sidebar-top .logo-text {
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+}
+
+/* Links normais */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Ícones nos links */
+.sidebar a i {
+    font-size: 30px;
+    width: 32px;
+    text-align: center;
+}
+
+/* Hover nos links */
+.sidebar a:hover {
+    background-color: #007b80;
+}
+
+/* Perfil fixo embaixo */
+.perfil-link {
+    margin-top: auto;
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.perfil-link i {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Hover no perfil */
+.perfil-link:hover {
+    background-color: #007b80;
+}
+
+/* Main content (ao lado da sidebar) */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+}
+
+
+/* Topbar alinhada à main-content */
+.topbar {
+    background-color: #007b80;
+    height: 60px; /* mesma altura que sidebar-top */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0 20px;
+}
+
+/* Controls (filtro, adicionar, busca) */
+.controls {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.controls button,
+.controls input,
+.controls select {
+   border: none;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 14px;
+    outline: none; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.controls button {
+    background-color: #00c084;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.controls input[type="text"] {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 20px;
+    width: 200px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Indicadores */
+.indicators {
+    display: flex;
+    gap: 20px;
+    padding: 0 20px 20px;
+}
+
+.indicators .card {
+    flex: 1;
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+
+}
+.indicators .card strong {
+    display: block;          /* Para quebrar linha e ficar separado do texto */
+    font-size: 32px;         /* Aumenta o tamanho da fonte */
+    margin-top: 10px;        /* Espaço acima do número */
+    color: white;            /* Cor branca para destaque */
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3); /* Sombra para dar profundidade */
+    font-weight: 900;        /* Mais grosso */
+}
+
+
+.indicators .green {
+    background-color: #7ce0a6;
+    color: #006644;
+}
+
+.indicators .red {
+    background-color: #ff8080;
+}
+
+.indicators .orange {
+    background-color: #ff9999;
+}
+
+/* Cards de Produtos */
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 0 20px 20px;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15); /* sombra preta suave */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+
+}
+
+.product-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* sombra mais forte no hover */
+}
+
+.product-card img {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.product-card h3 {
+    font-size: 14px;
+    text-align: center;
+}
+
+.product-card .price {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.product-card .qty {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+/* Quando a quantidade for 12 ou menos: vermelho */
+.product-card .qty {
+    background-color: #ff6b6b;
+}
+
+/* Quando a quantidade for maior que 12: verde */
+.product-card .qty-green {
+    background-color: #4caf50;
+}
+
+
+
+
+
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .sidebar-top .logo-text {
+        display: none;
+    }
+
+    .sidebar a span {
+        display: none;
+    }
+
+    .perfil-link span {
+        display: none;
+    }
+
+    .topbar {
+        font-size: 18px;
+        text-align: center;
+    }
+}
