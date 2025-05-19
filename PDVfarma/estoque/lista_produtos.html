@@ -1,0 +1,110 @@
+{% load static %}
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Produtos</title>
+    <link rel="stylesheet" href="{% static 'css/style_estoque.css' %}">
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-top">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+        <span class="logo-text">PDV FARMA</span>
+    </div>
+
+    <a href="#"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+    <a href="#"><i class="fas fa-boxes"></i><span>Estoque</span></a>
+    <a href="#"><i class="fas fa-users"></i><span>Funcionários</span></a>
+
+    <a href="#" class="perfil-link"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+</div>
+
+
+<!-- Conteúdo principal -->
+<div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        ESTOQUE
+    </div>
+
+    <!-- Barra de controle -->
+    <div class="controls">
+        <a href="{% url 'criar_produto' %}"><button>+ Adicionar produto</button></a>
+        <button type="submit" form="filtro-form">Filtro</button>
+
+        <form method="GET" style="display: inline;" id="filtro-form">
+            <input type="hidden" name="q" value="{{ query }}">
+            <select name="categoria">
+                <option value="">Categoria</option>
+                {% for valor, nome_legivel in categorias %}
+                    <option value="{{ valor }}" {% if categoria == valor %}selected{% endif %}>{{ nome_legivel }}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <form method="GET" style="display: inline;">
+            <input type="text" name="q" value="{{ query }}" placeholder="Pesquisa produto">
+            <input type="hidden" name="categoria" value="{{ categoria }}">
+        </form>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="indicators">
+        <div class="card green">
+            Total de vendas hoje<br><strong>R$ 1034,89</strong>
+        </div>
+        <div class="card red">
+            Baixa quantidade de produtos<br><strong>3</strong>
+        </div>
+        <div class="card orange">
+            Produtos próximos da validade<br><strong>1</strong>
+        </div>
+    </div>
+
+    <!-- Cards de produtos -->
+    <div class="products">
+        {% for produto in page_obj %}
+        <div class="product-card">
+            <img src="{% static 'img/img-teste.jpg' %}" alt="{{ produto.nome }}">
+            <h3>{{ produto.nome }}<br>{{ produto.get_categoria_display }}</h3>
+            <div class="price">R$: {{ produto.preco }}</div>
+            <div class="qty {% if produto.quantidade > 12 %}qty-green{% endif %}">QTD {{ produto.quantidade }}</div>
+            <div class="actions" style="margin-top: 10px;">
+                <a href="{% url 'atualizar_produto' produto.id %}">Editar</a> |
+                <form method="post" action="{% url 'deletar_produto' produto.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Deletar</button>
+                </form>
+            </div>
+        </div>
+        
+        {% empty %}
+        <p>Nenhum produto encontrado.</p>
+        {% endfor %}
+    </div>
+ 
+
+    <!-- Paginação -->
+    <div class="paginacao" style="text-align: center; margin: 20px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}&categoria={{ categoria }}">Anterior</a>
+        {% endif %}
+
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}&categoria={{ categoria }}">Próxima</a>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>
