@@ -5,22 +5,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - PDV Farma</title>
+    <title>Login - PDV Pharmacy</title>
     <link rel="stylesheet" href="{% static 'css/style_login.css' %}">
 </head>
 <body>
 
     <!-- Seção azul (lado esquerdo) -->
     <section class="color-section">
-        <img src="{% static 'img/logo.png' %}" alt="Logo PDV Farma" class="logo">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
         <footer class="footer">
-            <p>© 2025 PDV Farma. Todos os direitos reservados.</p>
+            <p>© 2025 PDV Pharmacy. Todos os direitos reservados.</p>
         </footer>
     </section>
 
     <!-- Seção branca (lado direito) -->
     <section class="login-section">
-        <h2>Faça o Login</h2>
+        <h2>Login</h2>
 
         <form method="POST">
             {% csrf_token %}
