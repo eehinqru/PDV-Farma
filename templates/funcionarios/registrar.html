@@ -1,0 +1,28 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    {% if edicao %}Editar Funcionário{% else %}Registrar Funcionário{% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>{% if edicao %}Editar Funcionário{% else %}Registrar Funcionário{% endif %}</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <fieldset>
+        <legend>Dados do Usuário</legend>
+        {{ user_form.as_p }}
+        {% if edicao %}
+            <p>Deixe os campos de senha em branco para manter a senha atual.</p>
+        {% endif %}
+    </fieldset>
+
+    <fieldset>
+        <legend>Dados do Funcionário</legend>
+        {{ funcionario_form.as_p }}
+    </fieldset>
+
+    <button type="submit">{% if edicao %}Salvar{% else %}Cadastrar{% endif %}</button>
+</form>
+{% endblock %}

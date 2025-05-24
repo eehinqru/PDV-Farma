@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}PDV Farma{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style_estoque.css' %}">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-top">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+        <span class="logo-text">PDV Pharmacy</span>
+    </div>
+
+    <a href="{% url 'vendas' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+    <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
+    <a href="{% url 'listar_funcionarios' %}"><i class="fas fa-users"></i><span>Funcionários</span></a>
+
+    
+</div>
+
+<!-- Conteúdo principal -->
+<div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+        {% block topbar %} <!-- Título dinâmico para cada página -->{% endblock %}
+    </div>
+
+    <!-- Barra de controle -->
+    <div class="controls">
+        {% block controls %}{% endblock %}
+    </div>
+
+    <!-- Indicadores -->
+    <div class="indicators">
+        {% block indicators %}{% endblock %}
+    </div>
+
+    <!-- Conteúdo principal variável -->
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Paginação -->
+    <div class="paginacao" style="text-align: center; margin: 20px;">
+        {% block pagination %}{% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>

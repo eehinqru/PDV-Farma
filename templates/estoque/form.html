@@ -1,0 +1,21 @@
+<!-- form.html (para criar e editar produtos) -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Produto</title>
+</head>
+<body>
+    <h1>{{ form.instance.id|default:"Novo" }} Produto</h1>
+
+   <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar</button>
+    <div>
+  
+</form>
+
+    <a href="{% url 'listar_produtos' %}">Cancelar</a>
+</body>
+</html>

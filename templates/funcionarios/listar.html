@@ -1,0 +1,26 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Lista de Funcionários{% endblock %}
+
+{% block topbar %}
+Funcionários
+{% endblock %}
+
+{% block controls %}
+<a href="{% url 'registrar_funcionario' %}">
+    <button>Adicionar Funcionário</button>
+</a>
+{% endblock %}
+
+{% block content %}
+<ul>
+    {% for f in funcionarios %}
+    <li>
+        {{ f.user.first_name }} {{ f.user.last_name }} - {{ f.telefone }} - {{ f.user.email }}
+        <a href="{% url 'editar_funcionario' f.id %}">Editar</a>
+    </li>
+    {% empty %}
+    <li>Nenhum funcionário encontrado.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
