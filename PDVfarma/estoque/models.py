@@ -16,6 +16,9 @@ class Produto(models.Model):
     preco = models.DecimalField(max_digits=10, decimal_places=2)
     quantidade_em_estoque = models.IntegerField()
     categoria = models.CharField(max_length=50, choices=CATEGORIAS)
-    
+    imagem = models.ImageField(upload_to='produtos/', blank=True, null=True)
+    data_entrada = models.DateField(verbose_name='Data de Entrada', auto_now_add=False, null=True, blank=True)
+    data_validade = models.DateField(verbose_name='Data de Validade', null=True, blank=True) 
+     
     def __str__(self):
         return self.nome

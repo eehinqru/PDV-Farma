@@ -284,3 +284,21 @@ body {
         text-align: center;
     }
 }
+
+
+.badge {
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.8rem;
+    margin-left: 8px;
+}
+
+.badge-red {
+    background-color: #e74c3c; /* vermelho */
+}
+
+.badge-yellow {
+    background-color: #f39c12; /* amarelo */
+}
