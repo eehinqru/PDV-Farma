@@ -5,7 +5,7 @@ from .models import Funcionario
 from .fucionarioForms import FuncionarioForm
 from .userForms import UserForm
 from django.shortcuts import get_object_or_404
-# iai beleza?
+
 def is_dono(user):
     return user.groups.filter(name='dono').exists()
 

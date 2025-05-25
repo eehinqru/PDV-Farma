@@ -1,5 +1,3 @@
-{% extends 'base/base.html' %}
-
 {% block title %}
     {% if edicao %}Editar Funcionário{% else %}Registrar Funcionário{% endif %}
 {% endblock %}
@@ -9,10 +7,50 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    
+
     <fieldset>
         <legend>Dados do Usuário</legend>
-        {{ user_form.as_p }}
+
+        <div class="form-group nome">
+            <label for="{{ user_form.first_name.id_for_label }}">Nome</label>
+            {{ user_form.first_name }}
+            {% for error in user_form.first_name.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group sobrenome">
+            <label for="{{ user_form.last_name.id_for_label }}">Sobrenome</label>
+            {{ user_form.last_name }}
+            {% for error in user_form.last_name.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group email">
+            <label for="{{ user_form.email.id_for_label }}">Email</label>
+            {{ user_form.email }}
+            {% for error in user_form.email.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group senha">
+            <label for="{{ user_form.password.id_for_label }}">Senha</label>
+            {{ user_form.password }}
+            {% for error in user_form.password.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group senha-confirmacao">
+            <label for="{{ user_form.password_confirm.id_for_label }}">Confirme a senha</label>
+            {{ user_form.password_confirm }}
+            {% for error in user_form.password_confirm.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
         {% if edicao %}
             <p>Deixe os campos de senha em branco para manter a senha atual.</p>
         {% endif %}
@@ -20,9 +58,66 @@
 
     <fieldset>
         <legend>Dados do Funcionário</legend>
-        {{ funcionario_form.as_p }}
+
+        <div class="form-group telefone">
+            <label for="{{ funcionario_form.telefone.id_for_label }}">Telefone</label>
+            {{ funcionario_form.telefone }}
+            {% for error in funcionario_form.telefone.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group cpf">
+            <label for="{{ funcionario_form.cpf.id_for_label }}">CPF</label>
+            {{ funcionario_form.cpf }}
+            {% for error in funcionario_form.cpf.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group endereco">
+            <label for="{{ funcionario_form.endereco.id_for_label }}">Endereço</label>
+            {{ funcionario_form.endereco }}
+            {% for error in funcionario_form.endereco.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group sexo">
+            <label for="{{ funcionario_form.sexo.id_for_label }}">Sexo</label>
+            {{ funcionario_form.sexo }}
+            {% for error in funcionario_form.sexo.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group data-nascimento">
+            <label for="{{ funcionario_form.data_nascimento.id_for_label }}">Data de Nascimento</label>
+            {{ funcionario_form.data_nascimento }}
+            {% for error in funcionario_form.data_nascimento.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group foto">
+            <label for="{{ funcionario_form.foto.id_for_label }}">Foto</label>
+            {{ funcionario_form.foto }}
+            {% for error in funcionario_form.foto.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group observacao">
+            <label for="{{ funcionario_form.observacao.id_for_label }}">Observação</label>
+            {{ funcionario_form.observacao }}
+            {% for error in funcionario_form.observacao.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
     </fieldset>
 
-    <button type="submit">{% if edicao %}Salvar{% else %}Cadastrar{% endif %}</button>
+    <div class="form-actions">
+        <button type="submit">{% if edicao %}Salvar{% else %}Cadastrar{% endif %}</button>
+    </div>
 </form>
 {% endblock %}

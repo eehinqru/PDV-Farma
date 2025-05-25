@@ -1,21 +1,125 @@
-<!-- form.html (para criar e editar produtos) -->
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Adicionar Produto</title>
+    <title>{{ form.instance.id|yesno:"Editar Produto,Novo Produto" }}</title>
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+        }
+
+        .form-actions button,
+        .form-actions a {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ form.instance.id|default:"Novo" }} Produto</h1>
+    <h1>{{ form.instance.id|yesno:"Editar Produto,Novo Produto" }}</h1>
 
-   <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Salvar</button>
-    <div>
-  
-</form>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <a href="{% url 'listar_produtos' %}">Cancelar</a>
+        <!-- Campo: Nome -->
+        <div class="form-group nome">
+            <label for="{{ form.nome.id_for_label }}">Nome</label>
+            {{ form.nome }}
+            {% for error in form.nome.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Campo: Descrição -->
+        <div class="form-group descricao">
+            <label for="{{ form.descricao.id_for_label }}">Descrição</label>
+            {{ form.descricao }}
+            {% for error in form.descricao.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Campo: Preço -->
+        <div class="form-group preco">
+            <label for="{{ form.preco.id_for_label }}">Preço</label>
+            {{ form.preco }}
+            {% for error in form.preco.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Campo: Quantidade -->
+        <div class="form-group quantidade_em_estoque">
+            <label for="{{ form.quantidade_em_estoque.id_for_label }}">Quantidade em Estoque</label>
+            {{ form.quantidade_em_estoque }}
+            {% for error in form.quantidade_em_estoque.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Campo: Categoria -->
+        <div class="form-group categoria">
+            <label for="{{ form.categoria.id_for_label }}">Categoria</label>
+            {{ form.categoria }}
+            {% for error in form.categoria.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Campo: Imagem -->
+        <div class="form-group imagem">
+            <label for="{{ form.imagem.id_for_label }}">Imagem</label>
+            {{ form.imagem }}
+            {% for error in form.imagem.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Campo: Data de Entrada -->
+        <div class="form-group data_entrada">
+            <label for="{{ form.data_entrada.id_for_label }}">Data de Entrada</label>
+            {{ form.data_entrada }}
+            {% for error in form.data_entrada.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Campo: Data de Validade -->
+        <div class="form-group data_validade">
+            <label for="{{ form.data_validade.id_for_label }}">Data de Validade</label>
+            {{ form.data_validade }}
+            {% for error in form.data_validade.errors %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Botões -->
+        <div class="form-actions">
+            <button type="submit">Salvar</button>
+            <a href="{% url 'listar_produtos' %}">Cancelar</a>
+        </div>
+    </form>
 </body>
 </html>
