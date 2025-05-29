@@ -9,7 +9,7 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 />
 </head>
-<body>
+<body> 
 
 <!-- Sidebar -->
 <div class="sidebar">
@@ -20,7 +20,10 @@
 
     <a href="#"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
     <a href="#"><i class="fas fa-boxes"></i><span>Estoque</span></a>
-    <a href="#"><i class="fas fa-users"></i><span>Funcionários</span></a>
+    {% if is_dono %}
+        <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+    {% endif %}
+  
 
     <a href="#" class="perfil-link"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
 </div>
@@ -36,7 +39,9 @@
 
     <!-- Barra de controle -->
     <div class="controls">
-        <a href="{% url 'criar_produto' %}"><button>+ Adicionar produto</button></a>
+        {% if is_dono %}
+            <a href="{% url 'criar_produto' %}"><button>+ Adicionar produto</button></a>
+        {% endif %}
         <button type="submit" form="filtro-form">Filtro</button>
 
         <form method="GET" style="display: inline;" id="filtro-form">
@@ -60,29 +65,60 @@
         <div class="card green">
             Total de vendas hoje<br><strong>R$ 1034,89</strong>
         </div>
-        <div class="card red">
-            Baixa quantidade de produtos<br><strong>3</strong>
-        </div>
+        
         <div class="card orange">
-            Produtos próximos da validade<br><strong>1</strong>
+            Produtos próximos da validade<br><strong>{{ perto_validade_count }}</strong>
         </div>
+        <div class="card red">
+            Produtos vencidos<br><strong>{{ vencidos_count }}</strong>
+        </div>
+        
+
     </div>
 
     <!-- Cards de produtos -->
     <div class="products">
         {% for produto in page_obj %}
         <div class="product-card">
-            <img src="{% static 'img/img-teste.jpg' %}" alt="{{ produto.nome }}">
+            {% if produto.imagem %}
+            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" width="150" />
+            {% else %}
+            <p>Sem imagem</p>
+            {% endif %}
             <h3>{{ produto.nome }}<br>{{ produto.get_categoria_display }}</h3>
             <div class="price">R$: {{ produto.preco }}</div>
-            <div class="qty {% if produto.quantidade > 12 %}qty-green{% endif %}">QTD {{ produto.quantidade }}</div>
-            <div class="actions" style="margin-top: 10px;">
-                <a href="{% url 'atualizar_produto' produto.id %}">Editar</a> |
-                <form method="post" action="{% url 'deletar_produto' produto.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">Deletar</button>
-                </form>
+            <div class="qty
+                {% if produto.quantidade_total > 12 %}
+                    qty-green
+                {% elif produto.quantidade_total > 5 %}
+                    qty-yellow
+                {% else %}
+                    qty-red
+                {% endif %}
+            ">
+            QTD {{ produto.quantidade_total }}
             </div>
+            {% if is_dono %}
+                <div class="actions" style="margin-top: 10px;">
+                    <a href="{% url 'atualizar_produto' produto.id %}">Editar</a> |
+                    <form method="post" action="{% url 'deletar_produto' produto.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit">Deletar</button>
+                    </form>
+                </div>
+            {% endif %}
+            
+                  <!-- Validade -->
+      <div>
+        {% if produto.data_validade %}
+            {% if produto.data_validade < hoje %}
+                <span class="badge badge-red">VENCIDO</span>
+            {% elif produto.data_validade <= limite %}
+                <span class="badge badge-yellow">Perto de vencer</span>
+            {% endif %}
+        {% endif %}
+      </div>
+                
         </div>
         
         {% empty %}

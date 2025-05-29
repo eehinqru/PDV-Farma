@@ -12,9 +12,24 @@ def is_dono(user):
 @login_required
 def listar_funcionarios(request):
     if not is_dono(request.user):
-        return redirect('login')  
-    funcionarios = Funcionario.objects.all()
-    return render(request, 'funcionarios/listar.html', {'funcionarios': funcionarios})
+        return redirect('login')
+
+    query = request.GET.get('q', '')  # pega o parâmetro 'q' da URL, ou string vazia
+    if query:
+        # filtra por nome, email ou telefone contendo o texto da query (case insensitive)
+        funcionarios = Funcionario.objects.filter(
+            user__first_name__icontains=query
+        ) | Funcionario.objects.filter(
+            user__last_name__icontains=query
+        ) | Funcionario.objects.filter(
+            user__email__icontains=query
+        ) | Funcionario.objects.filter(
+            telefone__icontains=query
+        )
+    else:
+        funcionarios = Funcionario.objects.all()
+
+    return render(request, 'funcionarios/listar.html', {'funcionarios': funcionarios, 'query': query})
 
 @login_required
 def registrar_funcionario(request):

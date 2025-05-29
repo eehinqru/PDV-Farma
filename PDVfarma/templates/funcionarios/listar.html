@@ -1,24 +1,28 @@
-{% block title %}Lista de Funcionários{% endblock %}
+<h1>Lista de Funcionários</h1>
 
-{% block topbar %}
-Funcionários
-{% endblock %}
+<div class="topbar">
+    Funcionários
+</div>
 
-{% block controls %}
-<a href="{% url 'registrar_funcionario' %}">
-    <button>Adicionar Funcionário</button>
-</a>
-{% endblock %}
+<div class="controls">
+    <form method="get" action="{% url 'listar_funcionarios' %}">
+        <input type="text" name="q" placeholder="Buscar funcionário..." value="{{ query }}">
+        <button type="submit">Buscar</button>
+    </form>
+    <a href="{% url 'registrar_funcionario' %}">
+        <button>Adicionar Funcionário</button>
+    </a>
+</div>
 
-{% block content %}
-<ul>
-    {% for f in funcionarios %}
-    <li>
-        {{ f.user.first_name }} {{ f.user.last_name }} - {{ f.telefone }} - {{ f.user.email }}
-        <a href="{% url 'editar_funcionario' f.id %}">Editar</a>
-    </li>
-    {% empty %}
-    <li>Nenhum funcionário encontrado.</li>
-    {% endfor %}
-</ul>
-{% endblock %}
+<div class="content">
+    <ul>
+        {% for f in funcionarios %}
+        <li>
+            {{ f.user.first_name }} {{ f.user.last_name }} - {{ f.telefone }} - {{ f.user.email }}
+            <a href="{% url 'editar_funcionario' f.id %}">Editar</a>
+        </li>
+        {% empty %}
+        <li>Nenhum funcionário encontrado.</li>
+        {% endfor %}
+    </ul>
+</div>

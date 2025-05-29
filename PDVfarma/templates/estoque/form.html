@@ -1,125 +1,175 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ form.instance.id|yesno:"Editar Produto,Novo Produto" }}</title>
-    <style>
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            font-size: 14px;
-        }
-
-        .error {
-            color: red;
-            font-size: 13px;
-        }
-
-        .form-actions {
-            margin-top: 30px;
-        }
-
-        .form-actions button,
-        .form-actions a {
-            margin-right: 10px;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <title>{% if form.instance.id %}Editar Produto{% else %}Novo Produto{% endif %}</title>
 </head>
 <body>
-    <h1>{{ form.instance.id|yesno:"Editar Produto,Novo Produto" }}</h1>
+    <h1>{% if form.instance.id %}Editar Produto{% else %}Novo Produto{% endif %}</h1>
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <!-- Campo: Nome -->
-        <div class="form-group nome">
-            <label for="{{ form.nome.id_for_label }}">Nome</label>
-            {{ form.nome }}
-            {% for error in form.nome.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
+        <!-- Nome -->
+        <label for="{{ form.nome.id_for_label }}">Nome</label><br />
+        {{ form.nome }}<br />
+        {% for error in form.nome.errors %}
+            <div style="color:red;">{{ error }}</div>
+        {% endfor %}
 
-        <!-- Campo: Descrição -->
-        <div class="form-group descricao">
-            <label for="{{ form.descricao.id_for_label }}">Descrição</label>
-            {{ form.descricao }}
-            {% for error in form.descricao.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
+        <!-- Código de Barras -->
+        <label for="{{ form.codigo_barras.id_for_label }}">Código de Barras</label><br />
+        {{ form.codigo_barras }}<br />
+        {% for error in form.codigo_barras.errors %}
+            <div style="color:red;">{{ error }}</div>
+        {% endfor %}
 
-        <!-- Campo: Preço -->
-        <div class="form-group preco">
-            <label for="{{ form.preco.id_for_label }}">Preço</label>
-            {{ form.preco }}
-            {% for error in form.preco.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
+        <!-- Descrição -->
+        <label for="{{ form.descricao.id_for_label }}">Descrição</label><br />
+        {{ form.descricao }}<br />
+        {% for error in form.descricao.errors %}
+            <div style="color:red;">{{ error }}</div>
+        {% endfor %}
 
-        <!-- Campo: Quantidade -->
-        <div class="form-group quantidade_em_estoque">
-            <label for="{{ form.quantidade_em_estoque.id_for_label }}">Quantidade em Estoque</label>
-            {{ form.quantidade_em_estoque }}
-            {% for error in form.quantidade_em_estoque.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
+        <!-- Preço -->
+        <label for="{{ form.preco.id_for_label }}">Preço</label><br />
+        {{ form.preco }}<br />
+        {% for error in form.preco.errors %}
+            <div style="color:red;">{{ error }}</div>
+        {% endfor %}
 
-        <!-- Campo: Categoria -->
-        <div class="form-group categoria">
-            <label for="{{ form.categoria.id_for_label }}">Categoria</label>
-            {{ form.categoria }}
-            {% for error in form.categoria.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
+        <!-- Categoria -->
+        <label for="{{ form.categoria.id_for_label }}">Categoria</label><br />
+        {{ form.categoria }}<br />
+        {% for error in form.categoria.errors %}
+            <div style="color:red;">{{ error }}</div>
+        {% endfor %}
 
-        <!-- Campo: Imagem -->
-        <div class="form-group imagem">
-            <label for="{{ form.imagem.id_for_label }}">Imagem</label>
-            {{ form.imagem }}
-            {% for error in form.imagem.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
+        <!-- Imagem -->
+        <label for="{{ form.imagem.id_for_label }}">Imagem</label><br />
+        {% if form.instance.imagem %}
+            <img id="imagem-preview" src="{{ form.instance.imagem.url }}" alt="Imagem atual" width="200"/><br />
+        {% else %}
+            <img id="imagem-preview" style="display:none;" width="200" /><br />
+        {% endif %}
+        {{ form.imagem }}<br />
+        {% for error in form.imagem.errors %}
+            <div style="color:red;">{{ error }}</div>
+        {% endfor %}
 
-        <!-- Campo: Data de Entrada -->
-        <div class="form-group data_entrada">
-            <label for="{{ form.data_entrada.id_for_label }}">Data de Entrada</label>
-            {{ form.data_entrada }}
-            {% for error in form.data_entrada.errors %}
-                <div class="error">{{ error }}</div>
-            {% endfor %}
-        </div>
+<h2>Lotes</h2>
+{{ formset.management_form }}
 
-        <!-- Campo: Data de Validade -->
-        <div class="form-group data_validade">
-            <label for="{{ form.data_validade.id_for_label }}">Data de Validade</label>
-            {{ form.data_validade }}
-            {% for error in form.data_validade.errors %}
-                <div class="error">{{ error }}</div>
+<!-- Formulário vazio para adicionar novo lote -->
+<fieldset id="novo-lote">
+    {% for field in formset.empty_form.visible_fields %}
+        {% if field.name != 'DELETE' %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label><br />
+            {{ field }}<br />
+            {% for error in field.errors %}
+                <div style="color:red;">{{ error }}</div>
             {% endfor %}
-        </div>
+        {% endif %}
+    {% endfor %}
+</fieldset>
 
-        <!-- Botões -->
-        <div class="form-actions">
-            <button type="submit">Salvar</button>
-            <a href="{% url 'listar_produtos' %}">Cancelar</a>
-        </div>
-    </form>
+<!-- Botões para adicionar e deletar -->
+<button type="button" id="add-lote">Adicionar lote</button>
+<button type="submit" name="excluir_lotes">Excluir lotes marcados</button>
+
+<hr>
+
+<!-- Lotes já existentes -->
+{% for lote_form in formset %}
+    {% if lote_form.instance.pk %}
+        <fieldset>
+            {% for field in lote_form.visible_fields %}
+                {% if field.name != 'DELETE' %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label><br />
+                    {{ field }}<br />
+                    {% for error in field.errors %}
+                        <div style="color:red;">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            <!-- Caixa para marcar exclusão, apenas uma vez -->
+            <label for="{{ lote_form.DELETE.id_for_label }}">Excluir?</label> {{ lote_form.DELETE }}<br />
+        </fieldset>
+        <br />
+    {% endif %}
+{% endfor %}
+
+<!-- Botões do produto -->
+{% if form.instance.id %}
+    <!-- Editando -->
+    <button type="submit">Salvar</button>
+    <a href="{% url 'listar_produtos' %}">Cancelar</a>
+    <a href="{% url 'deletar_produto' form.instance.id %}">Excluir</a>
+{% else %}
+    <!-- Criando -->
+    <button type="submit">Registrar</button>
+    <a href="{% url 'listar_produtos' %}">Cancelar</a>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const addButton = document.getElementById('add-lote');
+    const formsetContainer = document.getElementById('novo-lote').parentElement;
+    const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]');
+
+    addButton.addEventListener('click', () => {
+        const formCount = parseInt(totalForms.value);
+        const emptyForm = document.getElementById('novo-lote');
+        const newForm = emptyForm.cloneNode(true);
+
+        // Atualiza os atributos dos campos clonados para o índice correto
+        newForm.querySelectorAll('input, select, textarea, label').forEach(el => {
+            if (el.name) el.name = el.name.replace('__prefix__', formCount);
+            if (el.id) el.id = el.id.replace('__prefix__', formCount);
+            if (el.htmlFor) el.htmlFor = el.htmlFor.replace('__prefix__', formCount);
+
+            // Limpa valores para novo form
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else {
+                    el.value = '';
+                }
+            }
+        });
+
+        // Remove id para evitar duplicação no DOM
+        newForm.removeAttribute('id');
+
+        // Insere o novo formulário logo após o último lote (pode ajustar a posição)
+        formsetContainer.insertBefore(newForm, addButton);
+
+        // Atualiza o total de forms do management_form
+        totalForms.value = formCount + 1;
+    });
+});
+</script>
+
+    <!-- Preview da imagem -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputImagem = document.querySelector('input[type="file"][name$="imagem"]');
+            const previewImagem = document.getElementById('imagem-preview');
+
+            inputImagem.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImagem.src = e.target.result;
+                        previewImagem.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    previewImagem.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

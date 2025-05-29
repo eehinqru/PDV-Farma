@@ -20,7 +20,7 @@ def login_view(request):
             elif user.groups.filter(name='funcionario').exists():
                 return redirect('vendas')   # redireciona pra tela de vendas
 
-            return redirect('home')  # fallback
+            return redirect('home')
 
         else:
             messages.error(request, "Usuário ou senha inválidos.")
