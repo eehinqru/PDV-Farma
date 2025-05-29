@@ -1,11 +1,15 @@
+<!-- Título Dinâmico: muda dependendo se está editando ou cadastrando -->
 <h2>{% if edicao %}Editar Funcionário{% else %}Registrar Funcionário{% endif %}</h2>
 
+<!-- Formulário Principal: abrange tanto os dados do usuário quanto do funcionário -->
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
+    <!-- Seção 1: Dados de Conta do Usuário (nome, e-mail, senha etc.) -->
     <fieldset>
         <legend>Dados do Usuário</legend>
 
+        <!-- Campo: Nome -->
         <div class="form-group nome">
             <label for="{{ user_form.first_name.id_for_label }}">Nome</label>
             {{ user_form.first_name }}
@@ -14,6 +18,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Sobrenome -->
         <div class="form-group sobrenome">
             <label for="{{ user_form.last_name.id_for_label }}">Sobrenome</label>
             {{ user_form.last_name }}
@@ -22,6 +27,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Email -->
         <div class="form-group email">
             <label for="{{ user_form.email.id_for_label }}">Email</label>
             {{ user_form.email }}
@@ -30,6 +36,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Senha -->
         <div class="form-group senha">
             <label for="{{ user_form.password.id_for_label }}">Senha</label>
             {{ user_form.password }}
@@ -38,6 +45,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Confirmação de Senha -->
         <div class="form-group senha-confirmacao">
             <label for="{{ user_form.password_confirm.id_for_label }}">Confirme a senha</label>
             {{ user_form.password_confirm }}
@@ -46,14 +54,17 @@
             {% endfor %}
         </div>
 
+        <!-- Informação Condicional: instrução para edição -->
         {% if edicao %}
             <p>Deixe os campos de senha em branco para manter a senha atual.</p>
         {% endif %}
     </fieldset>
 
+    <!-- Seção 2: Dados Pessoais do Funcionário -->
     <fieldset>
         <legend>Dados do Funcionário</legend>
 
+        <!-- Campo: Telefone -->
         <div class="form-group telefone">
             <label for="{{ funcionario_form.telefone.id_for_label }}">Telefone</label>
             {{ funcionario_form.telefone }}
@@ -62,6 +73,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: CPF -->
         <div class="form-group cpf">
             <label for="{{ funcionario_form.cpf.id_for_label }}">CPF</label>
             {{ funcionario_form.cpf }}
@@ -70,6 +82,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Endereço -->
         <div class="form-group endereco">
             <label for="{{ funcionario_form.endereco.id_for_label }}">Endereço</label>
             {{ funcionario_form.endereco }}
@@ -78,6 +91,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Sexo (provavelmente select ou radio) -->
         <div class="form-group sexo">
             <label for="{{ funcionario_form.sexo.id_for_label }}">Sexo</label>
             {{ funcionario_form.sexo }}
@@ -86,6 +100,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Data de Nascimento -->
         <div class="form-group data-nascimento">
             <label for="{{ funcionario_form.data_nascimento.id_for_label }}">Data de Nascimento</label>
             {{ funcionario_form.data_nascimento }}
@@ -94,6 +109,7 @@
             {% endfor %}
         </div>
 
+        <!-- Campo: Foto com pré-visualização -->
         <div class="form-group foto">
             <label for="{{ funcionario_form.foto.id_for_label }}">Foto</label>
             {{ funcionario_form.foto }}
@@ -104,6 +120,7 @@
             <img id="preview" src="{% if edicao and funcionario_form.instance.foto.url %}{{ funcionario_form.instance.foto.url }}{% endif %}" alt="Prévia da foto" style="max-width: 200px; max-height: 200px; margin-top: 10px;">
         </div>
 
+        <!-- Campo: Observação (campo livre para anotações) -->
         <div class="form-group observacao">
             <label for="{{ funcionario_form.observacao.id_for_label }}">Observação</label>
             {{ funcionario_form.observacao }}
@@ -113,23 +130,26 @@
         </div>
     </fieldset>
 
+    <!-- Botões de Ação (Cadastrar/Salvar e Cancelar) -->
     <div class="form-actions" style="margin-top: 1em;">
         <button type="submit">{% if edicao %}Salvar{% else %}Cadastrar{% endif %}</button>
 
+        <!-- Botão Cancelar com redirecionamento -->
         <a href="{% url 'listar_funcionarios' %}">
             <button type="button">Cancelar</button>
         </a>
-
-        {% if edicao %}
-            <form method="post" action="{% url 'deletar_funcionario' funcionario_form.instance.id %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este funcionário?');">Excluir</button>
-            </form>
-        {% endif %}
     </div>
 </form>
 
+<!-- Botão Excluir (exibido apenas em modo de edição) -->
+{% if edicao %}
+    <form method="post" action="{% url 'deletar_funcionario' funcionario_form.instance.id %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este funcionário?');" style="margin-top: 1em; background-color: red; color: white;">Excluir</button>
+    </form>
+{% endif %}
 
+<!-- Script de Pré-visualização da Foto -->
 <script>
     const inputFoto = document.getElementById('{{ funcionario_form.foto.id_for_label }}');
     const preview = document.getElementById('preview');

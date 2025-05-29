@@ -20,3 +20,4 @@ class Funcionario(models.Model):
     observacao = models.TextField(blank=True, null=True)
 
     criado_em = models.DateTimeField(auto_now_add=True)
+ 

@@ -29,8 +29,16 @@ class UserForm(forms.ModelForm):
         senha = cleaned_data.get("password")
         senha_confirm = cleaned_data.get("password_confirm")
 
-        # Se algum dos dois foi preenchido, validar igualdade
         if senha or senha_confirm:
             if senha != senha_confirm:
                 raise forms.ValidationError("As senhas não conferem.")
         return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.username = self.cleaned_data['email']  # Define o username como o email
+        if self.cleaned_data['password']:
+            user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        return user

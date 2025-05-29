@@ -1,16 +1,17 @@
-<h1>Lista de Funcionários</h1>
+<h1>Lista de Funcionários</h1> <!-- Título principal da página -->
 
 <div class="topbar">
-    Funcionários
+    Funcionários <!-- Pode ser usado como uma barra de identificação da seção -->
 </div>
 
 <div class="controls">
+    <!-- Bloco de controle com campo de busca e botão de adicionar -->
     <form method="get" action="{% url 'listar_funcionarios' %}">
-        <input type="text" name="q" placeholder="Buscar funcionário..." value="{{ query }}">
-        <button type="submit">Buscar</button>
+        <input type="text" name="q" placeholder="Buscar funcionário..." value="{{ query }}"> <!-- Campo de busca -->
+        <button type="submit">Buscar</button> <!-- Botão de buscar -->
     </form>
     <a href="{% url 'registrar_funcionario' %}">
-        <button>Adicionar Funcionário</button>
+        <button>Adicionar Funcionário</button> <!-- Botão para cadastrar novo funcionário -->
     </a>
 </div>
 
@@ -18,11 +19,12 @@
     <ul>
         {% for f in funcionarios %}
         <li>
+            <!-- Exibe nome, telefone e email do funcionário -->
             {{ f.user.first_name }} {{ f.user.last_name }} - {{ f.telefone }} - {{ f.user.email }}
-            <a href="{% url 'editar_funcionario' f.id %}">Editar</a>
+            <a href="{% url 'editar_funcionario' f.id %}">Editar</a> <!-- Link para editar funcionário -->
         </li>
         {% empty %}
-        <li>Nenhum funcionário encontrado.</li>
+        <li>Nenhum funcionário encontrado.</li> <!-- Mensagem quando a lista estiver vazia -->
         {% endfor %}
     </ul>
 </div>
