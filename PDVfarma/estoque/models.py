@@ -1,6 +1,7 @@
-# models.py
-from django.db.models import Sum
 from django.db import models
+from django.db.models import Sum
+from django.utils import timezone
+
 
 class Produto(models.Model):
     CATEGORIAS = [
@@ -19,9 +20,18 @@ class Produto(models.Model):
     categoria = models.CharField(max_length=100, choices=CATEGORIAS)
     codigo_barras = models.CharField(max_length=100, unique=True)
     imagem = models.ImageField(upload_to='produtos/', blank=True, null=True)
+    quantidade_estoque = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.nome
+
+    def recalcular_quantidade_estoque(self):
+        hoje = timezone.now().date()
+        # Soma a quantidade de lotes válidos (data_validade maior ou igual a hoje)
+        total = self.lotes.filter(data_validade__gte=hoje).aggregate(Sum('quantidade'))['quantidade__sum']
+        self.quantidade_estoque = total if total is not None else 0
+        self.save()
+
 class Lote(models.Model):
     produto = models.ForeignKey(Produto, related_name='lotes', on_delete=models.CASCADE)
     data_entrada = models.DateField()
@@ -29,8 +39,8 @@ class Lote(models.Model):
     quantidade = models.IntegerField()
 
     def __str__(self):
-        return f"Lote de {self.produto.nome} ({self.data_validade})"
-@property
-def quantidade_total(self):
-    total = self.lotes.aggregate(soma=Sum('quantidade'))['soma']
-    return total or 0
+        return f"Lote {self.id} de {self.produto.nome} (Qtd: {self.quantidade}, Val: {self.data_validade})"
+
+    @property
+    def esta_vencido(self):
+        return self.data_validade < timezone.now().date()

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Nova Venda</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 2rem; }
+  label { display: block; margin-top: 1rem; }
+  select, input[type=number], input[type=text] { padding: 0.3rem; width: 150px; }
+  table { margin-top: 1rem; border-collapse: collapse; width: 100%; max-width: 700px; }
+  th, td { padding: 0.5rem; border: 1px solid #ccc; text-align: center; }
+  button { margin-top: 1rem; padding: 0.5rem 1rem; }
+  .error { color: red; }
+</style>
+</head>
+<body>
+
+<h1>Registrar Nova Venda</h1>
+
+<form method="post" id="form-venda">
+  {% csrf_token %}
+  
+  <table id="itens-venda">
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Quantidade</th>
+        <th>Preço Unit.</th>
+        <th>Subtotal</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Linha template para itens -->
+    </tbody>
+  </table>
+
+  <button type="button" onclick="adicionarItem()">Adicionar Produto</button>
+
+  <label>
+    Valor Recebido (R$):
+    <input type="number" id="valor-recebido" name="valor_recebido" min="0" step="0.01" required />
+  </label>
+
+  <label>
+    Total: R$ <span id="total">0.00</span>
+  </label>
+
+  <label>
+    Troco: R$ <span id="troco">0.00</span>
+  </label>
+
+  <input type="hidden" name="total_itens" id="total_itens" value="0" />
+
+  <br />
+  <button type="submit">Registrar Venda</button>
+</form>
+
+<script>
+  const produtos = [
+    {% for p in produtos %}
+    { id: {{ p.id }}, nome: "{{ p.nome }}", preco: {{ p.preco }} },
+    {% endfor %}
+  ];
+
+  const tbody = document.querySelector('#itens-venda tbody');
+  const totalItensInput = document.getElementById('total_itens');
+  const totalSpan = document.getElementById('total');
+  const trocoSpan = document.getElementById('troco');
+  const valorRecebidoInput = document.getElementById('valor-recebido');
+
+  function criarSelectProdutos(selectedId) {
+    const select = document.createElement('select');
+    select.name = '';
+    select.required = true;
+    select.onchange = atualizarLinha;
+
+    const optionVazio = document.createElement('option');
+    optionVazio.value = '';
+    optionVazio.textContent = 'Selecione...';
+    select.appendChild(optionVazio);
+
+    produtos.forEach(prod => {
+      const option = document.createElement('option');
+      option.value = prod.id;
+      option.textContent = prod.nome;
+      if (prod.id == selectedId) option.selected = true;
+      select.appendChild(option);
+    });
+
+    return select;
+  }
+
+  function adicionarItem() {
+    const index = tbody.children.length;
+
+    const tr = document.createElement('tr');
+
+    // Produto
+    const tdProduto = document.createElement('td');
+    const selectProduto = criarSelectProdutos();
+    selectProduto.name = `produto_${index}`;
+    tdProduto.appendChild(selectProduto);
+    tr.appendChild(tdProduto);
+
+    // Quantidade
+    const tdQtd = document.createElement('td');
+    const inputQtd = document.createElement('input');
+    inputQtd.type = 'number';
+    inputQtd.name = `quantidade_${index}`;
+    inputQtd.min = 1;
+    inputQtd.value = 1;
+    inputQtd.required = true;
+    inputQtd.oninput = atualizarLinha;
+    tdQtd.appendChild(inputQtd);
+    tr.appendChild(tdQtd);
+
+    // Preço unitário
+    const tdPreco = document.createElement('td');
+    tdPreco.textContent = '0.00';
+    tr.appendChild(tdPreco);
+
+    // Subtotal
+    const tdSubtotal = document.createElement('td');
+    tdSubtotal.textContent = '0.00';
+    tr.appendChild(tdSubtotal);
+
+    // Ações
+    const tdAcoes = document.createElement('td');
+    const btnRemover = document.createElement('button');
+    btnRemover.type = 'button';
+    btnRemover.textContent = 'Remover';
+    btnRemover.onclick = () => {
+      tr.remove();
+      atualizarTotal();
+      atualizarIndices();
+    };
+    tdAcoes.appendChild(btnRemover);
+    tr.appendChild(tdAcoes);
+
+    tbody.appendChild(tr);
+
+    atualizarLinha.call(selectProduto);
+    atualizarIndices();
+  }
+
+  function atualizarLinha() {
+    const tr = this.closest('tr');
+    const selectProduto = tr.querySelector('select');
+    const inputQtd = tr.querySelector('input[type=number]');
+    const tdPreco = tr.children[2];
+    const tdSubtotal = tr.children[3];
+
+    const prod = produtos.find(p => p.id == selectProduto.value);
+    const quantidade = parseInt(inputQtd.value) || 0;
+
+    if (prod) {
+      tdPreco.textContent = prod.preco.toFixed(2);
+      tdSubtotal.textContent = (prod.preco * quantidade).toFixed(2);
+    } else {
+      tdPreco.textContent = '0.00';
+      tdSubtotal.textContent = '0.00';
+    }
+
+    atualizarTotal();
+  }
+
+  function atualizarTotal() {
+    let total = 0;
+    tbody.querySelectorAll('tr').forEach(tr => {
+      const subtotal = parseFloat(tr.children[3].textContent) || 0;
+      total += subtotal;
+    });
+    totalSpan.textContent = total.toFixed(2);
+
+    const valorRecebido = parseFloat(valorRecebidoInput.value) || 0;
+    const troco = valorRecebido - total;
+    trocoSpan.textContent = troco >= 0 ? troco.toFixed(2) : '0.00';
+  }
+
+  valorRecebidoInput.addEventListener('input', atualizarTotal);
+
+  function atualizarIndices() {
+    const linhas = tbody.querySelectorAll('tr');
+    linhas.forEach((tr, i) => {
+      tr.querySelector('select').name = `produto_${i}`;
+      tr.querySelector('input[type=number]').name = `quantidade_${i}`;
+    });
+    totalItensInput.value = linhas.length;
+  }
+
+  // Inicializa com uma linha vazia
+  adicionarItem();
+
+  // Evitar submissão com valor recebido menor que total
+  document.getElementById('form-venda').addEventListener('submit', e => {
+    const total = parseFloat(totalSpan.textContent) || 0;
+    const valorRecebido = parseFloat(valorRecebidoInput.value) || 0;
+    if (valorRecebido < total) {
+      e.preventDefault();
+      alert('Valor recebido é insuficiente.');
+    }
+  });
+</script>
+
+</body>
+</html>
