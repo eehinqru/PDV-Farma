@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Histórico de Vendas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        h1 { margin-bottom: 1.5rem; }
+        .venda-card {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .venda-card h2 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .venda-card p {
+            margin-bottom: 0.3rem;
+        }
+        .venda-card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .venda-card th, .venda-card td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .venda-card th {
+            background-color: #e0e0e0;
+        }
+        .venda-card .total-info {
+            margin-top: 1rem;
+            font-weight: bold;
+            text-align: right;
+        }
+        .no-sales {
+            font-style: italic;
+            color: #777;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-link:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Histórico de Vendas</h1>
+
+    <a href="{% url 'nova_venda' %}" class="back-link">Voltar para Nova Venda</a>
+    <br><br>
+    
+    {% if vendas %}
+        {% for venda in vendas %}
+            <div class="venda-card">
+                <h2>Venda #{{ venda.id }}</h2>
+                <p><strong>Data:</strong> {{ venda.data|date:"d/m/Y H:i" }}</p>
+                <p><strong>Funcionário:</strong> {{ venda.funcionario.username }}</p>
+                
+                <h3>Itens da Venda:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Preço Unitário</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in venda.itens.all %}
+                            <tr>
+                                <td>{{ item.produto.nome }}</td>
+                                <td>{{ item.quantidade }}</td>
+                                <td>R$ {{ item.preco_unitario|floatformat:2 }}</td>
+                                <td>R$ {{ item.subtotal|floatformat:2 }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">Nenhum item nesta venda.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <div class="total-info">
+                    <p><strong>Total da Venda:</strong> R$ {{ venda.total|floatformat:2 }}</p>
+                    <p><strong>Valor Recebido:</strong> R$ {{ venda.valor_recebido|floatformat:2 }}</p>
+                    <p><strong>Troco:</strong> R$ {{ venda.troco|floatformat:2 }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-sales">Nenhuma venda encontrada no histórico.</p>
+    {% endif %}
+
+</body>
+</html>
