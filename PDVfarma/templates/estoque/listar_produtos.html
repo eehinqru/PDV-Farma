@@ -8,7 +8,7 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    {# Adicionado para o filtro de data (opcional, mas bom ter para compatibilidade) #}
+
     {% load tz %} 
 </head>
 <body> 
@@ -19,7 +19,7 @@
         <span class="logo-text">PDV Pharmacy</span>
     </div>
 
-    <a href="#"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+    <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
     <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> {# Link para a página de estoque #}
     {% if is_dono %}
         <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
@@ -36,15 +36,18 @@
     </div>
 
     <div class="indicators">
-        <div class="card orange">
+        {# Link para filtrar por produtos perto da validade #}
+        <a href="{% url 'listar_produtos' %}?validade_proxima=true" class="card orange">
             Produtos próximos da validade<br><strong>{{ perto_validade_count_geral }}</strong> 
-        </div>
-        <div class="card red">
+        </a>
+        {# Link para filtrar por produtos vencidos (você precisaria adicionar essa lógica de filtro na view) #}
+        <a href="{% url 'listar_produtos' %}?status_validade=vencido" class="card red">
             Produtos vencidos<br><strong>{{ vencidos_count_geral }}</strong> 
-        </div>
-        <div class="card red"> 
+        </a>
+        
+        <a href="{% url 'listar_produtos' %}?baixo_estoque=true" class="card red"> 
             Produtos com baixo estoque<br><strong>{{ baixa_quantidade_count_geral }}</strong> 
-        </div>
+        </a>
     </div>
 
 
@@ -82,7 +85,7 @@
             <p>Sem imagem</p>
             {% endif %}
             <h3>{{ produto.nome }}<br>{{ produto.get_categoria_display }}</h3>
-            <div class="price">R$: {{ produto.preco|floatformat:2 }}</div> {# Formatando preço #}
+            <div class="price">R$: {{ produto.preco|floatformat:2 }}</div> 
             <div class="qty
                 {% if produto.quantidade_estoque > 12 %}
                     qty-green

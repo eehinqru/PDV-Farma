@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
+# aplicação de login para autenticar usuários
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -10,7 +11,7 @@ def login_view(request):
 
         if user:
             login(request, user)
-            return redirect('listar_produtos')  # ou 'dashboard', dependendo do fluxo
+            return redirect('listar_produtos')  
         else:
             messages.error(request, 'Usuário ou senha inválidos.')
 

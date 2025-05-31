@@ -1,30 +1,104 @@
-<h1>Lista de Funcionários</h1> <!-- Título principal da página -->
+{% load static %}
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Funcionários</title>
+    {# Use o mesmo CSS que você usa para o estoque ou crie um específico para funcionários #}
+    <link rel="stylesheet" href="{% static 'css/style_estoque.css' %}">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+</head>
+<body> 
 
-<div class="topbar">
-    Funcionários <!-- Pode ser usado como uma barra de identificação da seção -->
+<div class="sidebar">
+    <div class="sidebar-top">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+        <span class="logo-text">PDV Pharmacy</span>
+    </div>
+
+    {# Links da sidebar (ajustados para usar seus namespaces) #}
+    <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+    <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
+    {# Link para a página de funcionários (este app) #}
+    <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+    
+    <a href="#" class="perfil-link"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
 </div>
 
-<div class="controls">
-    <!-- Bloco de controle com campo de busca e botão de adicionar -->
-    <form method="get" action="{% url 'listar_funcionarios' %}">
-        <input type="text" name="q" placeholder="Buscar funcionário..." value="{{ query }}"> <!-- Campo de busca -->
-        <button type="submit">Buscar</button> <!-- Botão de buscar -->
-    </form>
-    <a href="{% url 'registrar_funcionario' %}">
-        <button>Adicionar Funcionário</button> <!-- Botão para cadastrar novo funcionário -->
-    </a>
+
+<div class="main-content">
+
+    <div class="topbar">
+        FUNCIONÁRIOS
+    </div>
+
+    <div class="controls" style="margin-bottom: 20px;">
+        {# Formulário de busca #}
+        <form method="GET" action="{% url 'listar_funcionarios' %}" style="display: inline-flex; align-items: center; gap: 10px;">
+            <input type="text" name="q" value="{{ query }}" placeholder="Pesquisar funcionário (nome, email, telefone)">
+            <button type="submit" class="button">Pesquisar</button>
+            <a href="{% url 'listar_funcionarios' %}"><button type="button" class="button button-secondary">Limpar Pesquisa</button></a>
+        </form>
+        
+        {# Botão para adicionar funcionário #}
+        <a href="{% url 'registrar_funcionario' %}"><button class="button button-primary" style="margin-left: auto;">+ Registrar Funcionário</button></a>
+    </div>
+
+    <div class="products-list-container"> {# Mantive um nome genérico, mas pode ser employees-list-container #}
+        {% if page_obj %}
+            <table class="data-table"> {# Uma classe para estilizar sua tabela #}
+                <thead>
+                    <tr>
+                        <th>Nome Completo</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>CPF</th>
+                        <th>Endereço</th>
+                        <th>Cargo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for funcionario in page_obj %} {# Itera sobre o objeto de página agora #}
+                        <tr>
+                            <td>{{ funcionario.user.first_name }} {{ funcionario.user.last_name }}</td>
+                            <td>{{ funcionario.user.email }}</td>
+                            <td>{{ funcionario.telefone }}</td>
+                            <td>{{ funcionario.cpf }}</td>
+                            <td>{{ funcionario.endereco }}</td>
+                            <td>{{ funcionario.cargo }}</td>
+                            <td class="actions-cell">
+                                <a href="{% url 'editar_funcionario' funcionario.id %}" class="action-button edit">Editar</a>
+                                <form method="post" action="{% url 'deletar_funcionario' funcionario.id %}" style="display:inline-block;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-button delete" onclick="return confirm('Tem certeza que deseja deletar este funcionário?');">Deletar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center; margin-top: 20px;">Nenhum funcionário encontrado.</p>
+        {% endif %}
+    </div>
+    
+    {# Navegação de Paginação #}
+    <div class="paginacao" style="text-align: center; margin: 20px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="paginacao-link">Anterior</a>
+        {% endif %}
+
+        <span class="paginacao-info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="paginacao-link">Próxima</a>
+        {% endif %}
+    </div>
+
 </div>
 
-<div class="content">
-    <ul>
-        {% for f in funcionarios %}
-        <li>
-            <!-- Exibe nome, telefone e email do funcionário -->
-            {{ f.user.first_name }} {{ f.user.last_name }} - {{ f.telefone }} - {{ f.user.email }}
-            <a href="{% url 'editar_funcionario' f.id %}">Editar</a> <!-- Link para editar funcionário -->
-        </li>
-        {% empty %}
-        <li>Nenhum funcionário encontrado.</li> <!-- Mensagem quando a lista estiver vazia -->
-        {% endfor %}
-    </ul>
-</div>
+</body>
+</html>

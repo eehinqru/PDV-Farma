@@ -31,6 +31,9 @@ def listar_produtos(request):
     query = request.GET.get('q', '')
     categoria_valor = request.GET.get('categoria', '')
     validade_proxima_filter_ativado = request.GET.get('validade_proxima', '') == 'true'
+    
+    status_validade_filter = request.GET.get('status_validade', '')
+    baixo_estoque_filter_ativado = request.GET.get('baixo_estoque', '') == 'true'
 
     hoje = timezone.now().date()
     dias_validade_proxima = 90
@@ -46,18 +49,23 @@ def listar_produtos(request):
     if categoria_valor:
         produtos_qs = produtos_qs.filter(categoria=categoria_valor)
     
-    lotes_proximos_vencimento_qset = Lote.objects.filter(
-        produto__in=produtos_qs,
-        data_validade__gte=hoje,
-        data_validade__lte=limite_data_validade_proxima
-    )
-    
-    produtos_com_lotes_proximos_vencimento = Produto.objects.filter(
-        pk__in=lotes_proximos_vencimento_qset.values('produto__pk')
-    ).distinct()
 
     if validade_proxima_filter_ativado:
+        produtos_com_lotes_proximos_vencimento = Produto.objects.filter(
+            lotes__data_validade__gte=hoje,
+            lotes__data_validade__lte=limite_data_validade_proxima
+        ).distinct()
         produtos_qs = produtos_qs.filter(id__in=produtos_com_lotes_proximos_vencimento.values('id'))
+    
+    if status_validade_filter == 'vencido':
+        produtos_vencidos = Produto.objects.filter(
+            lotes__data_validade__lt=hoje
+        ).distinct()
+        produtos_qs = produtos_qs.filter(id__in=produtos_vencidos.values('id'))
+    
+    if baixo_estoque_filter_ativado:
+        produtos_qs = produtos_qs.filter(quantidade_estoque__lte=5)
+
 
     produtos_para_exibir_com_status = []
     for produto in produtos_qs.distinct(): 
@@ -101,34 +109,32 @@ def listar_produtos(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
-    perto_validade_count_geral = Lote.objects.filter(
-        produto__in=produtos_qs,
+    lotes_filtrados_geral = Lote.objects.filter(produto__in=produtos_qs) 
+
+    perto_validade_count_geral = lotes_filtrados_geral.filter(
         data_validade__gt=hoje,
         data_validade__lte=limite_data_validade_proxima
     ).count()
 
-    vencidos_count_geral = Lote.objects.filter(
-        produto__in=produtos_qs,
+    vencidos_count_geral = lotes_filtrados_geral.filter(
         data_validade__lt=hoje
     ).count()
 
-    baixa_quantidade_count_geral = produtos_qs.filter(
+    baixa_quantidade_count_geral = produtos_qs.filter( 
         quantidade_estoque__lte=5
     ).count()
 
     total_produtos_filtrados = produtos_qs.count() 
-
-    lotes_filtrados_total = Lote.objects.filter(produto__in=produtos_qs)
-    total_lotes_filtrados = lotes_filtrados_total.count()
-
-    quantidade_total_itens_filtrados = lotes_filtrados_total.aggregate(Sum('quantidade'))['quantidade__sum'] or 0
-
-    valor_total_estoque_filtrado = lotes_filtrados_total.annotate(
+    total_lotes_filtrados = lotes_filtrados_geral.count()
+    quantidade_total_itens_filtrados = lotes_filtrados_geral.aggregate(Sum('quantidade'))['quantidade__sum'] or 0
+    valor_total_estoque_filtrado = lotes_filtrados_geral.annotate(
         valor_lote=ExpressionWrapper(F('quantidade') * F('produto__preco'), output_field=DecimalField())
     ).aggregate(Sum('valor_lote'))['valor_lote__sum'] or 0.00
-
-    count_produtos_com_validade_proxima = produtos_com_lotes_proximos_vencimento.count()
-
+    
+    count_produtos_com_validade_proxima = Produto.objects.filter(
+        lotes__data_validade__gte=hoje,
+        lotes__data_validade__lte=limite_data_validade_proxima
+    ).filter(pk__in=produtos_qs.values('pk')).distinct().count()
 
     context = {
         'page_obj': page_obj,
@@ -136,6 +142,8 @@ def listar_produtos(request):
         'categoria_param': categoria_valor,
         'todas_categorias': Produto.CATEGORIAS,
         'validade_proxima_param_ativado': validade_proxima_filter_ativado,
+        'status_validade_param': status_validade_filter,
+        'baixo_estoque_param_ativado': baixo_estoque_filter_ativado,
 
         'total_produtos_exibidos': total_produtos_filtrados,
         'total_lotes_exibidos': total_lotes_filtrados,
@@ -152,7 +160,6 @@ def listar_produtos(request):
         'is_dono': eh_dono(request.user), 
     }
     return render(request, 'estoque/listar_produtos.html', context)
-
 
 # Cria um novo produto e seus lotes.
 @login_required

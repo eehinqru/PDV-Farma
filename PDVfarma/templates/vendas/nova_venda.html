@@ -1,77 +1,108 @@
-<!DOCTYPE html>
+{% load static %}
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8" />
     <title>Nova Venda</title>
+    {# Link para o seu arquivo CSS principal #}
+    <link rel="stylesheet" href="{% static 'css/style_estoque.css' %}">
+    {# Link para Font Awesome para os ícones #}
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 </head>
 <body>
 
-<h1>Registrar Nova Venda</h1>
-
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
-<form method="post" id="form-venda">
-    {% csrf_token %}
-
-    <div class="search-container">
-        <label for="search-input">Pesquisar Produto (Nome ou Código de Barras):</label>
-        <input type="text" id="search-input" placeholder="Digite para pesquisar..." autocomplete="off">
-        <ul id="search-results"></ul>
+{# --- Sidebar --- #}
+<div class="sidebar">
+    <div class="sidebar-top">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+        <span class="logo-text">PDV Pharmacy</span>
     </div>
 
-    <div class="add-item-area">
-        <label for="selected-product-name">Produto Selecionado:</label>
-        <input type="text" id="selected-product-name" readonly placeholder="Nenhum produto selecionado">
-        <input type="hidden" id="selected-product-id">
-        <input type="hidden" id="selected-product-price">
-        <input type="hidden" id="selected-product-category">
-        <input type="hidden" id="selected-product-stock">
+    {# Links da sidebar (Corrigidos conforme suas especificações) #}
+    <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+    <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
+    <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+    
+    <a href="#" class="perfil-link"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+</div>
 
-        <label for="quantity-input">Quantidade:</label>
-        <input type="number" id="quantity-input" min="1" value="1">
-        
-        <button type="button" id="add-to-sale-btn" disabled>Adicionar à Venda</button>
+{# --- Conteúdo Principal --- #}
+<div class="main-content">
+
+    {# --- Topbar --- #}
+    <div class="topbar">
+        NOVA VENDA
     </div>
 
-    <table id="itens-venda">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Categoria</th>
-                <th>Preço Unit.</th>
-                <th>Quantidade</th>
-                <th>Subtotal</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            </tbody>
-    </table>
+    {# Mensagens do Django (mantidas aqui para visibilidade) #}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-    <label>
-        Valor Recebido (R$):
-        <input type="number" id="valor-recebido" name="valor_recebido" min="0" step="0.01" value="0.00" required />
-    </label>
+    <form method="post" id="form-venda">
+        {% csrf_token %}
 
-    <label>
-        Total: R$ <span id="total">0.00</span>
-    </label>
+        <div class="search-container">
+            <label for="search-input">Pesquisar Produto (Nome ou Código de Barras):</label>
+            <input type="text" id="search-input" placeholder="Digite para pesquisar..." autocomplete="off">
+            <ul id="search-results"></ul>
+        </div>
 
-    <label>
-        Troco: R$ <span id="troco">0.00</span>
-    </label>
+        <div class="add-item-area">
+            <label for="selected-product-name">Produto Selecionado:</label>
+            <input type="text" id="selected-product-name" readonly placeholder="Nenhum produto selecionado">
+            <input type="hidden" id="selected-product-id">
+            <input type="hidden" id="selected-product-price">
+            <input type="hidden" id="selected-product-category">
+            <input type="hidden" id="selected-product-stock">
 
-    <input type="hidden" name="total_itens" id="total_itens" value="0" />
+            <label for="quantity-input">Quantidade:</label>
+            <input type="number" id="quantity-input" min="1" value="1">
+            
+            <button type="button" id="add-to-sale-btn" disabled>Adicionar à Venda</button>
+        </div>
 
-    <br />
-    <button type="submit" id="registrar-venda-btn" disabled>Registrar Venda</button>
-</form>
+        <table id="itens-venda">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Preço Unit.</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+
+        <label>
+            Valor Recebido (R$):
+            <input type="number" id="valor-recebido" name="valor_recebido" min="0" step="0.01" value="0.00" required />
+        </label>
+
+        <label>
+            Total: R$ <span id="total">0.00</span>
+        </label>
+
+        <label>
+            Troco: R$ <span id="troco">0.00</span>
+        </label>
+
+        <input type="hidden" name="total_itens" id="total_itens" value="0" />
+
+        <br />
+        <button type="submit" id="registrar-venda-btn" disabled>Registrar Venda</button>
+    </form>
+
+</div> {# Fechamento da div main-content #}
 
 <script>
     // Carrega os dados dos produtos do backend

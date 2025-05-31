@@ -69,7 +69,7 @@
             <div class="venda-card">
                 <h2>Venda #{{ venda.id }}</h2>
                 <p><strong>Data:</strong> {{ venda.data|date:"d/m/Y H:i" }}</p>
-                <p><strong>Funcionário:</strong> {{ venda.funcionario.username }}</p>
+                <p><strong>Funcionário:</strong> {{ venda.funcionario.first_name}}</p>
                 
                 <h3>Itens da Venda:</h3>
                 <table>
