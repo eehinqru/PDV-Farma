@@ -21,6 +21,7 @@ class Produto(models.Model):
     codigo_barras = models.CharField(max_length=100, unique=True)
     imagem = models.ImageField(upload_to='produtos/', blank=True, null=True)
     quantidade_estoque = models.PositiveIntegerField(default=0)
+    ativo = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nome

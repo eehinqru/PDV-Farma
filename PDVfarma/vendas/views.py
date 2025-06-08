@@ -19,7 +19,7 @@ def nova_venda(request):
             valor_recebido = Decimal(valor_recebido_str) 
         except ValueError:
             messages.error(request, "Por favor, insira um valor recebido válido.")
-            produtos = Produto.objects.all().annotate(
+            produtos = Produto.objects.filter(ativo=True).annotate(
                 categoria_display=F('categoria')
             ).values('id', 'nome', 'preco', 'codigo_barras', 'categoria', 'quantidade_estoque')
             for p in produtos:
@@ -110,7 +110,7 @@ def nova_venda(request):
         return redirect('historico_vendas')
 
     # GET request: exibe a página de nova venda com os produtos disponíveis para o JS
-    produtos = Produto.objects.all().annotate(
+    produtos = Produto.objects.filter(ativo=True).annotate(
         categoria_display=F('categoria')
     ).values('id', 'nome', 'preco', 'codigo_barras', 'categoria', 'quantidade_estoque')
     

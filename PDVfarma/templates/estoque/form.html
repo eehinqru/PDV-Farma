@@ -323,5 +323,13 @@
             }
         });
     </script>
+
+    <script>
+    function confirmDelete(productId, productName) {
+        if (confirm(`Tem certeza que deseja desativar o produto "${productName}"?\n\nEle não será excluído permanentemente, mas não aparecerá mais nas listas de produtos ativos.`)) {
+            document.getElementById(`delete-form-${productId}`).submit();
+        }
+    }
+</script>
 </body>
 </html>

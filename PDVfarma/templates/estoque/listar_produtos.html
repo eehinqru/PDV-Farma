@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Produtos</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
     <link rel="stylesheet" href="{% static 'css/style_estoque.css' %}">
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-
     {% load tz %} 
 </head>
 <body> 
@@ -25,7 +23,18 @@
         <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
     {% endif %}
     
-    <a href="#" class="perfil-link"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="perfil-link">
+            <i class="fas fa-user-circle"></i><span>Sair</span>
+        </button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}" class="perfil-link">
+        <i class="fas fa-sign-in-alt"></i><span>Entrar</span>
+    </a>
+{% endif %}
 </div>
 
 
@@ -100,9 +109,11 @@
             {% if is_dono %}
                 <div class="actions" style="margin-top: 10px;">
                     <a href="{% url 'atualizar_produto' produto.id %}">Editar</a> |
-                    <form method="post" action="{% url 'deletar_produto' produto.id %}" style="display:inline;">
+                    <form method="post" action="{% url 'deletar_produto' produto.id %}" style="display:inline;" id="delete-form-{{ produto.id }}">
                         {% csrf_token %}
-                        <button type="submit">Deletar</button>
+                        <button type="button" class="button button-danger" onclick="confirmDelete({{ produto.id }}, '{{ produto.nome }}')">
+                            Desativar
+                        </button>
                     </form>
                 </div>
             {% endif %}
@@ -135,6 +146,14 @@
     </div>
 
 </div>
+
+<script>
+    function confirmDelete(productId, productName) {
+        if (confirm(`Tem certeza que deseja desativar o produto "${productName}"?\n\nEle não será excluído permanentemente, mas não aparecerá mais nas listas de produtos ativos.`)) {
+            document.getElementById(`delete-form-${productId}`).submit();
+        }
+    }
+</script>
 
 </body>
 </html>

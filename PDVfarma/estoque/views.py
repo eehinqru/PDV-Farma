@@ -39,7 +39,7 @@ def listar_produtos(request):
     dias_validade_proxima = 90
     limite_data_validade_proxima = hoje + timedelta(days=dias_validade_proxima)
 
-    produtos_qs = Produto.objects.all().order_by('nome')
+    produtos_qs = Produto.objects.filter(ativo=True).order_by('nome')
 
     if query:
         produtos_qs = produtos_qs.filter(
@@ -237,12 +237,27 @@ def atualizar_produto(request, id):
 # Deleta um produto.
 @login_required
 @user_passes_test(eh_dono)
-def deletar_produto(request, id):
-    produto = get_object_or_404(Produto, id=id)
+def deletar_produto(request, produto_id):
+    if not eh_dono(request.user):
+        print(f"DEBUG: ERRO ao desativar produto {produto_id}: {e}")  # noqa: F821
+        messages.error(request, "Você não tem permissão para desativar produtos.")
+        return redirect('listar_produtos')
+    
+    produto = get_object_or_404(Produto, id=produto_id)
+
     if request.method == 'POST':
-        produto.delete()
-        return redirect('listar_produtos') 
-    return render(request, 'estoque/confirmar_delete.html', {'produto': produto})
+        try:
+            produto.ativo = False 
+            produto.save()
+            messages.success(request, f'Produto "{produto.nome}" desativado com sucesso.')
+            return redirect('listar_produtos')
+        except Exception as e:
+            print(f"DEBUG: ERRO ao desativar produto {produto_id}: {e}")
+            messages.error(request, f"Ocorreu um erro ao desativar o produto: {e}")
+            return redirect('listar_produtos')
+    
+    messages.error(request, "Requisição inválida. Use o método POST para desativar produtos.")
+    return redirect('listar_produtos') 
 
 # Exibe o dashboard com indicadores gerais do estoque.
 @login_required

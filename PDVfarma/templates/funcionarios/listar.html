@@ -71,10 +71,12 @@
                             <td>{{ funcionario.cargo }}</td>
                             <td class="actions-cell">
                                 <a href="{% url 'editar_funcionario' funcionario.id %}" class="action-button edit">Editar</a>
-                                <form method="post" action="{% url 'deletar_funcionario' funcionario.id %}" style="display:inline-block;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="action-button delete" onclick="return confirm('Tem certeza que deseja deletar este funcionário?');">Deletar</button>
-                                </form>
+                                <form action="{% url 'deletar_funcionario' funcionario.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja deletar o funcionário {{ funcionario.nome }}? Esta ação é irreversível!');">
+                                    Deletar
+                                </button>
+                            </form>
                             </td>
                         </tr>
                     {% endfor %}
