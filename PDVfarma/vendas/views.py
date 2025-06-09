@@ -84,7 +84,8 @@ def nova_venda(request):
                 produto=item_data['produto'],
                 quantidade=item_data['quantidade'],
                 preco_unitario=item_data['preco_unitario'],
-                subtotal=item_data['subtotal']
+                subtotal=item_data['subtotal'],
+                codigo_barras=item_data['codigo_barras']
             )
             # Atualiza a quantidade do produto no estoque geral
             item_data['produto'].quantidade_estoque -= item_data['quantidade']

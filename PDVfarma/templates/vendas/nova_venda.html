@@ -76,6 +76,7 @@
                     <th>Preço Unit.</th>
                     <th>Quantidade</th>
                     <th>Subtotal</th>
+                    <th>Código de Barras</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -286,6 +287,7 @@
                 <td>${item.product.preco.toFixed(2)}</td>
                 <td>${item.quantity}</td>
                 <td>${item.subtotal.toFixed(2)}</td>
+                <td>${item.codigo_barras}</td>
                 <td>
                     <button type="button" onclick="removeItem(${item.product.id})">Remover</button>
                     <input type="hidden" name="produto_${index}" value="${item.product.id}">
