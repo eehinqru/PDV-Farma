@@ -1,0 +1,214 @@
+/* style.css */
+
+/* Base Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px; /* Tamanho base para a unidade rem */
+    height: 100%; /* Garante que o html ocupe 100% da altura do viewport */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4; /* Fundo mais claro, ocupa toda a tela */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Faz o body ocupar no mínimo 100% da altura da viewport */
+    align-items: center; /* Centraliza o conteúdo horizontalmente (o .container) */
+    justify-content: center; /* Centraliza o conteúdo verticalmente (o .container) */
+    padding: 1.25rem; /* 20px de padding em volta, cria um pequeno respiro nas bordas */
+    width: 100%; /* Garante que o body ocupe 100% da largura */
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 2.5rem; /* 40px */
+    border-radius: 0.625rem; /* 10px */
+    box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1); /* Sombra suave */
+    max-width: 50rem; /* 800px - Largura máxima para o conteúdo principal */
+    width: 100%; /* Ocupa a largura total disponível até o max-width */
+    text-align: center; /* Centraliza o texto e elementos inline-block dentro do container */
+}
+
+/* Header (para a logo e título) */
+.header {
+    background-color: #007b80; /* Cor de fundo principal */
+    color: white;
+    padding: 1.5rem 0; /* 24px de padding vertical */
+    border-top-left-radius: 0.625rem;
+    border-top-right-radius: 0.625rem;
+    margin: -2.5rem -2.5rem 1.875rem -2.5rem; /* Puxa para fora do container para ocupar a largura total e dá margem inferior */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem; /* 10px entre logo e título */
+}
+
+/* Estilo para a sua logo real */
+.logo {
+    width: 8rem;   /* Aumentado para 8rem (128px) */
+    height: 8rem;  /* Aumentado para 8rem (128px) */
+    object-fit: contain;
+    margin-bottom: 0.625rem;
+}
+
+.header h1 {
+    font-size: 2.2rem; /* 35.2px */
+    margin-bottom: 0.625rem; /* 10px */
+    font-weight: bold;
+    color: white; /* Garante a cor branca para o texto */
+}
+
+.header p {
+    font-size: 1.1rem; /* 17.6px */
+    color: white; /* Alterado para branco puro para melhor contraste */
+    margin-bottom: 0;
+}
+
+/* Seções de Informação */
+.info-section {
+    margin-top: 1.875rem; /* 30px */
+}
+
+.info-section h2 {
+    font-size: 1.8rem; /* 28.8px */
+    color: #007b80; /* Cor principal */
+    margin-bottom: 1.25rem; /* 20px */
+    text-align: center; /* Centraliza o título da seção */
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.info-section h2::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 3.75rem; /* 60px */
+    height: 0.1875rem; /* 3px */
+    background-color: #007b80;
+}
+
+.info-section ul {
+    list-style: none; /* Remove os marcadores padrão */
+    padding-left: 0;
+    margin-bottom: 1.5rem; /* 24px */
+    text-align: left; /* Garante que a lista em si está alinhada à esquerda dentro do seu espaço */
+}
+
+.info-section li {
+    font-size: 1.1rem; /* 17.6px */
+    margin-bottom: 0.625rem; /* 10px */
+    padding-left: 1.5rem; /* Espaço para o ícone customizado */
+    position: relative;
+    color: #555;
+}
+
+.info-section li::before {
+    content: '\2713'; /* Símbolo de checkmark (✓) */
+    position: absolute;
+    left: 0;
+    color: #00c084; /* Verde de sucesso */
+    font-weight: bold;
+    font-size: 1.2rem;
+    top: 0;
+}
+
+/* Novo estilo para o grupo de pergunta e botão*/
+.call-to-action-group {
+    display: flex; /* Usa flexbox para fácil centralização */
+    flex-direction: column; /* Organiza os itens verticalmente */
+    align-items: center; /* Centraliza horizontalmente os itens dentro deste grupo */
+    justify-content: center; /* Centraliza verticalmente (se houver espaço) */
+    width: 100%; /* Ocupa a largura total para centralizar corretamente */
+    margin-top: 1rem; /* Espaço acima do grupo */
+}
+
+.info-section .call-to-action-group p { /* Especificidade para a pergunta dentro do grupo */
+    font-size: 1.2rem; /* 19.2px */
+    margin-bottom: 1.25rem; /* 20px - Espaço entre a pergunta e o botão */
+    font-weight: bold;
+    color: #2d2d2d;
+    text-align: center; /* Garante que o texto da pergunta esteja centralizado */
+    width: 100%; /* Garante que o parágrafo ocupe a largura total do grupo */
+}
+
+/* Botão CTA (Call to Action) */
+.cta-button {
+    background-color: #00c084; /* Verde de destaque */
+    color: white;
+    padding: 0.9375rem 1.875rem; /* 15px 30px */
+    text-decoration: none;
+    border-radius: 0.3125rem; /* 5px */
+    font-size: 1.25rem; /* 20px */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2); /* Sombra para profundidade */
+}
+
+.cta-button:hover {
+    background-color: #00a870; /* Verde mais escuro no hover */
+    transform: translateY(-0.125rem); /* Leve levantamento */
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem; /* Menos padding em telas menores */
+    }
+    .container {
+        padding: 1.5rem; /* Menos padding interno no container */
+    }
+    .header {
+        padding: 1rem 0;
+        margin: -1.5rem -1.5rem 1rem -1.5rem; /* Ajusta margens do cabeçalho */
+    }
+    .header h1 {
+        font-size: 1.8rem; /* Tamanho menor para o título */
+    }
+    .header p {
+        font-size: 1rem; /* Tamanho menor para o parágrafo */
+    }
+    .info-section h2 {
+        font-size: 1.5rem; /* Tamanho menor para o subtítulo */
+    }
+    .info-section li,
+    .info-section .call-to-action-group p { /* Incluído o parágrafo dentro do grupo */
+        font-size: 1rem; /* Tamanho menor para o texto da lista e parágrafo */
+    }
+    .cta-button {
+        font-size: 1.1rem; /* Tamanho menor para o botão */
+        padding: 0.75rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+    .header {
+        margin: -1rem -1rem 0.8rem -1rem;
+    }
+    .logo { /* Ajusta o tamanho da logo em telas menores */
+        width: 6rem; /* Aumentado para 6rem (96px) */
+        height: 6rem; /* Aumentado para 6rem (96px) */
+    }
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    .cta-button {
+        display: block; /* Botão ocupa a largura total */
+        width: 100%;
+        margin-left: 0; /* Garante que não há margem lateral */
+        margin-right: 0;
+    }
+}
