@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <title>Lista de Funcionários</title>
     {# Use o mesmo CSS que você usa para o estoque ou crie um específico para funcionários #}
-    <link rel="stylesheet" href="{% static 'css/style_estoque.css' %}">
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="{% static 'css/style_funcionario.css' %}">
+    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
 </head>
-<body> 
+<body>
 
 <div class="sidebar">
     <div class="sidebar-top">
@@ -18,13 +16,21 @@
         <span class="logo-text">PDV Pharmacy</span>
     </div>
 
-    {# Links da sidebar (ajustados para usar seus namespaces) #}
     <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
     <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
-    {# Link para a página de funcionários (este app) #}
-    <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
-    
-    <a href="#" class="perfil-link"><i class="fas fa-user-circle"></i><span>Perfil</span></a>
+    <a href="{% url 'listar_funcionarios' %}" class="active"> <i class="fas fa-users"></i> <span>Funcionários</span></a> 
+    {# Novo link para Sair/Entrar #}
+        {% if user.is_authenticated %}
+            <a href="#" class="logout-link"> {# Usamos um href="#" porque a ação é do formulário #}
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+                <form action="{% url 'logout' %}" method="post" style="display: none;"> {# Esconde o form #}
+                    {% csrf_token %}
+                    <button type="submit" id="logout-button"></button> {# Botão oculto #}
+                </form>
+            </a>
+        {% endif %} 
+    </div>
+
 </div>
 
 
@@ -34,16 +40,19 @@
         FUNCIONÁRIOS
     </div>
 
-    <div class="controls" style="margin-bottom: 20px;">
-        {# Formulário de busca #}
-        <form method="GET" action="{% url 'listar_funcionarios' %}" style="display: inline-flex; align-items: center; gap: 10px;">
-            <input type="text" name="q" value="{{ query }}" placeholder="Pesquisar funcionário (nome, email, telefone)">
-            <button type="submit" class="button">Pesquisar</button>
-            <a href="{% url 'listar_funcionarios' %}"><button type="button" class="button button-secondary">Limpar Pesquisa</button></a>
+    <div class="controls"> 
+        <form method="GET" action="{% url 'listar_funcionarios' %}"> 
+            <input type="text" name="q" value="{{ query }}" placeholder="Pesquisar funcionário">
+            <button type="submit" class="button"><i class="fas fa-search"></i></button>
+            {% if query %} 
+                <a href="{% url 'listar_funcionarios' %}"><button type="button" class="button button-secondary">Limpar Pesquisa</button></a>
+            {% endif %}
+
+            
         </form>
-        
+
         {# Botão para adicionar funcionário #}
-        <a href="{% url 'registrar.html' %}"><button class="button button-primary" style="margin-left: auto;">+ Registrar Funcionário</button></a>
+        <a href="{% url 'registrar_funcionario' %}"><button class="button button-primary">Registrar Funcionário</button></a> {# Removi style inline, 'margin-left: auto' está no CSS dos controls #}
     </div>
 
     <div class="products-list-container"> {# Mantive um nome genérico, mas pode ser employees-list-container #}
@@ -56,7 +65,6 @@
                         <th>Telefone</th>
                         <th>CPF</th>
                         <th>Endereço</th>
-                        <th>Cargo</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -68,16 +76,17 @@
                             <td>{{ funcionario.telefone }}</td>
                             <td>{{ funcionario.cpf }}</td>
                             <td>{{ funcionario.endereco }}</td>
-                            <td>{{ funcionario.cargo }}</td>
+                            {# REMOVIDA A LINHA ABAIXO PARA ALINHAR COM O CABEÇALHO SEM CARGO #}
+                            {# <td>{{ funcionario.cargo }}</td> #}
                             <td class="actions-cell">
-                                <a href="{% url 'editar_funcionario' funcionario.id %}" class="action-button edit">Editar</a>
-                                <form action="{% url 'deletar_funcionario' funcionario.id %}" method="post" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja deletar o funcionário {{ funcionario.nome }}? Esta ação é irreversível!');">
-                                    Deletar
-                                </button>
-                            </form>
-                            </td>
+    <a href="{% url 'editar_funcionario' funcionario.id %}" class="action-button edit">
+        <i class="fas fa-pencil-alt"></i> </a>
+    <form action="{% url 'deletar_funcionario' funcionario.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja deletar o funcionário {{ funcionario.user.first_name }} {{ funcionario.user.last_name }}? Esta ação é irreversível!');">
+            <i class="fas fa-trash-alt"></i> </button>
+    </form>
+</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -86,9 +95,9 @@
             <p style="text-align: center; margin-top: 20px;">Nenhum funcionário encontrado.</p>
         {% endif %}
     </div>
-    
+
     {# Navegação de Paginação #}
-    <div class="paginacao" style="text-align: center; margin: 20px;">
+    <div class="paginacao"> {# Removi style inline para o CSS gerenciar #}
         {% if page_obj.has_previous %}
             <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="paginacao-link">Anterior</a>
         {% endif %}

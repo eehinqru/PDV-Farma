@@ -1,88 +1,36 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bem-vindo ao Sistema PDV - Sua Solução</title>
-    <style>
-        /* CSS básico para a página inicial - pode ser movido para um arquivo estático */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-            text-align: center;
-        }
-        h1 {
-            color: #0056b3;
-            margin-bottom: 20px;
-        }
-        p {
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        .cta-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 1.2em;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
-        }
-        .cta-button:hover {
-            background-color: #218838;
-        }
-        .info-section {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .info-section h2 {
-            color: #007bff;
-            margin-bottom: 15px;
-        }
-        .info-section ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .info-section li {
-            margin-bottom: 10px;
-        }
-        .info-section a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .info-section a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style_index.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> 
 </head>
 <body>
-    <h1>Bem-vindo ao Sistema de PDV da Nossa Empresa!</h1>
-    <p>Somos a solução ideal para gerenciar seu ponto de venda de forma eficiente e descomplicada.</p>
-    <p>Oferecemos um sistema robusto para o controle de estoque, registro de vendas, e acompanhamento financeiro, tudo em um só lugar.</p>
-    
-    <div class="info-section">
-        <h2>O que oferecemos:</h2>
-        <ul>
-            <li>Gestão completa de Produtos e Estoque</li>
-            <li>Registro rápido e intuitivo de Vendas</li>
-            <li>Histórico detalhado de Transações</li>
-            <li>Controle de Lotes e Validade</li>
-            <li>Relatórios e Insights para o seu Negócio</li>
-        </ul>
-        <p>Pronto para otimizar sua gestão?</p>
-        
-        <a href="{% url 'login' %}" class="cta-button">Iniciar Serviço PDV</a>
-        
+    <div class="container">
+        <div class="header">
+            <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+            <h1>Bem-vindo ao Sistema de PDV da PDV Pharmacy!</h1>
+            <p>Somos a solução ideal para gerenciar seu ponto de venda de forma eficiente e descomplicada.</p> {# REVISADO PARA CONSISTÊNCIA #}
         </div>
 
-    </body>
+        <div class="info-section">
+            <h2>O que oferecemos:</h2>
+            <ul>
+                <li>Gestão completa de Produtos e Estoque</li>
+                <li>Registro rápido e intuitivo de Vendas</li>
+                <li>Histórico de Transações</li>
+                <li>Controle de Lotes e Validade</li>
+                <li>Relatórios e Insights para o seu Negócio</li>
+            </ul>
+
+            <div class="call-to-action-group">
+                <p>Pronto para otimizar sua gestão?</p>
+                <a href="{% url 'login' %}" class="cta-button">Iniciar Serviço PDV</a>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

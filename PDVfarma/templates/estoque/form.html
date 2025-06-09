@@ -1,298 +1,380 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if produto.id %}Editar Produto{% else %}Novo Produto{% endif %}</title>
-    <style>
-        /* Apenas para visualização: esconder o campo DELETE automaticamente renderizado */
-        .lote-item-wrapper input[type="checkbox"][name$="-DELETE"] {
-            display: none; /* Esconde a checkbox padrão */
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style_form_produto.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    
 </head>
 <body>
-    <h1>{% if produto.id %}Editar Produto{% else %}Novo Produto{% endif %}</h1>
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+            <span class="logo-text">PDV Pharmacy</span>
+        </div>
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <fieldset>
-            <legend>Dados do Produto</legend>
-            <label for="{{ form.nome.id_for_label }}">Nome</label><br />
-            {{ form.nome }}<br />
-            {% for error in form.nome.errors %}
-                <div class="error-message">{{ error }}</div>
-            {% endfor %}<br />
-
-            <label for="{{ form.codigo_barras.id_for_label }}">Código de Barras</label><br />
-            {{ form.codigo_barras }}<br />
-            {% for error in form.codigo_barras.errors %}
-                <div class="error-message">{{ error }}</div>
-            {% endfor %}<br />
-
-            <label for="{{ form.descricao.id_for_label }}">Descrição</label><br />
-            {{ form.descricao }}<br />
-            {% for error in form.descricao.errors %}
-                <div class="error-message">{{ error }}</div>
-            {% endfor %}<br />
-
-            <label for="{{ form.preco.id_for_label }}">Preço</label><br />
-            {{ form.preco }}<br />
-            {% for error in form.preco.errors %}
-                <div class="error-message">{{ error }}</div>
-            {% endfor %}<br />
-
-            <label for="{{ form.categoria.id_for_label }}">Categoria</label><br />
-            {{ form.categoria }}<br />
-            {% for error in form.categoria.errors %}
-                <div class="error-message">{{ error }}</div>
-            {% endfor %}<br />
-
-            <label for="{{ form.imagem.id_for_label }}">Imagem</label><br />
-            {% if produto.imagem %}
-                <img id="imagem-preview" src="{{ produto.imagem.url }}" alt="Imagem atual" width="200"/><br />
-            {% else %}
-                <img id="imagem-preview" style="display:none;" width="200" /><br />
-            {% endif %}
-            {{ form.imagem }}<br />
-            {% for error in form.imagem.errors %}
-                <div class="error-message">{{ error }}</div>
-            {% endfor %}<br />
-        </fieldset>
-
-        <hr>
-
-        <fieldset>
-            <legend>Lotes do Produto</legend>
-            {{ formset.management_form }} {# ESSENCIAL para o funcionamento do formset #}
-
-            <div id="formset-container">
-                {% for lote_form in formset %}
-                    <div class="lote-item-wrapper">
-                        {% if lote_form.instance.pk %}
-                            <h3>Lote #{{ forloop.counter }}</h3>
-                        {% else %}
-                            <h3>Novo Lote</h3>
-                        {% endif %}
-
-                        {# Renderiza OBRIGATORIAMENTE o campo 'id' (oculto) #}
-                        {{ lote_form.id }} 
-                        {# Renderiza OBRIGATORIAMENTE o campo 'DELETE' (oculto) #}
-                        {{ lote_form.DELETE.as_hidden }} 
-                        
-                        <p>
-                            <label for="{{ lote_form.data_entrada.id_for_label }}">Data entrada</label><br />
-                            {{ lote_form.data_entrada }}
-                            {% for error in lote_form.data_entrada.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        </p>
-                        <p>
-                            <label for="{{ lote_form.data_validade.id_for_label }}">Data validade</label><br />
-                            {{ lote_form.data_validade }}
-                            {% for error in lote_form.data_validade.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        </p>
-                        <p>
-                            <label for="{{ lote_form.quantidade.id_for_label }}">Quantidade</label><br />
-                            {{ lote_form.quantidade }}
-                            {% for error in lote_form.quantidade.errors %}
-                                <div class="error-message">{{ error }}</div>
-                            {% endfor %}
-                        </p>
-
-                        {# Botão de remover lote. Diferente para lotes existentes e novos. #}
-                        {% if lote_form.instance.pk %}
-                            <button type="button" class="remove-existing-lote-button">Remover Lote</button>
-                        {% else %}
-                            <button type="button" class="remove-new-lote-button">Remover Lote</button>
-                        {% endif %}
-
-                        {% if lote_form.non_field_errors %}
-                            <ul class="errorlist">
-                                {% for error in lote_form.non_field_errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-
-            {# Formulário vazio (template JS) #}
-            <div id="empty-form-template" style="display:none;">
-                <div class="lote-item-wrapper">
-                    <h3>Novo Lote</h3>
-                    {# Renderiza OBRIGATORIAMENTE o ID oculto e DELETE oculto para o formset vazio #}
-                    {{ formset.empty_form.id }}
-                    {{ formset.empty_form.DELETE.as_hidden }} 
-                    
-                    <p>
-                        <label for="{{ formset.empty_form.data_entrada.id_for_label }}">Data entrada</label><br />
-                        {{ formset.empty_form.data_entrada }}
-                    </p>
-                    <p>
-                        <label for="{{ formset.empty_form.data_validade.id_for_label }}">Data validade</label><br />
-                        {{ formset.empty_form.data_validade }}
-                    </p>
-                    <p>
-                        <label for="{{ formset.empty_form.quantidade.id_for_label }}">Quantidade</label><br />
-                        {{ formset.empty_form.quantidade }}
-                    </p>
-                    {# Botão de remover para novos lotes (apenas remove da tela) #}
-                    <button type="button" class="remove-new-lote-button">Remover Lote</button>
-                </div>
-            </div>
-
-            <button type="button" id="add-lote">Adicionar Novo Lote</button>
-        </fieldset>
-
-        <hr>
-
-        <button type="submit">Salvar</button>
-        <a href="{% url 'listar_produtos' %}">Cancelar</a>
-        {% if produto.id %}
-            <a href="{% url 'deletar_produto' produto.id %}">Excluir Produto</a>
+        <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> {# Link para a página de estoque #}
+        {% if is_dono %}
+            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
         {% endif %}
-    </form>
+        
+        {# Novo link para Sair/Entrar #}
+        {% if user.is_authenticated %}
+            <a href="#" class="logout-link"> {# Usamos um href="#" porque a ação é do formulário #}
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+                <form action="{% url 'logout' %}" method="post" style="display: none;"> {# Esconde o form #}
+                    {% csrf_token %}
+                    <button type="submit" id="logout-button"></button> {# Botão oculto #}
+                </form>
+            </a>
+        {% endif %} 
+    </div>
 
+    <div class="main-content">
+        <div class="topbar">
+            
+            <h1 class="page-title">{% if produto.id %}EDITAR PRODUTO{% else %}NOVO PRODUTO{% endif %}</h1>
+        </div>
+        
+        <div class="form-container">
+            
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+            
+                <div class="form-sections-wrapper">
+                    
+                    <div class="product-data-section">
+                        <fieldset>
+                            <legend>Dados do Produto</legend>
+                            <h2 class="section-subtitle">Obrigatório:</h2>
+                            <label for="{{ form.codigo_barras.id_for_label }}">Código de Barras</label><br />
+                            {{ form.codigo_barras }}<br />
+                            {% for error in form.codigo_barras.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}<br />
+
+                            <label for="{{ form.nome.id_for_label }}">Nome</label><br />
+                            {{ form.nome }}<br />
+                            {% for error in form.nome.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}<br />
+
+                            <label for="{{ form.categoria.id_for_label }}">Categoria</label><br />
+                            {{ form.categoria }}<br />
+                            {% for error in form.categoria.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}<br />
+
+                            <label for="{{ form.preco.id_for_label }}">Preço</label><br />
+                            {{ form.preco }}<br />
+                            {% for error in form.preco.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}<br />
+                            
+                            <h2 class="section-subtitle">Opcional:</h2>
+                            <label for="{{ form.descricao.id_for_label }}">Descrição</label><br />
+                            {{ form.descricao }}<br />
+                            {% for error in form.descricao.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}<br />
+
+                            <label for="{{ form.imagem.id_for_label }}">Imagem</label><br />
+                            {% if produto.imagem %}
+                                <img id="imagem-preview" src="{{ produto.imagem.url }}" alt="Imagem atual" /><br />
+                            {% else %}
+                                <img id="imagem-preview" style="display:none;" /><br />
+                            {% endif %}
+                            {{ form.imagem }}<br />
+                            {% for error in form.imagem.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}<br />
+                        </fieldset>
+
+                        <hr> {# This HR will be inside the product data section #}
+
+                        <div class="form-buttons">
+                            <button type="submit">Salvar</button>
+                            <a href="{% url 'listar_produtos' %}" class="action-button red">Cancelar</a>
+                            {% if produto.id %}
+                                <a href="{% url 'deletar_produto' produto.id %}" class="delete-button">Excluir Produto</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# Right section: Lotes Data #}
+                    <div class="lotes-data-section">
+                        <fieldset>
+                            <legend>Lotes de produtos</legend> {# Updated legend text #}
+                            {{ formset.management_form }} {# ESSENCIAL para o funcionamento do formset #}
+
+                            <div id="formset-container">
+                                {% for lote_form in formset %}
+                                    <div class="lote-item-wrapper">
+                                        {% if lote_form.instance.pk %}
+                                            <h3>Lote #{{ forloop.counter }}</h3>
+                                        {% else %}
+                                            <h3>Novo Lote</h3>
+                                        {% endif %}
+
+                                        {# Renderiza OBRIGATORIAMENTE o campo 'id' (oculto) #}
+                                        {{ lote_form.id }} 
+                                        {# Renderiza OBRIGATORIAMENTE o campo 'DELETE' (oculto) #}
+                                        {{ lote_form.DELETE.as_hidden }} 
+                                        
+                                        <p>
+                                            <label for="{{ lote_form.data_entrada.id_for_label }}">Data entrada</label><br />
+                                            {{ lote_form.data_entrada }}
+                                            {% for error in lote_form.data_entrada.errors %}
+                                                <div class="error-message">{{ error }}</div>
+                                            {% endfor %}
+                                        </p>
+                                        <p>
+                                            <label for="{{ lote_form.data_validade.id_for_label }}">Data validade</label><br />
+                                            {{ lote_form.data_validade }}
+                                            {% for error in lote_form.data_validade.errors %}
+                                                <div class="error-message">{{ error }}</div>
+                                            {% endfor %}
+                                        </p>
+                                        <p>
+                                            <label for="{{ lote_form.quantidade.id_for_label }}">Quantidade</label><br />
+                                            {{ lote_form.quantidade }}
+                                            {% for error in lote_form.quantidade.errors %}
+                                                <div class="error-message">{{ error }}</div>
+                                            {% endfor %}
+                                        </p>
+
+                                        {# Botões dentro de uma div lote-actions #}
+                                        <div class="lote-actions">
+                                            {% if lote_form.instance.pk %}
+                                                <button type="button" class="remove-existing-lote-button">Remover Lote</button>
+                                            {% else %}
+                                                <button type="button" class="remove-new-lote-button">Remover Lote</button>
+                                            {% endif %}
+                                        </div>
+
+                                        {% if lote_form.non_field_errors %}
+                                            <ul class="errorlist">
+                                                {% for error in lote_form.non_field_errors %}
+                                                    <li>{{ error }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div> {# Fecha a div formset-container #}
+                            
+                            {# Botão Adicionar Novo Lote fora da lote-actions, alinhado à esquerda na seção #}
+                            <button type="button" id="add-lote">Adicionar Novo Lote</button>
+
+                        </fieldset>
+                        {# Total Quantity display #}
+                        <div class="total-quantity">
+                            Quantidade Total: <span id="total-quantity-value">170</span> {# This will be updated by JS #}
+                        </div>
+                    </div>
+                </div> {# End form-sections-wrapper #}
+            </form>
+        </div> {# End form-container #}
+    </div> {# End main-content #}
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const addButton = document.getElementById('add-lote');
-        const formsetContainer = document.getElementById('formset-container');
-        const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]');
-        const initialManagementFormValue = parseInt(totalForms.value); // Guarda o valor inicial de TOTAL_FORMS
-
-        function validateLastLoteForm() {
-            const currentForms = formsetContainer.querySelectorAll('.lote-item-wrapper');
-            if (currentForms.length === 0) {
-                return true;
+        document.addEventListener('DOMContentLoaded', function () {
+            // Lógica para o botão de Sair
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault(); // Impede o comportamento padrão do link
+                    const logoutButton = this.querySelector('#logout-button');
+                    if (logoutButton) {
+                        logoutButton.click(); // Simula o clique no botão de submit do formulário
+                    }
+                });
             }
 
-            const lastForm = currentForms[currentForms.length - 1];
-            // Verifica se o último formulário está visível (não foi "removido")
-            if (lastForm.style.display === 'none') {
-                return true; // Se estiver escondido, não precisa validar
+            const addButton = document.getElementById('add-lote');
+            const formsetContainer = document.getElementById('formset-container');
+            const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]');
+            // const initialManagementFormValue = parseInt(totalForms.value); // Guarda o valor inicial de TOTAL_FORMS
+
+            // Função para atualizar a quantidade total
+            function updateTotalQuantity() {
+                let total = 0;
+                formsetContainer.querySelectorAll('.lote-item-wrapper').forEach(loteWrapper => {
+                    // Contabiliza apenas os formulários visíveis (não "removidos")
+                    if (loteWrapper.style.display !== 'none') {
+                        const quantityInput = loteWrapper.querySelector('input[name$="-quantidade"]');
+                        if (quantityInput && !isNaN(parseInt(quantityInput.value))) {
+                            total += parseInt(quantityInput.value);
+                        }
+                    }
+                });
+                document.getElementById('total-quantity-value').textContent = total;
             }
 
-            let isValid = true;
+            // Chama no carregamento
+            updateTotalQuantity();
 
-            const dateEntradaField = lastForm.querySelector('input[name$="-data_entrada"]');
-            const dateValidadeField = lastForm.querySelector('input[name$="-data_validade"]');
-            const quantidadeField = lastForm.querySelector('input[name$="-quantidade"]');
-
-            // Limpa mensagens de erro anteriores para o último formulário
-            lastForm.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-
-            if (!dateEntradaField || dateEntradaField.value.trim() === '') {
-                isValid = false;
-                if (dateEntradaField) {
-                    const errorDiv = document.getElementById(dateEntradaField.id + '_error');
-                    if (errorDiv) errorDiv.textContent = 'Este campo é obrigatório.';
+            // Adiciona listeners de evento para mudanças de quantidade
+            formsetContainer.addEventListener('input', function(event) {
+                if (event.target.matches('input[name$="-quantidade"]')) {
+                    updateTotalQuantity();
                 }
-            }
+            });
 
-            if (!dateValidadeField || dateValidadeField.value.trim() === '') {
-                isValid = false;
-                if (dateValidadeField) {
-                    const errorDiv = document.getElementById(dateValidadeField.id + '_error');
-                    if (errorDiv) errorDiv.textContent = 'Este campo é obrigatório.';
+
+            function validateLastLoteForm() {
+                const currentForms = formsetContainer.querySelectorAll('.lote-item-wrapper');
+                if (currentForms.length === 0) {
+                    return true;
                 }
-            }
 
-            if (!quantidadeField || quantidadeField.value.trim() === '' || parseInt(quantidadeField.value) <= 0) {
-                isValid = false;
-                if (quantidadeField) {
-                    const errorDiv = document.getElementById(quantidadeField.id + '_error');
-                    if (errorDiv) errorDiv.textContent = 'A quantidade é obrigatória e deve ser maior que zero.';
+                const lastForm = currentForms[currentForms.length - 1];
+                // Verifica se o último formulário está visível (não foi "removido")
+                if (lastForm.style.display === 'none') {
+                    return true; // Se estiver escondido, não precisa validar
                 }
+
+                let isValid = true;
+
+                const dateEntradaField = lastForm.querySelector('input[name$="-data_entrada"]');
+                const dateValidadeField = lastForm.querySelector('input[name$="-data_validade"]');
+                const quantidadeField = lastForm.querySelector('input[name$="-quantidade"]');
+
+                // Limpa mensagens de erro anteriores para o último formulário
+                lastForm.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+                if (!dateEntradaField || dateEntradaField.value.trim() === '') {
+                    isValid = false;
+                    if (dateEntradaField) {
+                        // Cria uma div de erro específica se não existir
+                        let errorDiv = dateEntradaField.nextElementSibling;
+                        if (!errorDiv || !errorDiv.classList.contains('error-message')) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.classList.add('error-message');
+                            dateEntradaField.parentNode.insertBefore(errorDiv, dateEntradaField.nextSibling);
+                        }
+                        errorDiv.textContent = 'Este campo é obrigatório.';
+                    }
+                }
+
+                if (!dateValidadeField || dateValidadeField.value.trim() === '') {
+                    isValid = false;
+                    if (dateValidadeField) {
+                        let errorDiv = dateValidadeField.nextElementSibling;
+                        if (!errorDiv || !errorDiv.classList.contains('error-message')) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.classList.add('error-message');
+                            dateValidadeField.parentNode.insertBefore(errorDiv, dateValidadeField.nextSibling);
+                        }
+                        errorDiv.textContent = 'Este campo é obrigatório.';
+                    }
+                }
+
+                if (!quantidadeField || quantidadeField.value.trim() === '' || parseInt(quantidadeField.value) <= 0) {
+                    isValid = false;
+                    if (quantidadeField) {
+                        let errorDiv = quantidadeField.nextElementSibling;
+                        if (!errorDiv || !errorDiv.classList.contains('error-message')) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.classList.add('error-message');
+                            quantidadeField.parentNode.insertBefore(errorDiv, quantidadeField.nextSibling);
+                        }
+                        errorDiv.textContent = 'A quantidade é obrigatória e deve ser maior que zero.';
+                    }
+                }
+
+                return isValid;
             }
 
-            return isValid;
-        }
 
+            if (addButton && formsetContainer && totalForms) {
+                addButton.addEventListener('click', () => {
+                    if (validateLastLoteForm()) {
+                        const formCount = parseInt(totalForms.value);
+                        const emptyFormHtml = document.getElementById('empty-form-template').innerHTML; 
+                        const newFormHtml = emptyFormHtml.replace(/__prefix__/g, formCount);
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = newFormHtml;
 
-        if (addButton && formsetContainer && totalForms) {
-            addButton.addEventListener('click', () => {
-                if (validateLastLoteForm()) {
-                    const formCount = parseInt(totalForms.value);
-                    const emptyFormHtml = document.getElementById('empty-form-template').innerHTML; 
-                    const newFormHtml = emptyFormHtml.replace(/__prefix__/g, formCount);
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = newFormHtml;
+                        Array.from(tempDiv.children).forEach(child => {
+                            formsetContainer.appendChild(child);
+                        });
 
-                    Array.from(tempDiv.children).forEach(child => {
-                        formsetContainer.appendChild(child);
-                    });
+                        totalForms.value = formCount + 1;
+                        updateTotalQuantity(); // Atualiza a quantidade total após adicionar um novo formulário
+                    } else {
+                        const lastForm = formsetContainer.lastElementChild;
+                        if (lastForm) {
+                            lastForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+            }
 
-                    totalForms.value = formCount + 1;
-                } else {
-                    const lastForm = formsetContainer.lastElementChild;
-                    if (lastForm) {
-                        lastForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // === Lógica para remover lotes ===
+
+            // Função para remover lotes existentes (marca DELETE e esconde)
+            formsetContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-existing-lote-button')) {
+                    const loteWrapper = event.target.closest('.lote-item-wrapper');
+                    if (loteWrapper) {
+                        const deleteCheckbox = loteWrapper.querySelector('input[type="hidden"][name$="-DELETE"]');
+                        if (deleteCheckbox) {
+                            deleteCheckbox.value = 'on'; // Marca a checkbox DELETE para exclusão
+                            loteWrapper.style.display = 'none'; // Esconde o lote visualmente
+                            
+                            // totalForms.value = parseInt(totalForms.value) - 1; // Isso deve ser tratado pela validação do formset do Django
+                            updateTotalQuantity(); // Atualiza a quantidade total após esconder
+                        }
+                    }
+                }});
+
+            // Função para remover novos lotes (apenas remove do DOM)
+            formsetContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-new-lote-button')) {
+                    const loteWrapper = event.target.closest('.lote-item-wrapper');
+                    if (loteWrapper) {
+                        // Remove o elemento do DOM completamente
+                        loteWrapper.remove();
+                        
+                        // Decrementa TOTAL_FORMS para lotes que são removidos completamente
+                        totalForms.value = parseInt(totalForms.value) - 1; 
+
+                        // IMPORTANTE: Reajusta os índices dos formulários restantes após uma remoção
+                        // Isso é crucial para que o Formset do Django processe corretamente.
+                        // Percorre todos os formulários visíveis e atualiza seus `name` e `id`
+                        const currentForms = formsetContainer.querySelectorAll('.lote-item-wrapper');
+                        currentForms.forEach((formWrapper, index) => {
+                            formWrapper.querySelectorAll('[name]').forEach(input => {
+                                const currentName = input.getAttribute('name');
+                                if (currentName) { // Verifica se currentName não é nulo
+                                    const newName = currentName.replace(/lotes-\d+-/, `lotes-${index}-`);
+                                    input.setAttribute('name', newName);
+                                }
+                            });
+                            formWrapper.querySelectorAll('[id]').forEach(input => {
+                                const currentId = input.getAttribute('id');
+                                if (currentId) { // Verifica se currentId não é nulo
+                                    const newId = currentId.replace(/id_lotes-\d+-/, `id_lotes-${index}-`);
+                                    input.setAttribute('id', newId);
+                                }
+                            });
+                            formWrapper.querySelector('h3').textContent = `Lote #${index + 1}`; // Atualiza o título
+                        });
+                        updateTotalQuantity(); // Atualiza a quantidade total após remover
                     }
                 }
             });
-        }
 
-        // === Lógica para remover lotes ===
-
-        // Função para remover lotes existentes (marca DELETE e esconde)
-        formsetContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('remove-existing-lote-button')) {
-                const loteWrapper = event.target.closest('.lote-item-wrapper');
-                if (loteWrapper) {
-                    const deleteCheckbox = loteWrapper.querySelector('input[type="hidden"][name$="-DELETE"]');
-                    if (deleteCheckbox) {
-                        deleteCheckbox.value = 'on'; // Marca a checkbox DELETE para exclusão
-                        loteWrapper.style.display = 'none'; // Esconde o lote visualmente
-                        
-                        // Atualiza o TOTAL_FORMS, decrementando.
-                        // Mas apenas se o formset tiver mais de 1 form visível.
-                        const visibleForms = formsetContainer.querySelectorAll('.lote-item-wrapper:not([style*="display: none"])');
-                        if (visibleForms.length > 0) { // Garante que não zere para menos de 0
-                           totalForms.value = parseInt(totalForms.value) - 1; 
-                        }
-                    }
-                }
-            }
         });
-
-        // Função para remover novos lotes (apenas remove do DOM)
-        formsetContainer.addEventListener('click', (event) => {
-            if (event.target.classList.contains('remove-new-lote-button')) {
-                const loteWrapper = event.target.closest('.lote-item-wrapper');
-                if (loteWrapper) {
-                    // Remove o elemento do DOM completamente
-                    loteWrapper.remove();
-                    
-                    // Decrementa TOTAL_FORMS para lotes que são removidos completamente
-                    totalForms.value = parseInt(totalForms.value) - 1; 
-
-                    // IMPORTANTE: Reajustar os índices dos forms restantes após uma remoção
-                    // Isso é crucial para que o Django Formset processe corretamente.
-                    // Percorre todos os formulários visíveis e atualiza seus `name` e `id`
-                    const currentForms = formsetContainer.querySelectorAll('.lote-item-wrapper');
-                    currentForms.forEach((formWrapper, index) => {
-                        formWrapper.querySelectorAll('[name]').forEach(input => {
-                            const currentName = input.getAttribute('name');
-                            const newName = currentName.replace(/lotes-\d+-/, `lotes-${index}-`);
-                            input.setAttribute('name', newName);
-                        });
-                        formWrapper.querySelectorAll('[id]').forEach(input => {
-                            const currentId = input.getAttribute('id');
-                            const newId = currentId.replace(/id_lotes-\d+-/, `id_lotes-${index}-`);
-                            input.setAttribute('id', newId);
-                        });
-                        formWrapper.querySelector('h3').textContent = `Lote #${index + 1}`; // Atualiza o título
-                    });
-                }
-            }
-        });
-
-    });
     </script>
 
     <script>
@@ -323,13 +405,5 @@
             }
         });
     </script>
-
-    <script>
-    function confirmDelete(productId, productName) {
-        if (confirm(`Tem certeza que deseja desativar o produto "${productName}"?\n\nEle não será excluído permanentemente, mas não aparecerá mais nas listas de produtos ativos.`)) {
-            document.getElementById(`delete-form-${productId}`).submit();
-        }
-    }
-</script>
 </body>
 </html>
