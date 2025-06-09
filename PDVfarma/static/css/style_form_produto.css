@@ -1,0 +1,568 @@
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f0f0f0;
+    overflow: hidden; /* Evita que o corpo role, o main-content cuidará disso */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #2d2d2d;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start; /* Garante que os itens se alinhem ao topo */
+    gap: 5px; /* Espaço entre os itens flex */
+    padding-top: 60px; /* Adiciona padding para o topo da sidebar (altura da topbar) */
+}
+
+/* Área da logo com fundo #025255 */
+.sidebar-top {
+    background-color: #025255;
+    height: 60px;
+    width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.sidebar-top .logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.sidebar-top .logo-text {
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+}
+
+/* Links normais da sidebar */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 0px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Ícones nos links da sidebar */
+.sidebar a i {
+    font-size: 30px;
+    width: 32px;
+    text-align: center;
+}
+
+/* Hover nos links da sidebar */
+.sidebar a:hover {
+    background-color: #007b80;
+}
+
+/* Estilos para o link de Sair */
+.sidebar .logout-link {
+    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
+}
+
+.sidebar .logout-link form {
+    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
+}
+
+.sidebar .logout-link button {
+    /* Basicamente zera o estilo padrão do botão para que o <a> pai o estilize */
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit; /* Herda a cor do texto do link pai */
+    font-size: inherit; /* Herda o tamanho da fonte do link pai */
+    font-weight: inherit;
+    cursor: inherit; /* Herda o cursor do link pai */
+    text-align: left; /* Alinha o texto do botão à esquerda */
+    display: flex; /* Permite que o botão se comporte como flex item para alinhamento */
+    align-items: center;
+    gap: 10px; /* Mantém o gap com o ícone, se houver */
+    flex-grow: 1; /* Ocupa o espaço restante */
+}
+
+
+/* Main content (ao lado da sidebar) */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9; /* A área branca para o conteúdo */
+    overflow-y: auto; /* Permite rolagem dentro do conteúdo principal se necessário */
+    padding-top: 60px; /* Espaço para a topbar fixa */
+    height: 100vh; /* Garante que main-content preencha a altura total */
+}
+
+/* Topbar alinhada à main-content */
+.topbar {
+    background-color: #007b80;
+    height: 60px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Alinha o conteúdo à direita */
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0 20px;
+    position: fixed; /* Fixa a topbar no topo */
+    width: calc(100% - 220px); /* Ajusta largura para contabilizar a sidebar */
+    top: 0;
+    left: 220px; /* Alinha com a sidebar */
+    z-index: 90; /* Abaixo de sidebar-top, mas acima de outros conteúdos */
+}
+
+.topbar .page-title { /* Garante que o h1 dentro da topbar não sobreponha estilos */
+    height: 60px; 
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0 20px;
+}
+
+
+
+/* --- ESTILOS PARA O FORMULÁRIO DE PRODUTO/LOTE --- */
+
+.form-container {
+    flex: 1; /* Permite que o container preencha o espaço restante */
+    padding: 0px 0px 20px 0px; /* Ajuste o padding superior e lateral para 0px */
+    display: flex;
+    flex-direction: column; /* Empilha título e formulário */
+    align-items: center; /* Centraliza o formulário horizontalmente */
+    width: 100%; /* Ocupa a largura total do main-content */
+    min-height: calc(100vh - 60px); /* Garante que o form-container tenha altura mínima para rolar se precisar */
+}
+
+
+form {
+    display: flex;
+    flex-direction: row; /* Organiza os dados do produto e dos lotes lado a lado */
+    flex-wrap: nowrap; /* MANTIDO COMO 'NOWRAP' PARA EVITAR QUEBRAS, a menos que o media query mude */
+    gap: 20px; /* Reduz espaçamento entre as seções */
+    max-width: 100%; /* Permite que o formulário ocupe 100% da largura do form-container */
+    width: 100%; /* Garante que o formulário ocupe a largura disponível */
+    background-color: white;
+    padding: 0px 15px 15px 15px; /* Reduz o padding interno superior para 0px, mantém laterais e inferior */
+    border-radius: 0px; /* Removido arredondamento */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    align-items: flex-start; /* Alinha as seções ao topo */
+    height: fit-content; /* Permite que o formulário se ajuste ao conteúdo */
+}
+
+.form-sections-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap; /* MANTIDO COMO 'NOWRAP' AQUI TAMBÉM */
+    gap: 20px; /* Reduz espaçamento entre as seções */
+    width: 100%; /* Garante que ocupe a largura total do formulário */
+    align-items: flex-start; /* Alinha as seções ao topo */
+}
+
+.product-data-section {
+    flex: 1.5; /* Damos mais flexibilidade para o lado do produto */
+    min-width: 350px; /* Reduzimos um pouco o min-width para mais compressão */
+    max-width: 60%; /* Permite que esta seção ocupe mais espaço */
+    display: flex;
+    flex-direction: column; /* Empilha o fieldset, hr e botões */
+    padding-bottom: 20px; /* Adiciona um padding para a seção de dados do produto */
+}
+
+.lotes-data-section {
+    flex: 1; /* Damos flex:1 para que a seção de lotes ocupe o restante do espaço */
+    min-width: 280px; /* Reduzimos um pouco o min-width para mais compressão */
+    max-width: 40%; /* Permite que esta seção ocupe menos espaço */
+    display: flex;
+    flex-direction: column; /* Empilha o fieldset e a quantidade total */
+    background-color: #e0f2f1; /* Fundo verde claro para a seção de lotes, como na imagem */
+    border-radius: 0px; /* Removido arredondamento */
+    padding: 15px; /* Adiciona padding interno, reduzido */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05); /* Sombra interna sutil */
+    height: 100%; /* Garante que ocupe a altura da seção ao lado */
+    overflow-y: auto; /* Permite rolagem apenas para a seção de lotes se o conteúdo for muito grande */
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 0px; /* Removido arredondamento */
+    padding: 15px; /* Reduzido padding interno do fieldset */
+    margin: 0; /* Remove margem padrão do fieldset */
+    background-color: #fcfcfc;
+    flex-grow: 1; /* Permite que o fieldset cresça dentro de sua seção */
+    display: flex; /* Adicionado para permitir o alinhamento de #add-lote */
+    flex-direction: column; /* Conteúdo do fieldset empilha */
+}
+
+.lotes-data-section fieldset {
+    background-color: transparent; /* Torna o fundo do fieldset transparente na seção de lotes */
+    border: none; /* Remove a borda já que a seção tem seu próprio estilo */
+    padding: 0; /* Remove padding já que a seção tem seu próprio padding */
+}
+
+legend {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007b80; /* Cor da sua topbar */
+    padding: 0 10px;
+    margin-bottom: 10px; /* Reduz margem inferior */
+    background-color: white; /* Fundo para a legenda "saltar" */
+    border-radius: 0px; /* Removido arredondamento */
+}
+
+.lotes-data-section legend {
+    background-color: transparent; /* Sem fundo para a legenda na seção de lotes */
+    color: #025255; /* Cor mais escura para a legenda de lotes */
+}
+
+.section-subtitle {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    margin-top: 10px; /* Reduzido */
+    margin-bottom: 8px; /* Reduzido */
+}
+
+.form-group, p { /* Estiliza tanto div.form-group quanto parágrafos usados para campos */
+    margin-bottom: 12px; /* Reduzido */
+}
+
+label {
+    display: block;
+    margin-bottom: 3px; /* Reduzido */
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="file"],
+select,
+textarea {
+    width: calc(100% - 10px); /* Ajusta largura para considerar menos padding */
+    padding: 8px; /* Reduzido */
+    border: 1px solid #ccc;
+    border-radius: 0px; /* Removido arredondamento */
+    font-size: 14px;
+    margin-top: 3px; /* Reduzido */
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #007b80;
+    box-shadow: 0 0 5px rgba(0, 123, 128, 0.3);
+}
+
+textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+    min-height: 60px; /* Reduzido */
+}
+
+/* Estilo para erros de formulário */
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-bottom: 8px; /* Reduzido */
+    display: block;
+}
+
+.errorlist { /* Para erros non_field_errors do formset */
+    color: #e74c3c;
+    font-size: 12px;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 8px; /* Reduzido */
+}
+
+/* Imagem de preview */
+#imagem-preview {
+    display: block; /* Garante que a imagem esteja em sua própria linha */
+    max-width: 120px; /* Reduzido */
+    height: auto;
+    margin-top: 8px; /* Reduzido */
+    border: 1px solid #ddd;
+    border-radius: 0px; /* Removido arredondamento */
+}
+
+/* Estilos para os lotes individuais dentro do formset */
+.lote-item-wrapper {
+    border: 1px dashed #a0a0a0;
+    border-radius: 0px; /* Removido arredondamento */
+    padding: 10px; /* Reduzido */
+    margin-bottom: 15px; /* Reduzido */
+    background-color: #f5f5f5;
+    position: relative; /* Para posicionar o botão de remover */
+}
+
+.lote-item-wrapper h3 {
+    font-size: 15px; /* Reduzido */
+    color: #025255;
+    margin-bottom: 8px; /* Reduzido */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px; /* Reduzido */
+}
+
+/* Estilos base para botões de ação (Salvar, Cancelar, Excluir) */
+button:where([type="submit"]),
+a.action-button {
+    display: inline-block;
+    padding: 10px 20px; /* Adiciona padding para espaçamento interno */
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center; /* Garante que o texto esteja centralizado */
+    text-decoration: none; /* Remove a sublinhado padrão dos links */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 10px; /* Adiciona bordas arredondadas */
+}
+
+/* Cor para o botão Salvar */
+button:where([type="submit"]) {
+    background-color: #00c084; /* Verde */
+    color: white;
+}
+button:where([type="submit"]):hover {
+    background-color: #00a070;
+    transform: translateY(-2px);
+}
+
+/* Cor para botões de ação vermelhos (Cancelar, Excluir) */
+a.action-button.red {
+    background-color: #dc3545; /* Cor de fundo vermelha */
+    color: white; /* Cor do texto branca */
+}
+
+/* Efeito de hover para os botões de ação vermelhos */
+a.action-button.red:hover {
+    background-color: #c82333; /* Um tom de vermelho ligeiramente mais escuro no hover */
+    transform: translateY(-2px); /* Efeito sutil de "levantar" o botão */
+}
+
+/* Estilos para agrupar e alinhar os botões de lote DENTRO de cada lote-item-wrapper */
+.lote-actions {
+    display: flex;
+    justify-content: flex-end; /* Alinha os botões à direita dentro do lote */
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+
+/* Botão "Adicionar Novo Lote" (o único, que fica no final da seção de lotes) */
+#add-lote {
+    background-color: #00c084; /* Verde */
+    color: white;
+    border-radius: 10px;
+    padding: 10px 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    
+    margin-top: 15px;
+    width: fit-content;
+    align-self: flex-start; 
+}
+
+#add-lote:hover {
+    background-color: #00a070;
+    transform: translateY(-2px);
+}
+
+
+/* Botões para remover lotes (dentro de lote-actions) */
+.remove-existing-lote-button,
+.remove-new-lote-button {
+    background-color: #dc3545; 
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.remove-existing-lote-button:hover,
+.remove-new-lote-button:hover {
+    background-color: #c82333;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+    width: 100%;
+}
+
+/* Estilos para o grupo de botões na parte inferior esquerda (Salvar, Cancelar, Excluir) */
+.form-buttons {
+    display: flex;
+    justify-content: flex-start; /* Alinha os botões à esquerda */
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+/* Estilo para a exibição da Quantidade Total */
+.total-quantity {
+    background-color: #025255;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 0px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: auto; 
+    align-self: stretch; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* --- RESPONSIVIDADE --- */
+
+@media (max-width: 992px) {
+    .topbar {
+        width: 100%; 
+        left: 0;
+    }
+
+    .main-content {
+        padding-top: 60px; 
+    }
+
+    form {
+        flex-direction: column; 
+        align-items: center; 
+        height: auto; 
+        overflow-y: visible; 
+    }
+
+    .form-sections-wrapper,
+    .product-data-section,
+    .lotes-data-section {
+        flex-direction: column; 
+        width: 100%; 
+        max-width: 100%;
+        min-width: auto; 
+    }
+
+    .lotes-data-section {
+        margin-top: 20px; 
+        height: auto; 
+    }
+    
+    fieldset { 
+        width: 100%; 
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+        padding: 10px;
+        gap: 10px; 
+    }
+
+    .sidebar-top {
+        width: 70px; 
+    }
+
+    .sidebar-top .logo-text {
+        display: none;
+    }
+
+    .sidebar a span {
+        display: none;
+    }
+
+    .topbar {
+        font-size: 18px;
+        justify-content: center; 
+        width: 100%;
+        left: 0;
+    }
+
+    .main-content {
+        padding-top: 60px; 
+    }
+
+    .form-container {
+        padding: 10px; 
+    }
+
+    form {
+        padding: 15px; 
+        gap: 15px; 
+    }
+
+    .form-buttons {
+        flex-direction: column; 
+        align-items: center; 
+        margin-right: 0;
+    }
+
+    button:where([type="submit"]),
+    #add-lote, 
+    .action-button { /* Aplicado também ao Cancelar e Excluir */
+        width: 100%; 
+        margin-right: 0;
+        margin-bottom: 8px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 5px; 
+    }
+
+    form {
+        padding: 10px; 
+    }
+
+    legend {
+        font-size: 16px; 
+    }
+
+    label, input, select, textarea, button {
+        font-size: 12px; 
+    }
+}
+
+/* Ocultar checkbox de DELETE padrão */
+.lote-item-wrapper input[type="checkbox"][name$="-DELETE"] {
+    display: none;
+}

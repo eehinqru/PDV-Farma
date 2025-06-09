@@ -1,0 +1,804 @@
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif; /* Certifique-se de que 'Inter' está disponível ou use uma fonte padrão */
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f0f0f0;
+    overflow: hidden; /* Evita que o corpo role, o main-content cuidará disso */
+}
+
+/* Classe para elementos visivelmente ocultos, mas acessíveis a leitores de tela */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #2d2d2d;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+    padding-top: 60px; /* Adiciona padding para o topo da sidebar (altura da topbar) */
+    position: fixed; /* Fixa a sidebar */
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+/* Área da logo com fundo #025255 */
+.sidebar-top {
+    background-color: #025255; /* sua cor personalizada */
+    height: 60px; /* mesma altura da topbar */
+    width: 220px; /* Largura da sidebar para fixação */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    position: fixed; /* Fixa o elemento */
+    top: 0; /* Alinha ao topo */
+    left: 0; /* Alinha à esquerda */
+    z-index: 1000; /* Garante que fique acima de outros elementos */
+}
+
+.sidebar-top .logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.sidebar-top .logo-text {
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+}
+
+/* Links normais da sidebar */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 0px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Ícones nos links da sidebar */
+.sidebar a i {
+    font-size: 30px;
+    width: 32px;
+    text-align: center;
+}
+
+/* Hover nos links da sidebar */
+.sidebar a:hover {
+    background-color: #007b80;
+}
+
+/* Estilos para o link de Sair */
+.sidebar .logout-link {
+    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
+}
+
+.sidebar .logout-link form {
+    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
+}
+
+.sidebar .logout-link button {
+    /* Basicamente zera o estilo padrão do botão para que o <a> pai o estilize */
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit; /* Herda a cor do texto do link pai */
+    font-size: inherit; /* Herda o tamanho da fonte do link pai */
+    font-weight: inherit;
+    cursor: inherit; /* Herda o cursor do link pai */
+    text-align: left; /* Alinha o texto do botão à esquerda */
+    display: flex; /* Permite que o botão se comporte como flex item para alinhamento */
+    align-items: center;
+    gap: 10px; /* Mantém o gap com o ícone, se houver */
+    flex-grow: 1; /* Ocupa o espaço restante */
+}
+
+
+
+
+/* Main content (ao lado da sidebar) */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9; /* A área branca para o conteúdo */
+    overflow-y: auto; /* Permite rolagem dentro do conteúdo principal se necessário */
+    padding-top: 60px; /* Espaço para a topbar fixa */
+    height: 100vh; /* Garante que main-content preencha a altura total */
+    margin-left: 220px; /* Adiciona margem para a sidebar */
+}
+
+/* Topbar alinhada à main-content */
+.topbar {
+    background-color: #007b80;
+    height: 60px;
+    color: white;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente o conteúdo (o texto do título) */
+    justify-content: flex-end; /* Alinha o conteúdo à direita */
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0 20px; /* Padding nas laterais */
+    position: fixed; /* Fixa a topbar no topo */
+    width: calc(100% - 220px); /* Ajusta largura para contabilizar a sidebar */
+    top: 0;
+    left: 220px; /* Alinha com a sidebar */
+    z-index: 90; /* Abaixo de sidebar-top, mas acima de outros conteúdos */
+}
+
+/* ************************************************************ */
+/* ESTILOS ESPECÍFICOS PARA O FORMULÁRIO DE REGISTRO/EDIÇÃO DE FUNCIONÁRIOS */
+/* ************************************************************ */
+
+.form-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinha o conteúdo à esquerda para 'colar' na sidebar */
+    padding: 0; /* Remove o padding para colar o formulário no topo e esquerda */
+    width: 100%;
+}
+
+form {
+    display: grid; /* Usar grid para um layout mais controlado */
+    grid-template-columns: repeat(2, 1fr) 180px; /* Colunas: Campo1, Campo2, Foto/Observação */
+    gap: 20px 30px; /* Espaçamento entre linhas e colunas */
+    padding: 30px; /* Mantém o padding interno para os campos */
+    border-radius: 8px; /* Cantos arredondados */
+    width: 100%; /* Garante que o formulário ocupe a largura disponível */
+    margin-bottom: 0; /* Remove o espaço na parte inferior do formulário principal */
+    position: relative; /* Para posicionamento da legenda */
+    
+
+    /* DEFINIÇÃO DAS ÁREAS DO GRID PARA O NOVO LAYOUT */
+    grid-template-areas:
+        "nome            sobrenome          foto"      /* Row 1 */
+        "cpf             data-nascimento    foto"      /* Row 2 */
+        "endereco        sexo               foto"      /* Row 3 */
+        "email           telefone           foto"      /* Row 4 */
+        "senha           senha-confirmacao  ."         /* Row 5: Senha e Confirma Senha lado a lado */
+        "observacao      observacao         ."         /* Row 6: Observação abaixo deles, abrangendo 2 colunas */
+        "password-info   password-info      ."         /* Row 7: Info da senha abaixo da Observação */
+        "buttons         buttons            buttons"   /* Row 8: Botões centralizados abaixo de tudo */
+    ;
+    align-items: start; /* Alinha itens ao topo da célula */
+}
+
+/* Esconder os fieldsets e legends originais do HTML */
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: contents; /* Faz com que os filhos do fieldset sejam diretos do grid */
+}
+
+legend {
+    display: none; /* Esconde as legendas originais */
+}
+
+/* Estilo para mensagens de erro gerais */
+.error-list {
+    background-color: #fdd;
+    border: 1px solid #f00;
+    color: #f00;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+.error {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #f00; /* Garante que a cor do texto de erro seja vermelha */
+}
+
+/* Inputs e Labels */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500; /* Levemente mais fino */
+    color: #333;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px; /* Cantos arredondados */
+    font-size: 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f8f8f8; /* Fundo levemente cinza */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #007b80;
+    box-shadow: 0 0 0 3px rgba(0, 123, 128, 0.2); /* Sombra suave para foco */
+    outline: none;
+}
+
+textarea {
+    min-height: 120px; /* Altura mínima para observação, ajustada para caber */
+    resize: vertical;
+}
+
+/* Layout dos grupos de formulário no grid */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0; /* Gerenciado pelo gap do grid */
+}
+
+/* Atribuição de áreas do grid aos campos */
+.form-group.nome { grid-area: nome; }
+.form-group.sobrenome { grid-area: sobrenome; }
+.form-group.cpf { grid-area: cpf; }
+.form-group.data-nascimento { grid-area: data-nascimento; }
+.form-group.endereco { grid-area: endereco; }
+.form-group.sexo { grid-area: sexo; }
+.form-group.email { grid-area: email; }
+.form-group.telefone { grid-area: telefone; }
+.form-group.senha { grid-area: senha; }
+.form-group.senha-confirmacao { grid-area: senha-confirmacao; }
+.form-group.observacao { grid-area: observacao; }
+
+
+/* Estilos para a seção de foto */
+.form-group.foto {
+    grid-area: foto;
+    display: flex;
+    flex-direction: column; /* Organiza a imagem e o input em coluna */
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: flex-start; /* Alinha ao topo na célula do grid */
+    gap: 10px; /* Espaço entre a imagem e o input file */
+    padding-top: 20px; /* Alinha com o primeiro campo */
+}
+
+.form-group.foto label.sr-only {
+    display: none; /* Oculta o label sr-only visualmente */
+}
+
+.form-group.foto input[type="file"] {
+    display: none; /* OCULTA o input de arquivo padrão, pois usaremos um botão customizado */
+}
+
+/* Hack para estilizar o input file real com um botão personalizado */
+.custom-file-upload {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #007b80; /* Cor solicitada: #007b80 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    margin-top: 0px; /* Ajuste para espaçamento com a imagem de preview */
+}
+
+.custom-file-upload:hover {
+    background-color: #00565a; /* Tom mais escuro para o hover */
+}
+
+/* Mensagem de "Deixe os campos de senha em branco..." */
+form p {
+    grid-area: password-info; /* Nova área de grid para o parágrafo de informações de senha */
+    grid-column: 1 / span 2; /* Ocupa as duas primeiras colunas */
+    text-align: center;
+    color: #555;
+    font-size: 13px;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+/* Ações do formulário (botões Salvar/Cadastrar, Cancelar, Excluir) */
+.form-actions {
+    grid-area: buttons; /* Nova área de grid para os botões */
+    grid-column: 1 / span 3; /* Ocupa todas as 3 colunas */
+    display: flex;
+    justify-content: center; /* Centraliza os botões */
+    gap: 15px; /* Espaçamento entre os botões */
+    margin-top: 30px; /* Espaço acima dos botões */
+    padding-top: 20px; /* Espaço extra na parte superior do form-actions */
+    border-top: 1px solid #eee; /* Linha separadora, como no Figma */
+}
+
+/* Botões genéricos para a área de controle (reutilizando da lista de funcionários) */
+.button {
+    padding: 12px 25px; /* Padding maior */
+    border: none;
+    border-radius: 8px; /* Cantos arredondados */
+    cursor: pointer;
+    font-size: 16px; /* Fonte maior */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.button-primary {
+    background-color: #28a745; /* Verde do Figma para Salvar/Cadastrar */
+    color: white;
+}
+
+.button-primary:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.button-secondary {
+    background-color: #6c757d; /* Cinza do Figma para Cancelar */
+    color: white;
+}
+
+.button-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.button-danger { /* Estilo para o botão "Excluir" */
+    background-color: #dc3545; /* Vermelho do Figma para Deletar */
+    color: white;
+}
+
+.button-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Estilo para o formulário de exclusão separado, se ele existir */
+form + form { /* Aplica-se ao segundo formulário, que seria o de exclusão */
+    display: flex;
+    justify-content: flex-end; /* Alinha o botão de exclusão à direita */
+    width: 100%;
+    padding: 0 30px 0px 30px; /* Remove o padding inferior */
+}
+
+.delete-button { /* Assegura que o botão de exclusão tenha o estilo danger */
+    margin-top: 0;
+}
+
+
+/* ************************************************************ */
+/* ESTILOS ESPECÍFICOS PARA A TABELA DE LISTAGEM DE FUNCIONÁRIOS */
+/* ************************************************************ */
+
+/* Container da lista (garante margens ao redor da tabela) */
+.products-list-container { /* Renomeie para .employees-list-container se preferir ser mais específico */
+    background-color: white; /* Fundo branco como no print para o container da tabela */
+    padding: 20px; /* Adiciona padding ao redor da tabela */
+    border-radius: 8px; /* Mantém cantos arredondados, se desejar */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Uma sombra leve para a tabela, se desejar */
+    margin-top: 20px; /* Espaço entre os controles e o container da tabela */
+}
+
+/* Tabela de Dados */
+.data-table {
+    width: 100%; /* Ocupa a largura total do container */
+    border-collapse: collapse; /* Remove espaçamento entre bordas de células */
+    /* overflow: hidden; */ /* Remova ou comente esta linha aqui se estiver causando problemas de corte no thead */
+}
+
+/* Cabeçalho da Tabela */
+.data-table thead {
+    background-color: #007b80; /* Cor verde-azulada do cabeçalho */
+    color: white;
+    display: table; /* Adicione isso */
+    width: 100%; /* Adicione isso para garantir que o thead preencha 100% */
+    table-layout: fixed; /* Adicione isso para distribuir as colunas uniformemente */
+}
+
+.data-table th {
+    padding: 12px 15px; /* Padding para as células do cabeçalho */
+    text-align: left; /* Alinha o texto à esquerda por padrão */
+    font-weight: bold; /* Texto em negrito */
+    font-size: 15px;
+    text-transform: uppercase; /* Para o texto em maiúsculas */
+    /* Você pode adicionar um border-right aqui se quiser uma linha vertical entre as colunas do cabeçalho */
+    /* border-right: 1px solid rgba(255,255,255,0.2); */
+}
+
+/* ESPECÍFICO PARA O CABEÇALHO DA COLUNA 'AÇÕES' */
+.data-table th:last-child { /* Seleciona a última coluna do cabeçalho (AÇÕES) */
+    text-align: center; /* Centraliza o texto "AÇÕES" */
+    /* Remova a borda direita da última coluna para não ter uma linha extra */
+    /* border-right: none; */
+}
+
+/* Corpo da Tabela */
+.data-table tbody {
+    display: table; /* Adicione isso */
+    width: 100%; /* Adicione isso para que o tbody ocupe a largura total */
+    table-layout: fixed; /* Adicione isso para alinhar as colunas com o thead */
+}
+
+.data-table tbody tr {
+    background-color: white; /* Garante que CADA LINHA do corpo da tabela tenha fundo branco */
+    border-bottom: 1px solid #eee; /* Linha divisória sutil entre as linhas */
+}
+
+.data-table tbody tr:last-child {
+    border-bottom: none; /* Remove a borda da última linha */
+}
+
+.data-table td {
+    padding: 10px 15px; /* Padding para as células do corpo */
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap; /* Tenta manter o texto em uma linha */
+    overflow: hidden; /* Esconde o conteúdo que transborda */
+    text-overflow: ellipsis; /* Adiciona "..." para conteúdo transbordando */
+    max-width: 200px; /* Limita a largura das células para que o ellipsis funcione, ajuste conforme necessário */
+}
+
+/* AJUSTES PARA A CÉLULA DA COLUNA 'AÇÕES' */
+.data-table td.actions-cell {
+    max-width: none; /* ESSENCIAL: Não limita a largura para a célula de ações */
+    white-space: nowrap; /* ESSENCIAL: Garante que os botões fiquem na mesma linha */
+    text-align: center; /* Centraliza o conteúdo (os botões) dentro da célula */
+    display: flex; /* Transforma em flex container */
+    gap: 8px; /* Espaçamento entre os botões */
+    justify-content: center; /* Centraliza horizontalmente os botões no flexbox */
+    align-items: center; /* Centraliza verticalmente os botões no flexbox */
+}
+
+
+/* Estilo para os botões dentro da célula de ações */
+.actions-cell .action-button,
+.actions-cell .btn { /* Use .btn se essa for a classe do seu botão de delete */
+    padding: 6px 12px; /* Padding menor para botões compactos */
+    border-radius: 5px; /* Bordas mais arredondadas */
+    font-size: 13px; /* Fonte menor */
+    font-weight: bold;
+    text-decoration: none; /* Remove sublinhado dos links */
+    display: inline-block; /* Permite padding e margin */
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.actions-cell .action-button.edit { /* Botão Editar */
+    background-color: #007b80; /* Laranja/Amarelo do print */
+    color: white;
+    border: none;
+}
+
+.actions-cell .btn.btn-danger { /* Botão Deletar */
+    background-color: #dc3545; /* Vermelho do print */
+    color: white;
+    border: none;
+}
+/* Estilo para a paginação */
+.paginacao {
+    text-align: center;
+    margin: 20px auto 0 auto; /* Margem acima e abaixo, e auto para centralizar horizontalmente */
+    padding: 10px; /* Padding interno */
+    background-color: white; /* Fundo branco para a área de paginação */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra mais sutil */
+    display: flex;
+    justify-content: center; /* Centraliza os elementos de paginação */
+    align-items: center;
+    gap: 15px; /* Espaçamento entre os links/info */
+    font-size: 15px;
+    color: #555;
+    width: 100%; /* Garante que ocupe a largura completa abaixo da tabela */
+    max-width: 900px; /* Opcional: limite a largura se a tabela também tiver um max-width */
+}
+
+.paginacao-link {
+    text-decoration: none;
+    color: #007bff; /* Azul para os links de paginação */
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.paginacao-link:hover {
+    background-color: #e9ecef; /* Fundo cinza claro no hover */
+}
+
+.paginacao-info {
+    font-weight: bold; /* A informação da página atual pode ser em negrito */
+    color: #333;
+}
+
+
+/* Ajustes para os controles (pesquisa e botões de adição) */
+.controls {
+    display: flex; /* Usar flexbox para alinhar todos os itens */
+    align-items: center; /* Alinha os itens verticalmente no centro */
+    justify-content: space-between; /* Espalha os elementos: busca à esquerda, registrar à direita */
+    gap: 15px; /* Espaçamento entre o formulário de busca e o botão de registrar */
+    /* REMOVIDO: padding, background-color, border-radius, box-shadow para remover a "caixa branca" */
+    margin-bottom: 20px; /* Manter o espaço entre os controles e a tabela */
+    margin-left: 20px; /* Adiciona margem lateral para alinhar com o conteúdo abaixo */
+    margin-right: 20px; /* Adiciona margem lateral para alinhar com o conteúdo abaixo */
+    width: auto; /* Permite que a largura se ajuste ao conteúdo */
+    max-width: 100%; /* Garante que não ultrapasse o pai */
+}
+
+.controls form {
+    display: flex; /* O formulário de busca também usa flex para seus próprios itens */
+    align-items: center;
+    gap: 10px; /* Espaçamento entre input e botões de pesquisa */
+    flex-grow: 1; /* Permite que o formulário ocupe o espaço restante */
+}
+
+.controls input[type="text"] {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 15px;
+    flex-grow: 1; /* Permite que o input de texto cresça */
+    max-width: 400px; /* Opcional: limita a largura máxima do campo de busca */
+}
+
+/* Estilos para os botões de controle (Pesquisar, Limpar Pesquisa, + Registrar Funcionário) */
+.controls .button { /* Aplica-se a todos os botões dentro de .controls */
+    padding: 10px 20px; /* Ajuste o padding para botões nos controles */
+    font-size: 15px;
+    border: none; /* Garante que os botões não tenham borda */
+    border-radius: 5px; /* Mais arredondado */
+    box-shadow: none; /* Remova a sombra para um visual mais plano aqui, se desejar */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* O botão Registrar Funcionário no lado direito */
+.controls .button-primary { /* Este é o botão "+ Registrar Funcionário" */
+    background-color: #28a745; /* Verde do print */
+    color: white;
+}
+
+.controls .button-primary:hover {
+    background-color: #218838;
+}
+
+/* O botão Limpar Pesquisa */
+.controls .button-secondary { /* Use esta classe para o botão Limpar Pesquisa */
+    background-color: #6c757d; /* Cinza do print */
+    color: white;
+}
+
+.controls .button-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* O botão Pesquisar */
+.controls button[type="submit"] {
+    background-color: #007bff; /* Azul do print */
+    color: white;
+}
+
+.controls button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+
+/* ************************************************************ */
+/* RESPONSIVIDADE */
+/* ************************************************************ */
+
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0;
+    }
+    .topbar {
+        width: 100%;
+        left: 0;
+    }
+
+    form { /* Formulário de registro/edição */
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+        grid-template-areas: none; /* Remove áreas nomeadas para flexibilidade */
+        padding: 20px;
+        gap: 15px;
+    }
+
+    form::before { /* Se você estiver usando um pseudo-elemento para título de fieldset */
+        text-align: center; /* Centraliza o título "Informações pessoais" */
+        position: static; /* Remove o posicionamento absoluto */
+        margin-bottom: 15px; /* Adiciona espaço abaixo do título */
+    }
+
+    .form-group.foto {
+        flex-direction: column; /* Coloca imagem e input de arquivo em coluna */
+        justify-content: center;
+        align-items: center;
+        padding-top: 0; /* Remove padding extra */
+        margin-bottom: 15px; /* Adiciona um pouco de margem abaixo se não houver outros itens */
+    }
+
+    #preview {
+        margin-bottom: 10px; /* Espaço entre a imagem e o input file (se visível) */
+        margin-right: 0; /* Garante que não haja margem lateral */
+    }
+
+    .custom-file-upload {
+        margin-top: 0;
+    }
+
+    .form-actions {
+        flex-direction: column; /* Empilha os botões de ação */
+        align-items: center; /* Centraliza-os */
+        gap: 10px;
+        padding-top: 15px;
+    }
+
+    .button {
+        width: 100%; /* Botões ocupam a largura total */
+    }
+
+    form + form {
+        justify-content: center; /* Centraliza o botão de exclusão */
+        padding: 0 10px;
+    }
+
+    /* Ajustes para a linha de controles (Pesquisa e Registrar) */
+    .controls {
+        flex-direction: column; /* Empilha os itens (form de busca e botão de registrar) */
+        align-items: stretch; /* Estica para preencher a largura */
+        padding: 15px 20px; /* Ajuste o padding */
+        gap: 15px; /* Espaçamento entre os blocos empilhados */
+        margin-left: 0; /* Remove margem lateral em telas menores */
+        margin-right: 0; /* Remove margem lateral em telas menores */
+    }
+
+    .controls form {
+        flex-direction: column; /* Empilha os itens de pesquisa */
+        width: 100%;
+        gap: 10px;
+        align-items: stretch; /* Estica input e botões de pesquisa */
+    }
+
+    .controls input[type="text"] {
+        width: 100%; /* Campo de busca ocupa a largura total */
+        max-width: none; /* Remove limite de largura para preencher */
+    }
+
+    .controls .button { /* Ajuste para botões de controle em telas pequenas */
+        width: 100%; /* Botões de pesquisa, limpar, registrar ocupam a largura total */
+    }
+
+    .controls .button-primary { /* Botão Registrar Funcionário */
+        width: 100%; /* Ocupa a largura total */
+        margin-left: 0; /* Garante que não haja margem extra */
+    }
+}
+
+@media (max-width: 768px) {
+    /* Ajustes para a sidebar em telas menores */
+    .sidebar {
+        width: 70px;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .sidebar-top {
+        width: 70px;
+    }
+
+    .sidebar-top .logo-text {
+        display: none;
+    }
+
+    .sidebar a span {
+        display: none;
+    }
+
+
+    .topbar {
+        font-size: 18px;
+        justify-content: center;
+        width: 100%;
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 70px; /* Ajusta o margin-left para a sidebar minimizada */
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+
+    form { /* Formulário de registro/edição */
+        padding: 15px;
+        gap: 10px;
+    }
+
+    form::before {
+        font-size: 16px;
+    }
+
+    label, input, select, textarea, .button {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .button {
+        padding: 10px 20px;
+    }
+
+    .paginacao { /* Ajusta a paginação para telas menores */
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 5px;
+    }
+
+    form { /* Formulário de registro/edição */
+        padding: 10px;
+    }
+
+    form::before {
+        font-size: 14px;
+    }
+
+    label, input, select, textarea, .button {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .button {
+        padding: 8px 15px;
+    }
+
+    .form-group.foto {
+        flex-direction: column; /* Empilha foto e botão */
+        gap: 5px;
+    }
+    #preview {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
