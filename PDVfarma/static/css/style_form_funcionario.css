@@ -1,0 +1,565 @@
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f0f0f0;
+    overflow: hidden; /* Evita que o corpo role, o main-content cuidará disso */
+}
+
+/* Classe para elementos visivelmente ocultos, mas acessíveis a leitores de tela */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #2d2d2d;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+    padding-top: 60px; /* Adiciona padding para o topo da sidebar (altura da topbar) */
+    position: fixed; /* Fixa a sidebar */
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+/* Área da logo com fundo #025255 */
+.sidebar-top {
+    background-color: #025255; /* sua cor personalizada */
+    height: 60px; /* mesma altura da topbar */
+    width: 220px; /* Largura da sidebar para fixação */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    position: fixed; /* Fixa o elemento */
+    top: 0; /* Alinha ao topo */
+    left: 0; /* Alinha à esquerda */
+    z-index: 1000; /* Garante que fique acima de outros elementos */
+}
+
+.sidebar-top .logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.sidebar-top .logo-text {
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+}
+
+/* Links normais da sidebar */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 0px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Ícones nos links da sidebar */
+.sidebar a i {
+    font-size: 30px;
+    width: 32px;
+    text-align: center;
+}
+
+/* Hover nos links da sidebar */
+.sidebar a:hover {
+    background-color: #007b80;
+}
+
+/* Aqui fica o log-out */
+/* Estilos para o link de Sair */
+.sidebar .logout-link {
+    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
+}
+
+.sidebar .logout-link form {
+    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
+}
+
+.sidebar .logout-link button {
+    /* Basicamente zera o estilo padrão do botão para que o <a> pai o estilize */
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit; /* Herda a cor do texto do link pai */
+    font-size: inherit; /* Herda o tamanho da fonte do link pai */
+    font-weight: inherit;
+    cursor: inherit; /* Herda o cursor do link pai */
+    text-align: left; /* Alinha o texto do botão à esquerda */
+    display: flex; /* Permite que o botão se comporte como flex item para alinhamento */
+    align-items: center;
+    gap: 10px; /* Mantém o gap com o ícone, se houver */
+    flex-grow: 1; /* Ocupa o espaço restante */
+}
+
+/* Main content (ao lado da sidebar) */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9; /* A área branca para o conteúdo */
+    overflow-y: auto; /* Permite rolagem dentro do conteúdo principal se necessário */
+    padding-top: 60px; /* Espaço para a topbar fixa */
+    height: 100vh; /* Garante que main-content preencha a altura total */
+    margin-left: 220px; /* Adiciona margem para a sidebar */
+}
+
+/* Topbar alinhada à main-content */
+.topbar {
+    background-color: #007b80;
+    height: 60px;
+    color: white;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente o conteúdo (o texto do título) */
+    justify-content: flex-end; /* Alinha o conteúdo à direita */
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0 20px; /* Padding nas laterais */
+    position: fixed; /* Fixa a topbar no topo */
+    width: calc(100% - 220px); /* Ajusta largura para contabilizar a sidebar */
+    top: 0;
+    left: 220px; /* Alinha com a sidebar */
+    z-index: 90; /* Abaixo de sidebar-top, mas acima de outros conteúdos */
+}
+
+/* ************************************************************ */
+/* ESTILOS ESPECÍFICOS PARA O FORMULÁRIO DE REGISTRO/EDIÇÃO DE FUNCIONÁRIOS */
+/* ************************************************************ */
+
+.form-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinha o conteúdo à esquerda para 'colar' na sidebar */
+    padding: 0; /* Remove o padding para colar o formulário no topo e esquerda */
+    width: 100%;
+}
+
+form {
+    display: grid; /* Usar grid para um layout mais controlado */
+    grid-template-columns: repeat(2, 1fr) 180px; /* Colunas: Campo1, Campo2, Foto/Observação */
+    gap: 20px 30px; /* Espaçamento entre linhas e colunas */
+    background-color: white;
+    padding: 30px; /* Mantém o padding interno para os campos */
+    border-radius: 8px; /* Cantos arredondados */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Garante que o formulário ocupe a largura disponível */
+    margin-bottom: 0; /* Remove o espaço na parte inferior do formulário principal */
+    position: relative; /* Para posicionamento da legenda */
+    
+    /* DEFINIÇÃO DAS ÁREAS DO GRID PARA O NOVO LAYOUT */
+    grid-template-areas:
+        "nome            sobrenome           foto"      /* Row 1 */
+        "cpf             data-nascimento     foto"      /* Row 2 */
+        "endereco        sexo                foto"      /* Row 3 */
+        "email           telefone            foto"      /* Row 4 */
+        "senha           senha-confirmacao   ."         /* Row 5: Senha e Confirma Senha lado a lado */
+        "observacao      observacao          ."         /* Row 6: Observação abaixo deles, abrangendo 2 colunas */
+        "password-info   password-info       ."         /* Row 7: Info da senha abaixo da Observação */
+        "buttons         buttons             buttons"   /* Row 8: Botões centralizados abaixo de tudo */
+    ;
+    align-items: start; /* Alinha itens ao topo da célula */
+}
+
+/* Esconder os fieldsets e legends originais do HTML */
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: contents; /* Faz com que os filhos do fieldset sejam diretos do grid */
+}
+
+legend {
+    display: none; /* Esconde as legendas originais */
+}
+
+/* Estilo para mensagens de erro gerais */
+.error-list {
+    background-color: #fdd;
+    border: 1px solid #f00;
+    color: #f00;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+.error {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* Inputs e Labels */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500; /* Levemente mais fino */
+    color: #333;
+    font-size: 14px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px; /* Cantos arredondados */
+    font-size: 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f8f8f8; /* Fundo levemente cinza */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #007b80;
+    box-shadow: 0 0 0 3px rgba(0, 123, 128, 0.2); /* Sombra suave para foco */
+    outline: none;
+}
+
+textarea {
+    min-height: 120px; /* Altura mínima para observação, ajustada para caber */
+    resize: vertical;
+}
+
+/* Layout dos grupos de formulário no grid */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0; /* Gerenciado pelo gap do grid */
+}
+
+/* Atribuição de áreas do grid aos campos */
+.form-group.nome { grid-area: nome; }
+.form-group.sobrenome { grid-area: sobrenome; }
+.form-group.cpf { grid-area: cpf; }
+.form-group.data-nascimento { grid-area: data-nascimento; }
+.form-group.endereco { grid-area: endereco; }
+.form-group.sexo { grid-area: sexo; }
+.form-group.email { grid-area: email; }
+.form-group.telefone { grid-area: telefone; }
+.form-group.senha { grid-area: senha; }
+.form-group.senha-confirmacao { grid-area: senha-confirmacao; }
+.form-group.observacao { grid-area: observacao; }
+
+/* Estilos para a seção de foto */
+.form-group.foto {
+    grid-area: foto;
+    display: flex;
+    flex-direction: column; /* Organiza a imagem e o input em coluna */
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: flex-start; /* Alinha ao topo na célula do grid */
+    gap: 10px; /* Espaço entre a imagem e o input file */
+    padding-top: 20px; /* Alinha com o primeiro campo */
+}
+
+/* Oculta o label sr-only visualmente */
+.form-group.foto label.sr-only {
+    display: none;
+}
+
+/* OCULTA o input de arquivo padrão, pois usaremos um botão customizado */
+.form-group.foto input[type="file"] {
+    display: none;
+}
+
+/* Estilo para a imagem de prévia (o ícone de usuário) */
+#preview {
+    display: block;
+    width: 120px;
+    height: 120px;
+    border: 2px solid #ddd;
+    border-radius: 50%; /* Torna-o circular */
+    object-fit: cover; /* Garante que a imagem preencha o círculo */
+    background-color: #eee; /* Fundo padrão cinza claro */
+    margin-bottom: 10px; /* Espaço abaixo da imagem */
+    /* Substitua pelo ícone de usuário se não houver foto */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="%23b0b0b0" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80px; /* Tamanho do ícone SVG */
+}
+
+/* Hack para estilizar o input file real com um botão personalizado */
+.custom-file-upload {
+    display: inline-flex; /* Use inline-flex para alinhar ícone e texto */
+    align-items: center; /* Centraliza verticalmente o ícone e o texto */
+    gap: 8px; /* Espaçamento entre o ícone e o texto */
+    padding: 8px 15px;
+    background-color: #007b80; /* Cor solicitada: #007b80 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    margin-top: 0px; /* Ajuste para espaçamento com a imagem de preview */
+}
+
+.custom-file-upload:hover {
+    background-color: #00565a; /* Tom mais escuro para o hover */
+}
+
+/* Mensagem de "Deixe os campos de senha em branco..." */
+form p {
+    grid-area: password-info; /* Nova área de grid para o parágrafo de informações de senha */
+    grid-column: 1 / span 2; /* Ocupa as duas primeiras colunas */
+    text-align: center;
+    color: #555;
+    font-size: 13px;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+/* Ações do formulário (botões Salvar/Cadastrar, Cancelar, Excluir) */
+.form-actions {
+    grid-area: buttons; /* Nova área de grid para os botões */
+    grid-column: 1 / span 3; /* Ocupa todas as 3 colunas */
+    display: flex;
+    justify-content: center; /* Centraliza os botões */
+    gap: 15px; /* Espaçamento entre os botões */
+    margin-top: 30px; /* Espaço acima dos botões */
+    padding-top: 20px; /* Espaço extra na parte superior do form-actions */
+    border-top: 1px solid #eee; /* Linha separadora, como no Figma */
+}
+
+/* Botões genéricos para a área de controle (reutilizando da lista de funcionários) */
+.button {
+    padding: 12px 25px; /* Padding maior */
+    border: none;
+    border-radius: 8px; /* Cantos arredondados */
+    cursor: pointer;
+    font-size: 16px; /* Fonte maior */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.button-primary {
+    background-color: #28a745; /* Verde do Figma para Salvar/Cadastrar */
+    color: white;
+}
+
+.button-primary:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.button-secondary {
+    background-color: red; /* Cinza do Figma para Cancelar */
+    color: white;
+}
+
+.button-secondary:hover {
+    background-color: #cc1f1a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.button-danger { /* Estilo para o botão "Excluir" */
+    background-color: #dc3545; /* Vermelho do Figma para Deletar */
+    color: white;
+}
+
+.button-danger:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* Estilo para o formulário de exclusão separado, se ele existir */
+form + form { /* Aplica-se ao segundo formulário, que seria o de exclusão */
+    display: flex;
+    justify-content: flex-end; /* Alinha o botão de exclusão à direita */
+    width: 100%;
+    padding: 0 30px 0px 30px; /* Remove o padding inferior */
+}
+
+.delete-button { /* Assegura que o botão de exclusão tenha o estilo danger */
+    margin-top: 0;
+}
+
+/* ************************************************************ */
+/* RESPONSIVIDADE */
+/* ************************************************************ */
+
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0;
+    }
+    .topbar {
+        width: 100%;
+        left: 0;
+    }
+
+    form {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+        grid-template-areas: none; /* Remove áreas nomeadas para flexibilidade */
+        padding: 20px;
+        gap: 15px;
+    }
+
+    form::before { /* Este seletor (form::before) não existe no seu HTML, pode ser removido se não estiver usando para nada */
+        text-align: center; /* Centraliza o título "Informações pessoais" */
+        position: static; /* Remove o posicionamento absoluto */
+        margin-bottom: 15px; /* Adiciona espaço abaixo do título */
+    }
+
+    .form-group.foto {
+        /* Seção de foto em telas menores */
+        flex-direction: column; /* Coloca imagem e input de arquivo em coluna */
+        justify-content: center;
+        align-items: center;
+        padding-top: 0; /* Remove padding extra */
+        margin-bottom: 15px; /* Adiciona um pouco de margem abaixo se não houver outros itens */
+    }
+
+    #preview {
+        margin-bottom: 10px; /* Espaço entre a imagem e o input file (se visível) */
+        margin-right: 0; /* Garante que não haja margem lateral */
+    }
+
+    /* O custom-file-upload também precisa ser ajustado para telas menores */
+    .custom-file-upload {
+        margin-top: 0;
+    }
+
+    .form-actions {
+        flex-direction: column; /* Empilha os botões de ação */
+        align-items: center; /* Centraliza-os */
+        gap: 10px;
+        padding-top: 15px;
+    }
+
+    .button {
+        width: 100%; /* Botões ocupam a largura total */
+    }
+
+    form + form {
+        justify-content: center; /* Centraliza o botão de exclusão */
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Ajustes para a sidebar em telas menores */
+    .sidebar {
+        width: 70px;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .sidebar-top {
+        width: 70px;
+    }
+
+    .sidebar-top .logo-text {
+        display: none;
+    }
+
+    .sidebar a span {
+        display: none;
+    }
+
+    .topbar {
+        font-size: 18px;
+        justify-content: center;
+        width: 100%;
+        left: 0;
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+
+    form {
+        padding: 15px;
+        gap: 10px;
+    }
+
+    form::before { /* Este seletor (form::before) não existe no seu HTML, pode ser removido se não estiver usando para nada */
+        font-size: 16px;
+    }
+
+    label, input, select, textarea, .button {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .button {
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 5px;
+    }
+
+    form {
+        padding: 10px;
+    }
+
+    form::before { /* Este seletor (form::before) não existe no seu HTML, pode ser removido se não estiver usando para nada */
+        font-size: 14px;
+    }
+
+    label, input, select, textarea, .button {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .button {
+        padding: 8px 15px;
+    }
+
+    .form-group.foto {
+        flex-direction: column; /* Empilha foto e botão */
+        gap: 5px;
+    }
+    #preview {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}

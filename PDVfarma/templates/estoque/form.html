@@ -104,7 +104,7 @@
                             <button type="submit">Salvar</button>
                             <a href="{% url 'listar_produtos' %}" class="action-button red">Cancelar</a>
                             {% if produto.id %}
-                                <a href="{% url 'deletar_produto' produto.id %}" class="delete-button">Excluir Produto</a>
+                                <a href="{% url 'deletar_produto' produto.id %}" class="action-button red">Excluir Produto</a>
                             {% endif %}
                         </div>
                     </div>

@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+
 # aplicação de login para autenticar usuários
 def login_view(request):
     if request.method == 'POST':
@@ -18,6 +19,7 @@ def login_view(request):
 
     return render(request, 'login/login.html')
 
+# logout_view para desconectar o usuário
 @login_required 
 def logout_view(request):
     logout(request) 

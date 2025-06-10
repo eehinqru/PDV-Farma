@@ -18,19 +18,18 @@
         </div>
 
         <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
-        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
-        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> {# Link para a página de estoque #}
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a>  
         {% if is_dono %}
             <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
         {% endif %}
         
         {# Novo link para Sair/Entrar #}
         {% if user.is_authenticated %}
-            <a href="#" class="logout-link"> {# Usamos um href="#" porque a ação é do formulário #}
+            <a href="#" class="logout-link"> 
                 <i class="fas fa-sign-out-alt"></i><span>Sair</span>
-                <form action="{% url 'logout' %}" method="post" style="display: none;"> {# Esconde o form #}
+                <form action="{% url 'logout' %}" method="post" style="display: none;"> 
                     {% csrf_token %}
-                    <button type="submit" id="logout-button"></button> {# Botão oculto #}
+                    <button type="submit" id="logout-button"></button> 
                 </form>
             </a>
         {% endif %} 
@@ -43,16 +42,31 @@
     </div>
 
     <div class="indicators">
-        {# Link para filtrar por produtos perto da validade #}
-        <a href="{% url 'listar_produtos' %}?validade_proxima=true" class="card orange">
+
+        <a href="{% url 'listar_produtos' %}?validade_proxima=true" class="card
+                {% if produto.perto_validade_count_geral > 0 %}
+                 red
+                {% else %}
+                green
+                {% endif %}">
             Produtos próximos da validade<br><strong>{{ perto_validade_count_geral }}</strong> 
         </a>
-        {# Link para filtrar por produtos vencidos (você precisaria adicionar essa lógica de filtro na view) #}
-        <a href="{% url 'listar_produtos' %}?status_validade=vencido" class="card red">
+        
+        <a href="{% url 'listar_produtos' %}?status_validade=vencido" class="card
+                {% if vencidos_count_geral > 0 %}
+                 red
+                {% else %}
+                green
+                {% endif %}">
             Produtos vencidos<br><strong>{{ vencidos_count_geral }}</strong> 
         </a>
         
-        <a href="{% url 'listar_produtos' %}?baixo_estoque=true" class="card red"> 
+        <a href="{% url 'listar_produtos' %}?baixo_estoque=true" class="card
+                {% if baixa_quantidade_count_geral > 0 %}
+                 red
+                {% else %}
+                green
+                {% endif %}"> 
             Produtos com baixo estoque<br><strong>{{ baixa_quantidade_count_geral }}</strong> 
         </a>
     </div>
@@ -74,9 +88,6 @@
                     </option>
                 {% endfor %}
             </select>
-
-            <label for="id_validade_proxima" style="margin-left: 10px;">Somente Validade Próxima:</label>
-            <input type="checkbox" id="id_validade_proxima" name="validade_proxima" value="true" {% if validade_proxima_param_ativado %}checked{% endif %}>
             
             <button type="submit">Aplicar Filtros</button>
             <a href="{% url 'listar_produtos' %}"><button type="button">Limpar Filtros</button></a> {# Usar type="button" para não submeter #}

@@ -17,20 +17,18 @@
     </div>
 
     {# Links da sidebar #}
-    <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
-    <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Historico de vendas</span></a> 
-    <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
-   {% if is_dono %}
-            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
-        {% endif %}
-    
-    {# Novo link para Sair/Entrar #}
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> 
+        <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        
+        
+        {# Novo link para Sair/Entrar #}
         {% if user.is_authenticated %}
-            <a href="#" class="logout-link"> {# Usamos um href="#" porque a ação é do formulário #}
+            <a href="#" class="logout-link"> 
                 <i class="fas fa-sign-out-alt"></i><span>Sair</span>
-                <form action="{% url 'logout' %}" method="post" style="display: none;"> {# Esconde o form #}
+                <form action="{% url 'logout' %}" method="post" style="display: none;"> 
                     {% csrf_token %}
-                    <button type="submit" id="logout-button"></button> {# Botão oculto #}
+                    <button type="submit" id="logout-button"></button> 
                 </form>
             </a>
         {% endif %} 

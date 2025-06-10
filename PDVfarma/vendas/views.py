@@ -7,6 +7,8 @@ from estoque.models import Lote
 from django.db.models import F
 from decimal import Decimal 
 
+
+# Nova venda
 @login_required
 @transaction.atomic
 def nova_venda(request):
@@ -15,7 +17,7 @@ def nova_venda(request):
         valor_recebido_str = request.POST.get('valor_recebido', '0').replace(',', '.') # Lidar com vírgula como separador decimal
         
         try:
-            # <--- Mude float() para Decimal() aqui
+            
             valor_recebido = Decimal(valor_recebido_str) 
         except ValueError:
             messages.error(request, "Por favor, insira um valor recebido válido.")
@@ -28,7 +30,7 @@ def nova_venda(request):
 
 
         itens_para_venda = []
-        # <--- Mude 0 para Decimal('0.00') aqui
+        
         total_venda = Decimal('0.00') 
 
         for i in range(total_itens):
@@ -41,15 +43,15 @@ def nova_venda(request):
 
             produto = get_object_or_404(Produto, id=produto_id)
             
-            # Validação de estoque:
+            
             if quantidade > produto.quantidade_estoque:
                 messages.error(request, f"Quantidade insuficiente para {produto.nome}. Estoque disponível: {produto.quantidade_estoque}")
                 return redirect('nova_venda')
             
-            # produto.preco já é um Decimal (se o seu campo for DecimalField)
+            
             preco_unitario = produto.preco 
-            subtotal = preco_unitario * quantidade # Isso resultará em um Decimal
-            total_venda += subtotal # Somando Decimal com Decimal
+            subtotal = preco_unitario * quantidade 
+            total_venda += subtotal 
 
             itens_para_venda.append({
                 'produto': produto,
@@ -58,7 +60,7 @@ def nova_venda(request):
                 'subtotal': subtotal
             })
 
-        # Agora ambos valor_recebido e total_venda são Decimais, a operação é válida
+        
         troco = valor_recebido - total_venda
 
         if troco < 0:
@@ -69,15 +71,15 @@ def nova_venda(request):
             messages.error(request, "Adicione pelo menos um item à venda.")
             return redirect('nova_venda')
 
-        # Cria a venda
+        
         venda = Venda.objects.create(
             funcionario=request.user,
-            total=total_venda, # Salvar Decimal
-            valor_recebido=valor_recebido, # Salvar Decimal
-            troco=troco # Salvar Decimal
+            total=total_venda, 
+            valor_recebido=valor_recebido, 
+            troco=troco 
         )
 
-        # Cria os itens da venda e atualiza o estoque
+        
         for item_data in itens_para_venda:
             ItemVenda.objects.create(
                 venda=venda,
@@ -87,11 +89,11 @@ def nova_venda(request):
                 subtotal=item_data['subtotal'],
                 codigo_barras=item_data['codigo_barras']
             )
-            # Atualiza a quantidade do produto no estoque geral
+            
             item_data['produto'].quantidade_estoque -= item_data['quantidade']
             item_data['produto'].save()
 
-            # Lógica de baixa de estoque em lotes (priorizando os mais antigos/próximos do vencimento)
+            
             qtd_para_baixar = item_data['quantidade']
             lotes_disponiveis = Lote.objects.filter(
                 produto=item_data['produto'],
@@ -110,7 +112,7 @@ def nova_venda(request):
         messages.success(request, "Venda registrada com sucesso.")
         return redirect('historico_vendas')
 
-    # GET request: exibe a página de nova venda com os produtos disponíveis para o JS
+    
     produtos = Produto.objects.filter(ativo=True).annotate(
         categoria_display=F('categoria')
     ).values('id', 'nome', 'preco', 'codigo_barras', 'categoria', 'quantidade_estoque')
@@ -120,6 +122,7 @@ def nova_venda(request):
 
     return render(request, 'vendas/nova_venda.html', {'produtos_data': list(produtos)})
 
+# Listar histórico de vendas
 @login_required
 def historico_vendas(request):
     vendas = Venda.objects.select_related('funcionario').prefetch_related('itens__produto').order_by('-data')
