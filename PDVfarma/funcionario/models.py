@@ -7,7 +7,7 @@ class Funcionario(models.Model):
     SEXO_CHOICES = [
         ('M', 'Masculino'),
         ('F', 'Feminino'),
-        ('O', 'Outro'),
+        ('O', 'Outros'),
     ]
 
     telefone = models.CharField(max_length=15)

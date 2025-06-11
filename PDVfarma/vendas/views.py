@@ -57,7 +57,8 @@ def nova_venda(request):
                 'produto': produto,
                 'quantidade': quantidade,
                 'preco_unitario': preco_unitario,
-                'subtotal': subtotal
+                'subtotal': subtotal,
+                'codigo_barras': produto.codigo_barras
             })
 
         

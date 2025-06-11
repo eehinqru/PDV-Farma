@@ -10,7 +10,7 @@ class Venda(models.Model):
     valor_recebido = models.DecimalField(max_digits=10, decimal_places=2)
     troco = models.DecimalField(max_digits=10, decimal_places=2)
     
-    def __str__(self):
+    def _str_(self):
         return f"Venda #{self.id} - {self.data.strftime('%d/%m/%Y %H:%M')}"
 
 class ItemVenda(models.Model):
@@ -20,6 +20,7 @@ class ItemVenda(models.Model):
     quantidade = models.PositiveIntegerField()
     preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    codigo_barras = models.CharField(max_length=20, null=True, blank=True)
 
-    def __str__(self):
+    def _str_(self):
         return f"{self.quantidade}x {self.produto.nome} - R$ {self.subtotal}"
