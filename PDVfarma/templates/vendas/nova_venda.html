@@ -1,0 +1,372 @@
+{% load static %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Nova Venda</title>
+    <link rel="stylesheet" href="{% static 'css/style_venda.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> 
+</head>
+<body>
+
+{# --- Sidebar --- #}
+<div class="sidebar">
+    <div class="sidebar-top">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+        <span class="logo-text">PDV Pharmacy</span>
+    </div>
+
+    {# Links da sidebar #}
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> 
+        <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        
+        
+        {# Novo link para Sair/Entrar #}
+        {% if user.is_authenticated %}
+            <a href="#" class="logout-link"> 
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+                <form action="{% url 'logout' %}" method="post" style="display: none;"> 
+                    {% csrf_token %}
+                    <button type="submit" id="logout-button"></button> 
+                </form>
+            </a>
+        {% endif %} 
+</div>
+
+{# --- Conteúdo Principal --- #}
+<div class="main-content">
+
+    {# --- Topbar --- #}
+    <div class="topbar">
+        NOVA VENDA
+    </div>
+
+    {# Mensagens do Django #}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">
+                {{ message }}
+                <span class="close-message" onclick="this.parentElement.style.display='none';">&times;</span>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+    <form method="post" id="form-venda">
+        {% csrf_token %}
+
+        {# Seção da Esquerda: Tabela de Itens + Pesquisa + Adicionar Item #}
+        <div class="products-section"> 
+            {# Tabela de Itens da Venda - Sempre em destaque #}
+            <table id="itens-venda">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Preço Unit.</th>
+                        <th>QTE</th>
+                        <th>Subtotal</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            {# Área de Pesquisa de Produto (separada visualmente) #}
+            <div class="search-container">
+                <label for="search-input">Pesquisar Produto (Nome ou Código de Barras):</label>
+                <input type="text" id="search-input" placeholder="Digite para pesquisar..." autocomplete="off">
+                <ul id="search-results"></ul>
+            </div>
+
+            {# Área de Adição de Item (separada visualmente) #}
+            <div class="add-item-area">
+                <label for="selected-product-name">Produto Selecionado:</label>
+                <input type="text" id="selected-product-name" readonly placeholder="Nenhum produto selecionado">
+                <input type="hidden" id="selected-product-id">
+                <input type="hidden" id="selected-product-price">
+                <input type="hidden" id="selected-product-category">
+                <input type="hidden" id="selected-product-stock">
+
+                <div class="quantity-add-wrapper"> {# Para alinhar quantidade e botão #}
+                    <label for="quantity-input">Quantidade:</label>
+                    <input type="number" id="quantity-input" min="1" value="1">
+                    <button type="button" id="add-to-sale-btn" disabled>Adicionar à Venda</button>
+                </div>
+            </div>
+        </div> {# Fechamento da div .products-section #}
+
+        {# Seção da Direita: Resumo da Venda e Botões de Ação #}
+        <div class="summary-section">
+            <div class="right-summary">
+                <div class="summary-line-total">
+                    <span>Total: R$</span>
+                    <span id="total">0.00</span>
+                </div>
+
+                <div class="summary-line">
+                    <span>Valor Recebido (R$):</span>
+                    <input type="number" id="valor-recebido" name="valor_recebido" min="0" step="0.01" value="0.00" required />
+                </div>
+
+                <div class="summary-line">
+                    <span>Troco:</span>
+                    <span id="troco">0.00</span>
+                </div>
+            </div>
+
+            <input type="hidden" name="total_itens" id="total_itens" value="0" />
+
+            <div class="action-buttons">
+                <button type="button" class="button-cancel">Cancelar</button>
+                <button type="submit" id="registrar-venda-btn" disabled class="button-confirm">Confirmar</button>
+            </div>
+        </div> {# Fechamento da div .summary-section #}
+    </form>
+
+</div> {# Fechamento da div main-content #}
+
+<script>
+    // Carrega os dados dos produtos do backend
+    const ALL_PRODUCTS = [
+        {% for p in produtos_data %}
+        { 
+            id: {{ p.id }}, 
+            nome: "{{ p.nome|escapejs }}", 
+            preco: {{ p.preco }}, 
+            codigo_barras: "{{ p.codigo_barras|escapejs }}",
+            categoria: "{{ p.categoria_display|escapejs }}",
+            quantidade_estoque: {{ p.quantidade_estoque }}
+        },
+        {% endfor %}
+    ];
+
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const selectedProductNameInput = document.getElementById('selected-product-name');
+    const selectedProductIdInput = document.getElementById('selected-product-id');
+    const selectedProductPriceInput = document.getElementById('selected-product-price');
+    const selectedProductCategoryInput = document.getElementById('selected-product-category');
+    const selectedProductStockInput = document.getElementById('selected-product-stock');
+    const quantityInput = document.getElementById('quantity-input');
+    const addToSaleBtn = document.getElementById('add-to-sale-btn');
+    const tbody = document.querySelector('#itens-venda tbody');
+    const valorRecebidoInput = document.getElementById('valor-recebido');
+    const totalSpan = document.getElementById('total');
+    const trocoSpan = document.getElementById('troco');
+    const totalItensInput = document.getElementById('total_itens');
+    const registrarVendaBtn = document.getElementById('registrar-venda-btn');
+
+    let currentSaleItems = []; // Array para armazenar os itens da venda no frontend
+    let selectedProduct = null; // Produto atualmente selecionado na pesquisa
+
+    // Função para renderizar os resultados da pesquisa
+    function renderSearchResults(results) {
+        searchResults.innerHTML = ''; // Limpa resultados anteriores
+        if (results.length === 0 && searchInput.value.length > 0) {
+            const li = document.createElement('li');
+            li.textContent = 'Nenhum produto encontrado.';
+            searchResults.appendChild(li);
+            searchResults.style.display = 'block'; // Garante que a mensagem seja visível
+            return;
+        }
+
+        results.forEach(product => {
+            const li = document.createElement('li');
+            li.textContent = `${product.nome} (Estoque: ${product.quantidade_estoque})`;
+            li.dataset.productId = product.id;
+            li.addEventListener('click', () => selectProduct(product));
+            searchResults.appendChild(li);
+        });
+        searchResults.style.display = results.length > 0 ? 'block' : 'none';
+    }
+
+    // Função para selecionar um produto da pesquisa
+    function selectProduct(product) {
+        selectedProduct = product;
+        selectedProductNameInput.value = product.nome;
+        selectedProductIdInput.value = product.id;
+        selectedProductPriceInput.value = product.preco;
+        selectedProductCategoryInput.value = product.categoria;
+        selectedProductStockInput.value = product.quantidade_estoque;
+        quantityInput.value = 1; // Reseta a quantidade para 1
+        quantityInput.max = product.quantidade_estoque; // Define max com base no estoque
+        addToSaleBtn.disabled = false; // Habilita o botão de adicionar
+        searchResults.style.display = 'none'; // Esconde os resultados da pesquisa
+        searchInput.value = product.nome; // Atualiza o input de pesquisa com o nome do produto selecionado
+        quantityInput.focus(); // Foca na quantidade
+        validateQuantityInput(); // Valida a quantidade inicial
+    }
+
+    // Valida a quantidade digitada
+    function validateQuantityInput() {
+        const currentQty = parseInt(quantityInput.value);
+        const maxStock = parseInt(selectedProductStockInput.value);
+
+        if (selectedProduct && (currentQty <= 0 || isNaN(currentQty))) {
+            quantityInput.value = 1; // Volta para 1 se for inválido
+            addToSaleBtn.disabled = true;
+            return false;
+        }
+        if (selectedProduct && currentQty > maxStock) {
+            alert(`Quantidade solicitada (${currentQty}) excede o estoque disponível (${maxStock}).`);
+            quantityInput.value = maxStock > 0 ? maxStock : 1; // Ajusta para o máximo disponível ou 1
+            addToSaleBtn.disabled = true;
+            return false;
+        }
+        addToSaleBtn.disabled = false; // Re-habilita se a quantidade for válida
+        return true;
+    }
+
+    // Evento de digitação na barra de pesquisa
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+        if (query.length < 2) { // Começa a pesquisar com 2 ou mais caracteres
+            searchResults.style.display = 'none';
+            selectedProduct = null;
+            selectedProductNameInput.value = '';
+            selectedProductIdInput.value = '';
+            selectedProductPriceInput.value = '';
+            selectedProductCategoryInput.value = '';
+            selectedProductStockInput.value = '';
+            addToSaleBtn.disabled = true;
+            return;
+        }
+
+        const filteredProducts = ALL_PRODUCTS.filter(p => 
+            p.nome.toLowerCase().includes(query) || p.codigo_barras.toLowerCase().includes(query)
+        );
+        renderSearchResults(filteredProducts);
+    });
+
+    // Esconder resultados ao clicar fora
+    document.addEventListener('click', (event) => {
+        if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+
+    // Valida a quantidade ao mudar
+    quantityInput.addEventListener('input', validateQuantityInput);
+
+    // Função para adicionar item à lista de venda
+    addToSaleBtn.addEventListener('click', () => {
+        if (!selectedProduct || !validateQuantityInput()) {
+            return;
+        }
+
+        const productId = selectedProduct.id;
+        const quantity = parseInt(quantityInput.value);
+
+        // Verifica se o produto já está na lista, se sim, atualiza a quantidade
+        const existingItemIndex = currentSaleItems.findIndex(item => item.product.id === productId);
+
+        if (existingItemIndex !== -1) {
+            // Produto já existe na lista, atualiza a quantidade
+            const existingItem = currentSaleItems[existingItemIndex];
+            const newQuantity = existingItem.quantity + quantity;
+
+            if (newQuantity > selectedProduct.quantidade_estoque) {
+                alert(`Não é possível adicionar. A quantidade total (${newQuantity}) excede o estoque disponível (${selectedProduct.quantidade_estoque}) para ${selectedProduct.nome}.`);
+                return;
+            }
+            existingItem.quantity = newQuantity;
+            existingItem.subtotal = existingItem.product.preco * newQuantity;
+        } else {
+            // Adiciona novo item à lista
+            if (quantity > selectedProduct.quantidade_estoque) {
+                alert(`Quantidade solicitada (${quantity}) excede o estoque disponível (${selectedProduct.quantidade_estoque}).`);
+                return;
+            }
+            currentSaleItems.push({
+                product: selectedProduct,
+                quantity: quantity,
+                subtotal: selectedProduct.preco * quantity
+            });
+        }
+        
+        renderSaleItems(); // Atualiza a tabela
+        resetAddForm(); // Limpa a área de adição
+        updateTotal(); // Atualiza o total
+    });
+
+    // Função para remover item da lista de venda
+    function removeItem(productId) {
+        currentSaleItems = currentSaleItems.filter(item => item.product.id !== productId);
+        renderSaleItems();
+        updateTotal();
+    }
+
+    // Função para renderizar os itens da venda na tabela
+    function renderSaleItems() {
+        tbody.innerHTML = ''; // Limpa a tabela
+        currentSaleItems.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.product.nome}</td>
+                <td>${item.product.categoria}</td>
+                <td>${item.product.preco.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>${item.subtotal.toFixed(2)}</td>
+                <td>
+                    <button type="button" onclick="removeItem(${item.product.id})">Remover</button>
+                    <input type="hidden" name="produto_${index}" value="${item.product.id}">
+                    <input type="hidden" name="quantidade_${index}" value="${item.quantity}">
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+        totalItensInput.value = currentSaleItems.length; // Atualiza o total de itens para o backend
+        updateRegistrarVendaBtnState();
+    }
+
+    // Reseta o formulário de adição de item
+    function resetAddForm() {
+        selectedProduct = null;
+        searchInput.value = '';
+        selectedProductNameInput.value = '';
+        selectedProductIdInput.value = '';
+        selectedProductPriceInput.value = '';
+        selectedProductCategoryInput.value = '';
+        selectedProductStockInput.value = '';
+        quantityInput.value = 1;
+        quantityInput.max = ""; // Remove o limite máximo
+        addToSaleBtn.disabled = true;
+        searchInput.focus();
+    }
+
+    // Atualiza os totais e troco
+    function updateTotal() {
+        let total = currentSaleItems.reduce((sum, item) => sum + item.subtotal, 0);
+        totalSpan.textContent = total.toFixed(2);
+        updateTroco();
+    }
+
+    function updateTroco() {
+        const valorRecebido = parseFloat(valorRecebidoInput.value) || 0;
+        const total = parseFloat(totalSpan.textContent) || 0;
+        const troco = valorRecebido - total;
+        trocoSpan.textContent = troco >= 0 ? troco.toFixed(2) : (troco).toFixed(2);
+        updateRegistrarVendaBtnState();
+    }
+
+    // Habilita/desabilita o botão Registrar Venda
+    function updateRegistrarVendaBtnState() {
+        const total = parseFloat(totalSpan.textContent);
+        const valorRecebido = parseFloat(valorRecebidoInput.value);
+        registrarVendaBtn.disabled = currentSaleItems.length === 0 || valorRecebido < total;
+    }
+
+    // Event listener para valor recebido
+    valorRecebidoInput.addEventListener('input', updateTroco);
+
+    // Inicialização
+    resetAddForm();
+    updateTotal(); // Garante que os totais são 0.00 ao carregar
+</script>
+
+</body>
+</html>

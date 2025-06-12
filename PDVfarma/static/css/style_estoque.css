@@ -1,0 +1,477 @@
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px; /* Define o tamanho base da fonte, 1rem = 16px */
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: 'Arial', sans-serif; /* Família da fonte para o body */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #2d2d2d;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
+    gap: 5px;
+    padding-top: 60px; /* Adiciona padding para o topo da sidebar (altura da topbar) */
+}
+
+/* Área da logo com fundo #025255 */
+.sidebar-top {
+    background-color: #025255;
+    height: 60px;
+    width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    position: fixed; /* Fixa no topo e na esquerda */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Garante que fique acima de outros elementos */
+}
+
+.sidebar-top .logo {
+    width: 5rem; /* 80px / 16px = 5rem */
+    height: 5rem; /* 80px / 16px = 5rem */
+    object-fit: contain;
+}
+
+.sidebar-top .logo-text {
+    font-weight: bold;
+    font-size: 1rem; /* 16px / 16px = 1rem */
+    color: white;
+}
+
+/* Links normais da sidebar */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 0px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Ícones nos links da sidebar */
+.sidebar a i {
+    font-size: 30px;
+    width: 32px;
+    text-align: center;
+}
+
+/* Hover nos links da sidebar */
+.sidebar a:hover {
+    background-color: #007b80;
+}
+
+/* Estilos para o link de Sair */
+.sidebar .logout-link {
+    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
+}
+
+.sidebar .logout-link form {
+    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
+}
+
+.sidebar .logout-link button {
+    /* Basicamente zera o estilo padrão do botão para que o <a> pai o estilize */
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit; /* Herda a cor do texto do link pai */
+    font-size: inherit; /* Herda o tamanho da fonte do link pai */
+    font-weight: inherit;
+    cursor: inherit; /* Herda o cursor do link pai */
+    text-align: left; /* Alinha o texto do botão à esquerda */
+    display: flex; /* Permite que o botão se comporte como flex item para alinhamento */
+    align-items: center;
+    gap: 10px; /* Mantém o gap com o ícone, se houver */
+    flex-grow: 1; /* Ocupa o espaço restante */
+}
+
+/* Main content (ao lado da sidebar) */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    overflow-y: auto; /* Permite rolagem interna */
+    padding-top: 3.75rem; /* Adiciona espaço no topo igual à altura da topbar */
+}
+
+/* Topbar alinhada à main-content */
+.topbar {
+    background-color: #007b80;
+    height: 3.75rem; /* 60px / 16px = 3.75rem */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1.5rem; /* 24px / 16px = 1.5rem */
+    font-weight: bold;
+    padding: 0 1.25rem; /* 20px */
+    flex-shrink: 0; /* Impede que a topbar encolha */
+
+    /* --- ADICIONE/MODIFIQUE ISSO --- */
+    position: fixed; /* Torna a topbar fixa na tela */
+    top: 0;          /* Alinha ao topo da viewport */
+    left: 220px;     /* Começa após a largura da sidebar (220px) */
+    right: 0;        /* Se estende até a direita da viewport */
+    z-index: 999;    /* Garante que fique acima do conteúdo que rola, mas abaixo da sidebar-top (se aplicável) */
+    /* --- FIM DAS ALTERAÇÕES --- */
+}
+
+/* Controls (filtro, adicionar, busca) */
+.controls {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem; /* 20px */
+    gap: 0.625rem; /* 10px */
+    flex-wrap: wrap;
+    flex-shrink: 0; /* Impede que os controles encolham */
+    border-bottom: 1px solid #ddd; /* Linha de separação */
+    padding-bottom: 1.25rem; /* Espaço entre os controles e a linha */
+    margin-bottom: 1.25rem; /* Espaço entre a linha e os produtos */
+}
+
+.controls button,
+.controls input,
+.controls select {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.875rem;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Botões gerais de controle (ex: + Adicionar produto, Aplicar Filtros) */
+.controls button {
+    background-color: #00c084; /* Verde padrão para botões de ação */
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: inline-flex; /* Permite ícones */
+    align-items: center;
+    gap: 5px; /* Espaço entre ícone e texto */
+}
+
+.controls button:hover {
+    filter: brightness(90%); /* Escurece um pouco no hover */
+}
+
+.controls input[type="text"] {
+    background-color: white;
+    border: 0.0625rem solid #ccc; /* 1px */
+    padding: 0.625rem 0.9375rem; /* 10px 15px */
+    border-radius: 1.25rem; /* 20px */
+    width: 12.5rem; /* 200px */
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.1); /* 0 2px 4px */
+}
+
+.controls select {
+    border: 1px solid #777;
+    background-color: white; /* Garante fundo branco para o select */
+}
+
+/* Botões específicos para o bloco de controle (se aplicável) */
+.button-secondary {
+    background-color: #6c757d; /* Cinza para "Limpar Filtros" */
+}
+
+.button-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Indicadores (cards informativos no topo) */
+.indicators {
+    display: flex;
+    gap: 1.25rem; /* 20px */
+    padding: 0 1.25rem 1.25rem; /* 0 20px 20px */
+    margin-top: 1.25rem; /* Adiciona 20px de margem superior */
+    flex-shrink: 0; /* Impede que os indicadores encolham */
+}
+
+.indicators .card {
+    flex: 1;
+    border-radius: 0.9375rem; /* 15px */
+    padding: 1.25rem; /* 20px */
+    color: white; /* Texto padrão branco para os cards */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem; /* 16px */
+    text-decoration: none; /* Remove o sublinhado em links com classe .card */
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1); /* Sombra suave */
+    transition: transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.3); /* Adiciona a borda preta suave */
+}
+
+.indicators .card:hover {
+    transform: translateY(-0.125rem); /* Leve levantada no hover */
+    box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada */
+    border: 1px solid rgba(0, 0, 0, 0.6); /* Borda mais escura no hover */
+}
+
+.indicators .card strong {
+    display: block; /* Para quebrar linha e ficar separado do texto */
+    font-size: 2rem; /* 32px */
+    margin-top: 0.625rem; /* 10px */
+    color: white; /* Cor branca para destaque */
+    text-shadow: 0.0625rem 0.0625rem 0.1875rem rgba(0,0,0,0.3); /* 1px 1px 3px */
+    font-weight: 900; /* Mais grosso */
+}
+
+.indicators .green {
+    background-color: #7ce0a6;
+    color: #006644; /* Cor de texto mais escura para contraste */
+}
+
+.indicators .red {
+    background-color: #ff8080;
+}
+
+
+/* Cards de Produtos individuais */
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13.75rem, 1fr)); /* 220px */
+    gap: 1.25rem; /* 20px */
+    padding: 0 1.25rem 1.25rem; /* 0 20px 20px */
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 0.9375rem; /* 15px */
+    padding: 0.9375rem; /* 15px */
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.15); /* 0 0 8px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.product-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2); /* 0 8px 16px */
+}
+
+.product-card img {
+    width: 6.25rem; /* 100px */
+    margin-bottom: 0.625rem; /* 10px */
+}
+
+.product-card h3 {
+    font-size: 0.875rem; /* 14px */
+    text-align: center;
+}
+
+.product-card .price {
+    font-weight: bold;
+    font-size: 1rem; /* 16px */
+    margin-top: 0.625rem; /* 10px */
+}
+
+.product-card .qty {
+    color: white;
+    padding: 0.25rem 0.625rem; /* 4px 10px */
+    border-radius: 0.625rem; /* 10px */
+    font-size: 0.8125rem; /* 13px */
+    margin-top: 0.3125rem; /* 5px */
+}
+
+/* Cores de quantidade em estoque */
+.product-card .qty-red {
+    background-color: #ff6b6b; /* Vermelho para baixo estoque */
+}
+
+.product-card .qty-yellow {
+    background-color: #f39c12; /* Amarelo para estoque médio/alerta */
+}
+
+.product-card .qty-green {
+    background-color: #4caf50; /* Verde para estoque bom */
+}
+
+/* Ações dentro do card de produto (Editar | Desativar) */
+.product-card .actions {
+    display: flex; /* Para alinhar os botões e o pipe */
+    align-items: center;
+    justify-content: center; /* Centraliza as ações dentro do card */
+    margin-top: 10px; /* Garante espaçamento do conteúdo acima */
+    flex-wrap: wrap; /* Permite que os botões quebrem linha se não houver espaço */
+}
+
+.product-card .actions .button {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px; /* Padding ajustado para botões menores no card */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px; /* Tamanho da fonte menor para o card */
+    text-decoration: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+    margin: 2px; /* Margem pequena para separar os botões */
+}
+
+.product-card .actions .button i {
+    margin-right: 5px; /* Espaço entre o ícone e o texto */
+}
+
+/* Estilo para o botão "Editar" nos cards (cor #007b80) */
+.product-card .actions .button-edit {
+    background-color: #007b80;
+}
+
+.product-card .actions .button-edit:hover {
+    background-color: #005f63; /* Tom mais escuro no hover */
+}
+
+/* Estilo para o botão "Desativar" nos cards (vermelho) */
+.product-card .actions .button-danger {
+    background-color: #dc3545; /* Vermelho padrão para ações perigosas */
+}
+
+.product-card .actions .button-danger:hover {
+    background-color: #c82333; /* Tom mais escuro no hover */
+}
+
+/* Separador entre botões nos cards (se usado) */
+.product-card .actions .separator {
+    margin: 0 5px;
+    color: #666;
+}
+
+/* Badges de validade */
+.badge {
+    font-weight: bold;
+    padding: 0.125rem 0.375rem; /* 2px 6px */
+    border-radius: 0.25rem; /* 4px */
+    color: white;
+    font-size: 0.8rem;
+    margin-top: 5px; /* Espaço do elemento acima */
+    display: inline-block; /* Para que o padding e margin funcionem bem */
+}
+
+.badge-red {
+    background-color: #e74c3c; /* Vermelho para vencido */
+}
+
+.badge-yellow {
+    background-color: #f39c12; /* Amarelo para perto de vencer */
+}
+
+/* Paginação */
+.paginacao {
+    flex-shrink: 0; /* Impede que a paginação encolha */
+    text-align: center;
+    margin: 20px;
+    padding: 10px;
+}
+
+.paginacao a {
+    text-decoration: none;
+    color: #007b80;
+    padding: 8px 15px;
+    border: 1px solid #007b80;
+    border-radius: 5px;
+    margin: 0 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.paginacao a:hover {
+    background-color: #007b80;
+    color: white;
+}
+
+.paginacao span {
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 4.375rem; /* 70px */
+        padding: 0.625rem; /* 10px */
+        gap: 0.625rem; /* 10px */
+    }
+
+    .sidebar-top {
+        width: 4.375rem; /* Ajusta a largura do topo para 70px */
+        justify-content: center; /* Centraliza a logo no topo da sidebar menor */
+        padding: 0; /* Remove padding lateral */
+    }
+
+    .sidebar-top .logo-text {
+        display: none; /* Esconde o texto da logo em telas menores */
+    }
+
+    .sidebar a span {
+        display: none; /* Esconde o texto dos links da sidebar */
+    }
+
+    .sidebar a i {
+        margin: 0 auto; /* Centraliza o ícone quando o texto está escondido */
+    }
+
+    .topbar {
+        font-size: 1.125rem; /* 18px */
+        text-align: center;
+        justify-content: center; /* Centraliza o texto "ESTOQUE" */
+        padding: 0 10px;
+    }
+
+    .indicators {
+        flex-direction: column; /* Empilha os cards indicadores em telas menores */
+        padding: 0 10px 10px; /* Ajusta o padding */
+    }
+
+    .indicators .card {
+        margin-bottom: 10px; /* Espaçamento entre os cards empilhados */
+    }
+
+    .controls {
+        flex-direction: column; /* Empilha os controles */
+        align-items: flex-start; /* Alinha à esquerda */
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .controls input[type="text"],
+    .controls select,
+    .controls button {
+        width: 100%; /* Ocupa a largura total */
+        margin-right: 0; /* Remove margem direita */
+    }
+
+    .controls label {
+        margin-left: 0 !important; /* Remove margem do label */
+        width: 100%;
+        text-align: left;
+    }
+    
+    .products {
+        grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); /* Cards menores em telas pequenas */
+        padding: 0 10px 10px;
+    }
+}

@@ -1,0 +1,112 @@
+{% load static %}
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Funcionários</title>
+    <link rel="stylesheet" href="{% static 'css/style_funcionario.css' %}">
+    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+     <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-top">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+        <span class="logo-text">PDV Pharmacy</span>
+    </div>
+
+    <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+    <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
+    <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
+        {% if user.is_authenticated %}
+            <a href="#" class="logout-link"> 
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+                <form action="{% url 'logout' %}" method="post" style="display: none;"> 
+                    <button type="submit" id="logout-button"></button> 
+                </form>
+            </a>
+        {% endif %} 
+    </div>
+
+</div>
+
+
+<div class="main-content">
+
+    <div class="topbar">
+        FUNCIONÁRIOS
+    </div>
+
+    <div class="controls"> 
+        <form method="GET" action="{% url 'listar_funcionarios' %}"> 
+            <input type="text" name="q" value="{{ query }}" placeholder="Pesquisar funcionário">
+            <button type="submit" class="button"><i class="fas fa-search"></i></button>
+            {% if query %} 
+                <a href="{% url 'listar_funcionarios' %}"><button type="button" class="button button-secondary">Limpar Pesquisa</button></a>
+            {% endif %}
+
+            
+        </form>
+
+        {# Botão para adicionar funcionário #}
+        <a href="{% url 'registrar_funcionario' %}"><button class="button button-primary">Registrar Funcionário</button></a> {# Removi style inline, 'margin-left: auto' está no CSS dos controls #}
+    </div>
+
+    <div class="products-list-container"> {# Mantive um nome genérico, mas pode ser employees-list-container #}
+        {% if page_obj %}
+            <table class="data-table"> {# Uma classe para estilizar sua tabela #}
+                <thead>
+                    <tr>
+                        <th>Nome Completo</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>CPF</th>
+                        <th>Endereço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for funcionario in page_obj %} {# Itera sobre o objeto de página agora #}
+                        <tr>
+                            <td>{{ funcionario.user.first_name }} {{ funcionario.user.last_name }}</td>
+                            <td>{{ funcionario.user.email }}</td>
+                            <td>{{ funcionario.telefone }}</td>
+                            <td>{{ funcionario.cpf }}</td>
+                            <td>{{ funcionario.endereco }}</td>
+                            {# REMOVIDA A LINHA ABAIXO PARA ALINHAR COM O CABEÇALHO SEM CARGO #}
+                            {# <td>{{ funcionario.cargo }}</td> #}
+                            <td class="actions-cell">
+    <a href="{% url 'editar_funcionario' funcionario.id %}" class="action-button edit">
+        <i class="fas fa-pencil-alt"></i> </a>
+    <form action="{% url 'deletar_funcionario' funcionario.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja deletar o funcionário {{ funcionario.user.first_name }} {{ funcionario.user.last_name }}? Esta ação é irreversível!');">
+            <i class="fas fa-trash-alt"></i> </button>
+    </form>
+</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="text-align: center; margin-top: 20px;">Nenhum funcionário encontrado.</p>
+        {% endif %}
+    </div>
+
+    {# Navegação de Paginação #}
+    <div class="paginacao"> {# Removi style inline para o CSS gerenciar #}
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="paginacao-link">Anterior</a>
+        {% endif %}
+
+        <span class="paginacao-info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="paginacao-link">Próxima</a>
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

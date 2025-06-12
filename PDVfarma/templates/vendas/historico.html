@@ -1,0 +1,109 @@
+{% load static %}
+{% load tz %} 
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico de Vendas - PDV Pharmacy</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> {# Caminho ajustado para static #}
+    <link rel="stylesheet" href="{% static 'css/style_vendas_historico.css' %}">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+            <span class="logo-text">PDV Pharmacy</span>
+        </div>
+
+        <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
+        <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+
+        
+        {% if user.is_authenticated %}
+            <a href="#" class="logout-link">
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+                <form action="{% url 'logout' %}" method="post" style="display: none;">
+                    {% csrf_token %}
+                    <button type="submit" id="logout-button"></button>
+                </form>
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            HISTÓRICO DE VENDAS
+        </div>
+
+        {# Conteúdo do Histórico de Vendas começa aqui #}
+        <div class="history-container"> {# Adicionei um contêiner para o conteúdo do histórico #}
+            
+
+            
+            
+            {% if vendas %}
+                {% for venda in vendas %}
+                    <div class="venda-card">
+                        <h2>Venda #{{ venda.id }}</h2>
+                        <p><strong>Data:</strong> {{ venda.data|date:"d/m/Y H:i" }}</p>
+                        <p><strong>Funcionário:</strong> {{ venda.funcionario.first_name }}</p>
+                        
+                        <h3>Itens da Venda:</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Preço Unitário</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in venda.itens.all %}
+                                    <tr>
+                                        <td>{{ item.produto.nome }}</td>
+                                        <td>{{ item.quantidade }}</td>
+                                        <td>R$ {{ item.preco_unitario|floatformat:2 }}</td>
+                                        <td>R$ {{ item.subtotal|floatformat:2 }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4">Nenhum item nesta venda.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        <div class="total-info">
+                            <p><strong>Total da Venda:</strong> R$ {{ venda.total|floatformat:2 }}</p>
+                            <p><strong>Valor Recebido:</strong> R$ {{ venda.valor_recebido|floatformat:2 }}</p>
+                            <p><strong>Troco:</strong> R$ {{ venda.troco|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-sales">Nenhuma venda encontrada no histórico.</p>
+            {% endif %}
+        </div>
+        {# Conteúdo do Histórico de Vendas termina aqui #}
+
+    </div>
+
+    <script>
+        // Script para o logout (já estava no seu código anterior)
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.querySelector('.logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('logout-button').click();
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
