@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Q 
 
-# checar se o usuário é do grupo 'dono'
 def is_dono(user):
     return user.groups.filter(name='dono').exists()
 

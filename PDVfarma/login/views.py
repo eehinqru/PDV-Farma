@@ -24,5 +24,5 @@ def login_view(request):
 def logout_view(request):
     logout(request) 
     messages.success(request, "Você foi desconectado com sucesso.")
-    return redirect('login') 
+    return redirect('login:login')  
 

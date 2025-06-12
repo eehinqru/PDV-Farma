@@ -16,22 +16,32 @@
         <span class="logo-text">PDV Pharmacy</span>
     </div>
 
+     {% if user.is_authenticated and funcionario_logado %}
+    <div class="user-profile-sidebar">
+        {% if funcionario_logado.foto %}
+            <img src="{{ funcionario_logado.foto.url }}" alt="Foto de Perfil" class="profile-pic">
+        {% else %}
+            <img src="{% static 'img/default_profile_pic.png' %}" alt="Foto de Perfil Padrão" class="profile-pic">
+        {% endif %}
+        <span class="user-name">{{ user.first_name|default:user.username }}</span>
+    </div>
+    {% endif %}
+
     {# Links da sidebar #}
         <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
         <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> 
-        <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
-        
-        
-        {# Novo link para Sair/Entrar #}
+        {% if is_dono %}
+            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        {% endif %}
         {% if user.is_authenticated %}
-            <a href="#" class="logout-link"> 
-                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
-                <form action="{% url 'logout' %}" method="post" style="display: none;"> 
-                    {% csrf_token %}
-                    <button type="submit" id="logout-button"></button> 
-                </form>
-            </a>
-        {% endif %} 
+        <a href="#" class="logout-link"> 
+        <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+        <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
+            {% csrf_token %} 
+            <button type="submit" id="logout-button"></button> 
+        </form>
+        </a>
+        {% endif %}
 </div>
 
 {# --- Conteúdo Principal --- #}
@@ -91,13 +101,13 @@
                 <input type="hidden" id="selected-product-category">
                 <input type="hidden" id="selected-product-stock">
 
-                <div class="quantity-add-wrapper"> {# Para alinhar quantidade e botão #}
+                <div class="quantity-add-wrapper"> 
                     <label for="quantity-input">Quantidade:</label>
                     <input type="number" id="quantity-input" min="1" value="1">
                     <button type="button" id="add-to-sale-btn" disabled>Adicionar à Venda</button>
                 </div>
             </div>
-        </div> {# Fechamento da div .products-section #}
+        </div> 
 
         {# Seção da Direita: Resumo da Venda e Botões de Ação #}
         <div class="summary-section">
@@ -106,6 +116,17 @@
                     <span>Total: R$</span>
                     <span id="total">0.00</span>
                 </div>
+
+                {# NOVO CAMPO: Forma de Pagamento #}
+                <div class="summary-line">
+                    <span>Forma de Pagamento:</span>
+                    <select id="forma-pagamento" name="forma_pagamento" required>
+                        {% for value, label in formas_pagamento %}
+                            <option value="{{ value }}" {% if selected_forma_pagamento == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {# FIM NOVO CAMPO #}
 
                 <div class="summary-line">
                     <span>Valor Recebido (R$):</span>
@@ -159,6 +180,7 @@
     const trocoSpan = document.getElementById('troco');
     const totalItensInput = document.getElementById('total_itens');
     const registrarVendaBtn = document.getElementById('registrar-venda-btn');
+    const formaPagamentoSelect = document.getElementById('forma-pagamento'); 
 
     let currentSaleItems = []; // Array para armazenar os itens da venda no frontend
     let selectedProduct = null; // Produto atualmente selecionado na pesquisa
@@ -288,9 +310,9 @@
             });
         }
         
-        renderSaleItems(); // Atualiza a tabela
-        resetAddForm(); // Limpa a área de adição
-        updateTotal(); // Atualiza o total
+        renderSaleItems(); 
+        resetAddForm(); 
+        updateTotal(); 
     });
 
     // Função para remover item da lista de venda
@@ -333,7 +355,7 @@
         selectedProductCategoryInput.value = '';
         selectedProductStockInput.value = '';
         quantityInput.value = 1;
-        quantityInput.max = ""; // Remove o limite máximo
+        quantityInput.max = ""; 
         addToSaleBtn.disabled = true;
         searchInput.focus();
     }
@@ -346,26 +368,66 @@
     }
 
     function updateTroco() {
-        const valorRecebido = parseFloat(valorRecebidoInput.value) || 0;
+        // Assegura que o valor recebido é um número válido, convertendo vírgula para ponto se necessário
+        const valorRecebidoRaw = valorRecebidoInput.value.replace(',', '.');
+        const valorRecebido = parseFloat(valorRecebidoRaw) || 0;
+        
         const total = parseFloat(totalSpan.textContent) || 0;
         const troco = valorRecebido - total;
-        trocoSpan.textContent = troco >= 0 ? troco.toFixed(2) : (troco).toFixed(2);
+        trocoSpan.textContent = troco.toFixed(2); // Usar toFixed(2) para garantir duas casas decimais
+
         updateRegistrarVendaBtnState();
     }
 
     // Habilita/desabilita o botão Registrar Venda
     function updateRegistrarVendaBtnState() {
         const total = parseFloat(totalSpan.textContent);
-        const valorRecebido = parseFloat(valorRecebidoInput.value);
+        const valorRecebido = parseFloat(valorRecebidoInput.value.replace(',', '.')); // Lidar com vírgula aqui também
+
+        // O botão é habilitado se houver itens na venda E o valor recebido for suficiente
         registrarVendaBtn.disabled = currentSaleItems.length === 0 || valorRecebido < total;
     }
 
     // Event listener para valor recebido
     valorRecebidoInput.addEventListener('input', updateTroco);
 
-    // Inicialização
-    resetAddForm();
-    updateTotal(); // Garante que os totais são 0.00 ao carregar
+    // Inicialização ao carregar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lógica de logout
+        const logoutLink = document.querySelector('.logout-link');
+        const logoutForm = document.getElementById('logout-form'); 
+
+        if (logoutLink && logoutForm) {
+            logoutLink.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                logoutForm.submit(); 
+            });
+        }
+
+        // NOVO: Preencher valor recebido e forma de pagamento se houverem no contexto (pós erro)
+        const valorRecebidoParam = "{{ valor_recebido_param|default:'0.00' }}";
+        const selectedFormaPagamentoParam = "{{ selected_forma_pagamento|default:'' }}";
+
+        if (parseFloat(valorRecebidoParam) > 0) {
+            valorRecebidoInput.value = parseFloat(valorRecebidoParam).toFixed(2);
+        } else {
+            valorRecebidoInput.value = "0.00";
+        }
+        
+        if (selectedFormaPagamentoParam) {
+            formaPagamentoSelect.value = selectedFormaPagamentoParam;
+        } else {
+            // Se não houver erro, garante que a primeira opção é selecionada ou o padrão 'DINHEIRO'
+            if (formaPagamentoSelect.options.length > 0) {
+                formaPagamentoSelect.value = formaPagamentoSelect.options[0].value;
+            }
+        }
+        
+        updateTotal(); 
+    });
+
+    resetAddForm(); 
+
 </script>
 
 </body>

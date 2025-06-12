@@ -1,13 +1,15 @@
 {% load static %}
 {% load tz %} 
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Histórico de Vendas - PDV Pharmacy</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> {# Caminho ajustado para static #}
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> 
     <link rel="stylesheet" href="{% static 'css/style_vendas_historico.css' %}">
+
 </head>
 <body>
 
@@ -16,20 +18,19 @@
             <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
             <span class="logo-text">PDV Pharmacy</span>
         </div>
-
         <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
         <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
-        <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
-
-        
+        {% if is_dono %}
+            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        {% endif %}
         {% if user.is_authenticated %}
-            <a href="#" class="logout-link">
-                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
-                <form action="{% url 'logout' %}" method="post" style="display: none;">
-                    {% csrf_token %}
-                    <button type="submit" id="logout-button"></button>
-                </form>
-            </a>
+        <a href="#" class="logout-link"> 
+            <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+            <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
+                {% csrf_token %} 
+                <button type="submit" id="logout-button"></button> 
+            </form>
+        </a>
         {% endif %}
     </div>
 
@@ -38,21 +39,60 @@
             HISTÓRICO DE VENDAS
         </div>
 
-        {# Conteúdo do Histórico de Vendas começa aqui #}
-        <div class="history-container"> {# Adicionei um contêiner para o conteúdo do histórico #}
-            
+        {# Mensagens de erro/sucesso do Django #}
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-            
-            
+        {# --- FORMULÁRIO DE FILTROS --- #}
+        <div class="filter-section">
+            <h2>Filtrar Histórico</h2>
+            <form method="GET" action="{% url 'historico_vendas' %}" class="filter-form">
+                
+                <div class="form-group">
+                    <label for="data_inicio">Data Início:</label>
+                    <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio_param }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="data_fim">Data Fim:</label>
+                    <input type="date" id="data_fim" name="data_fim" value="{{ data_fim_param }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="funcionario">Funcionário:</label>
+                    <select id="funcionario" name="funcionario">
+                    <option value="">Todos</option>
+                        {% for func in funcionarios %}
+                            <option value="{{ func.user.id }}" {% if funcionario_param == func.user.id|stringformat:"d" %}selected{% endif %}>
+                                {{ func.user.first_name }} {% if func.user.last_name %}{{ func.user.last_name }}{% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="button button-primary">Aplicar Filtros</button>
+                <a href="{% url 'historico_vendas' %}"><button type="button" class="button button-secondary">Limpar Filtros</button></a>
+            </form>
+        </div>
+        {# --- FIM DO FORMULÁRIO DE FILTROS --- #}
+
+        <div class="history-container"> 
             {% if vendas %}
                 {% for venda in vendas %}
                     <div class="venda-card">
                         <h2>Venda #{{ venda.id }}</h2>
-                        <p><strong>Data:</strong> {{ venda.data|date:"d/m/Y H:i" }}</p>
-                        <p><strong>Funcionário:</strong> {{ venda.funcionario.first_name }}</p>
-                        
+                        <p><strong>Data:</strong> {{ venda.data|date:"d/m/Y H:i" }}</p> {# Fechei a tag <p> aqui, estava faltando #}
+                        <p><strong>Funcionário:</strong> {{ venda.funcionario.first_name }} {% if venda.funcionario.last_name %}{{ venda.funcionario.last_name }}{% endif %}</p>
+                        {# NOVA LINHA: Forma de Pagamento #}
+                        <p><strong>Forma de Pagamento:</strong> {{ venda.get_forma_pagamento_display }}</p>
+
                         <h3>Itens da Venda:</h3>
-                        <table>
+                        <table class="items-table">
                             <thead>
                                 <tr>
                                     <th>Produto</th>
@@ -85,21 +125,21 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <p class="no-sales">Nenhuma venda encontrada no histórico.</p>
+                <p class="no-sales">Nenhuma venda encontrada com os filtros aplicados.</p>
             {% endif %}
         </div>
-        {# Conteúdo do Histórico de Vendas termina aqui #}
-
     </div>
 
+    {# Script para o logout #}
     <script>
-        // Script para o logout (já estava no seu código anterior)
         document.addEventListener('DOMContentLoaded', function() {
             const logoutLink = document.querySelector('.logout-link');
-            if (logoutLink) {
-                logoutLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('logout-button').click();
+            const logoutForm = document.getElementById('logout-form'); 
+
+            if (logoutLink && logoutForm) {
+                logoutLink.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    logoutForm.submit(); 
                 });
             }
         });

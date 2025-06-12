@@ -64,14 +64,16 @@ ROOT_URLCONF = 'PDVfarma.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates','index.html'],  # Diretório para templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ],
+                'funcionario.context_processors.funcionario_logado_context',
+                'funcionario.context_processors.is_dono_context',  
+                ],
         },
     },
 ]
