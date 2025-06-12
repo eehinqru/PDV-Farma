@@ -1,0 +1,181 @@
+{% load static %}
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Produtos</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    <link rel="stylesheet" href="{% static 'css/style_estoque.css' %}">
+    {% load tz %} 
+</head>
+<body> 
+
+<div class="sidebar">
+        <div class="sidebar-top">
+            <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+            <span class="logo-text">PDV Pharmacy</span>
+        </div>
+
+        <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a>  
+        {% if is_dono %}
+            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        {% endif %}
+        
+        {% if user.is_authenticated %}
+        <a href="#" class="logout-link"> 
+        <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+        <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
+            {% csrf_token %} 
+            <button type="submit" id="logout-button"></button> 
+        </form>
+        </a>
+        {% endif %}
+    </div>
+
+<div class="main-content">
+
+    <div class="topbar">
+        ESTOQUE
+    </div>
+
+    <div class="indicators">
+
+        <a href="{% url 'listar_produtos' %}?validade_proxima=true" class="card
+                {% if produto.perto_validade_count_geral > 0 %}
+                 red
+                {% else %}
+                green
+                {% endif %}">
+            Produtos próximos da validade<br><strong>{{ perto_validade_count_geral }}</strong> 
+        </a>
+        
+        <a href="{% url 'listar_produtos' %}?status_validade=vencido" class="card
+                {% if vencidos_count_geral > 0 %}
+                 red
+                {% else %}
+                green
+                {% endif %}">
+            Produtos vencidos<br><strong>{{ vencidos_count_geral }}</strong> 
+        </a>
+        
+        <a href="{% url 'listar_produtos' %}?baixo_estoque=true" class="card
+                {% if baixa_quantidade_count_geral > 0 %}
+                 red
+                {% else %}
+                green
+                {% endif %}"> 
+            Produtos com baixo estoque<br><strong>{{ baixa_quantidade_count_geral }}</strong> 
+        </a>
+    </div>
+
+
+    <div class="controls">
+        {% if is_dono %}
+            <a href="{% url 'criar_produto' %}"><button>+ Adicionar produto</button></a>
+        {% endif %}
+        
+        <form method="GET" action="{% url 'listar_produtos' %}" style="display: inline;">
+            <input type="text" name="q" value="{{ query_param }}" placeholder="Pesquisar produto">
+            
+            <select name="categoria">
+                <option value="">Categoria</option>
+                {% for valor, nome_legivel in todas_categorias %}
+                    <option value="{{ valor }}" {% if categoria_param == valor %}selected{% endif %}>
+                        {{ nome_legivel }}
+                    </option>
+                {% endfor %}
+            </select>
+            
+            <button type="submit">Aplicar Filtros</button>
+            <a href="{% url 'listar_produtos' %}"><button type="button">Limpar Filtros</button></a> {# Usar type="button" para não submeter #}
+        </form>
+    </div>
+
+    <div class="products">
+        {% for produto in page_obj %}
+        <div class="product-card">
+            {% if produto.imagem %}
+            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" width="150" />
+            {% else %}
+            <p>Sem imagem</p>
+            {% endif %}
+            <h3>{{ produto.nome }}<br>{{ produto.get_categoria_display }}</h3>
+            <div class="price">R$: {{ produto.preco|floatformat:2 }}</div> 
+            <div class="qty
+                {% if produto.quantidade_estoque > 12 %}
+                    qty-green
+                {% elif produto.quantidade_estoque > 5 %}
+                    qty-yellow
+                {% else %}
+                    qty-red
+                {% endif %}
+            ">
+            QTD {{ produto.quantidade_estoque }}
+            </div>
+            {% if is_dono %}
+                <div class="actions" style="margin-top: 10px;">
+    <a href="{% url 'atualizar_produto' produto.id %}" class="button button-edit"><i class="fas fa-edit"></i> Editar</a> 
+    <span class="separator">|</span> <form method="post" action="{% url 'deletar_produto' produto.id %}" style="display:inline;" id="delete-form-{{ produto.id }}">
+        {% csrf_token %}
+        <button type="button" class="button button-danger" onclick="confirmDelete({{ produto.id }}, '{{ produto.nome }}')">
+            <i class="fas fa-ban"></i> Remover
+        </button>
+    </form>
+</div>
+            {% endif %}
+            
+            <div>
+                {% if produto.status_validade == 'vencido' %}
+                    <span class="badge badge-red">VENCIDO ({{ produto.data_validade_mais_proxima|date:"d/m/Y" }})</span>
+                {% elif produto.status_validade == 'perto_vencer' %}
+                    <span class="badge badge-yellow">Perto de vencer ({{ produto.data_validade_mais_proxima|date:"d/m/Y" }})</span>
+                {% else %}
+                    <span>Validade OK</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p>Nenhum produto encontrado.</p>
+        {% endfor %}
+    </div>
+    
+    <div class="paginacao" style="text-align: center; margin: 20px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query_param }}&categoria={{ categoria_param }}&validade_proxima={{ validade_proxima_param_ativado|yesno:"true," }}">Anterior</a>
+        {% endif %}
+
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query_param }}&categoria={{ categoria_param }}&validade_proxima={{ validade_proxima_param_ativado|yesno:"true," }}">Próxima</a>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+    function confirmDelete(productId, productName) {
+        if (confirm(`Tem certeza que deseja desativar o produto "${productName}"?\n\nEle não será excluído permanentemente, mas não aparecerá mais nas listas de produtos ativos.`)) {
+            document.getElementById(`delete-form-${productId}`).submit();
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutLink = document.querySelector('.logout-link');
+        const logoutForm = document.getElementById('logout-form'); 
+
+        if (logoutLink && logoutForm) {
+            logoutLink.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                logoutForm.submit(); 
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

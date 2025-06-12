@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao Sistema PDV - Sua Solução</title>
+    <link rel="stylesheet" href="{% static 'css/style_index.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> 
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+            <h1>Bem-vindo ao Sistema de PDV da PDV Pharmacy!</h1>
+            <p>Somos a solução ideal para gerenciar seu ponto de venda de forma eficiente e descomplicada.</p> {# REVISADO PARA CONSISTÊNCIA #}
+        </div>
+
+        <div class="info-section">
+            <h2>O que oferecemos:</h2>
+            <ul>
+                <li>Gestão completa de Produtos e Estoque</li>
+                <li>Registro rápido e intuitivo de Vendas</li>
+                <li>Histórico de Transações</li>
+                <li>Controle de Lotes e Validade</li>
+                <li>Relatórios e Insights para o seu Negócio</li>
+            </ul>
+
+            <div class="call-to-action-group">
+                <p>Pronto para otimizar sua gestão?</p>
+                <a href="{% url 'login' %}" class="cta-button">Iniciar Serviço PDV</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

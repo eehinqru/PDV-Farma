@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render #, redirect 
 
-# Create your views here.
-
+# direcionar a raiz do aplicativo para a página inicial
 def index(request):
-    return render(request, 'index.html')
+
+    return render(request, 'index/index.html')
+

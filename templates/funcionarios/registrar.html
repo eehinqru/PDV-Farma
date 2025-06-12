@@ -1,28 +1,233 @@
-{% extends 'base/base.html' %}
+{% load static %}
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if edicao %}Editar Funcionário{% else %}Registrar Funcionário{% endif %}</title>
+    {# Link para o seu arquivo CSS externo principal (ex: style_estoque.css ou um style_base.css) #}
+    <link rel="stylesheet" href="{% static 'css/style_form_funcionario.css' %}">
+    <link  rel="stylesheet"   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+</head>
+<body> 
 
-{% block title %}
-    {% if edicao %}Editar Funcionário{% else %}Registrar Funcionário{% endif %}
-{% endblock %}
+<div class="sidebar">
+    <div class="sidebar-top">
+        <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+        <span class="logo-text">PDV Pharmacy</span>
+    </div>
 
-{% block content %}
-<h2>{% if edicao %}Editar Funcionário{% else %}Registrar Funcionário{% endif %}</h2>
-
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    <fieldset>
-        <legend>Dados do Usuário</legend>
-        {{ user_form.as_p }}
-        {% if edicao %}
-            <p>Deixe os campos de senha em branco para manter a senha atual.</p>
+    {# Links da sidebar (AGORA TODOS CORRIGIDOS CONFORME SUAS ESPECIFICAÇÕES) #}
+        <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> {# Link para a página de estoque #}
+        <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        {% if user.is_authenticated %}
+        <a href="#" class="logout-link"> 
+        <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+        <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
+            {% csrf_token %} 
+            <button type="submit" id="logout-button"></button> 
+        </form>
+        </a>
         {% endif %}
-    </fieldset>
+</div>
 
-    <fieldset>
-        <legend>Dados do Funcionário</legend>
-        {{ funcionario_form.as_p }}
-    </fieldset>
 
-    <button type="submit">{% if edicao %}Salvar{% else %}Cadastrar{% endif %}</button>
-</form>
-{% endblock %}
+<div class="main-content">
+
+    <div class="topbar">
+        {% if edicao %}EDITAR FUNCIONÁRIO{% else %}REGISTRAR FUNCIONÁRIO{% endif %}
+    </div>
+
+    <div class="form-container">
+    
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {# Mensagens de erro gerais do formulário #}
+            {% if user_form.non_field_errors %}
+                <div class="error-list">
+                    {% for error in user_form.non_field_errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if funcionario_form.non_field_errors %}
+                <div class="error-list">
+                    {% for error in funcionario_form.non_field_errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <fieldset>
+                <legend>Dados do Usuário</legend>
+
+                <div class="form-group nome">
+                    <label for="{{ user_form.first_name.id_for_label }}">Nome</label>
+                    {{ user_form.first_name }}
+                    {% for error in user_form.first_name.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group sobrenome">
+                    <label for="{{ user_form.last_name.id_for_label }}">Sobrenome</label>
+                    {{ user_form.last_name }}
+                    {% for error in user_form.last_name.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group email">
+                    <label for="{{ user_form.email.id_for_label }}">Email</label>
+                    {{ user_form.email }}
+                    {% for error in user_form.email.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group senha">
+                    <label for="{{ user_form.password.id_for_label }}">Senha</label>
+                    {{ user_form.password }}
+                    {% for error in user_form.password.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                    {% if edicao %}
+                    <p>Não deixe os campos de senha em branco.</p>
+                {% endif %}
+                </div>
+
+                <div class="form-group senha-confirmacao">
+                    <label for="{{ user_form.password_confirm.id_for_label }}">Confirme a senha</label>
+                    {{ user_form.password_confirm }}
+                    {% for error in user_form.password_confirm.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                
+            </fieldset>
+
+            <fieldset>
+                <legend>Dados do Funcionário</legend>
+
+                <div class="form-group telefone">
+                    <label for="{{ funcionario_form.telefone.id_for_label }}">Telefone</label>
+                    {{ funcionario_form.telefone }}
+                    {% for error in funcionario_form.telefone.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group cpf">
+                    <label for="{{ funcionario_form.cpf.id_for_label }}">CPF</label>
+                    {{ funcionario_form.cpf }}
+                    {% for error in funcionario_form.cpf.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group endereco">
+                    <label for="{{ funcionario_form.endereco.id_for_label }}">Endereço</label>
+                    {{ funcionario_form.endereco }}
+                    {% for error in funcionario_form.endereco.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group sexo">
+                    <label for="{{ funcionario_form.sexo.id_for_label }}">Sexo</label>
+                    {{ funcionario_form.sexo }}
+                    {% for error in funcionario_form.sexo.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group data-nascimento">
+                    <label for="{{ funcionario_form.data_nascimento.id_for_label }}">Data de Nascimento</label>
+                    {{ funcionario_form.data_nascimento }}
+                    {% for error in funcionario_form.data_nascimento.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="form-group foto">
+    <label for="{{ funcionario_form.foto.id_for_label }}" class="sr-only">Foto</label>
+    {{ funcionario_form.foto }}
+    {% for error in funcionario_form.foto.errors %}
+        <div class="error">{{ error }}</div>
+    {% endfor %}
+    <img id="preview" src="{% if edicao and funcionario_form.instance.foto.url %}{{ funcionario_form.instance.foto.url }}{% endif %}">
+    <label for="{{ funcionario_form.foto.id_for_label }}" class="custom-file-upload">
+        <i class="fas fa-camera"></i> Escolher Foto
+    </label>
+</div>
+
+                <div class="form-group observacao">
+                    <label for="{{ funcionario_form.observacao.id_for_label }}">Observação</label>
+                    {{ funcionario_form.observacao }}
+                    {% for error in funcionario_form.observacao.errors %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <button type="submit" class="button button-primary">{% if edicao %}Salvar{% else %}Cadastrar{% endif %}</button>
+
+                <a href="{% url 'listar_funcionarios' %}">
+                    <button type="button" class="button button-secondary">Cancelar</button>
+                </a>
+
+            {% if edicao %}
+            <form action="{% url 'deletar_funcionario' funcionario.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="button button-secondary" onclick="return confirm('Tem certeza que deseja deletar o funcionário {{ funcionario.nome }}? Esta ação é irreversível!');">
+             Deletar
+            </button>
+        {% endif %}
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    const inputFoto = document.getElementById('{{ funcionario_form.foto.id_for_label }}');
+    const preview = document.getElementById('preview');
+
+    if (inputFoto) { // Verifique se o elemento existe antes de adicionar o listener
+        inputFoto.addEventListener('change', function() {
+            const [file] = inputFoto.files;
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+            } else {
+                // Se nenhum arquivo for selecionado, restaura a imagem original ou deixa vazia
+                {% if edicao and funcionario_form.instance.foto.url %}
+                    preview.src = "{{ funcionario_form.instance.foto.url }}";
+                {% else %}
+                    preview.src = ""; // Ou um placeholder padrão
+                {% endif %}
+            }
+        });
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutLink = document.querySelector('.logout-link');
+        const logoutForm = document.getElementById('logout-form'); 
+
+        if (logoutLink && logoutForm) {
+            logoutLink.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                logoutForm.submit(); 
+            });
+        }
+    });
+</script>
+</body>
+</html>

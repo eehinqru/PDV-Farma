@@ -2,9 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.shortcuts import render, redirect
 from .models import Funcionario
-from .fucionarioForms import FuncionarioForm
+from .fucionarioForms import FuncionarioForm 
 from .userForms import UserForm
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
+from django.db.models import Q 
 
 def is_dono(user):
     return user.groups.filter(name='dono').exists()
@@ -12,10 +14,32 @@ def is_dono(user):
 @login_required
 def listar_funcionarios(request):
     if not is_dono(request.user):
-        return redirect('login')  
-    funcionarios = Funcionario.objects.all()
-    return render(request, 'funcionarios/listar.html', {'funcionarios': funcionarios})
+        return redirect('login')
 
+    query = request.GET.get('q', '') 
+    
+
+    funcionarios_qs = Funcionario.objects.all().order_by('user__first_name', 'user__last_name') 
+
+    if query:
+        funcionarios_qs = funcionarios_qs.filter(
+            Q(user__first_name__icontains=query) | 
+            Q(user__last_name__icontains=query) | 
+            Q(user__email__icontains=query) | 
+            Q(telefone__icontains=query)
+        ).distinct() 
+
+
+    paginator = Paginator(funcionarios_qs, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'funcionarios/listar.html', {
+        'page_obj': page_obj, 
+        'query': query 
+    })
+
+# registrar um novo funcionário
 @login_required
 def registrar_funcionario(request):
     if not is_dono(request.user):
@@ -37,8 +61,8 @@ def registrar_funcionario(request):
             funcionario.user = user
             funcionario.save()
 
-            print("Funcionário criado com sucesso!")  # Debug
-            return redirect('listar_funcionarios')
+            print("Funcionário criado com sucesso!")
+            return redirect('listar_funcionarios') 
         else:
             print("Erros no formulário:")
             print(user_form.errors)
@@ -52,6 +76,7 @@ def registrar_funcionario(request):
         'funcionario_form': funcionario_form,
     })
 
+# editar um funcionário existente
 @login_required
 def editar_funcionario(request, funcionario_id):
     if not is_dono(request.user):
@@ -69,12 +94,12 @@ def editar_funcionario(request, funcionario_id):
 
             senha = user_form.cleaned_data.get('password')
             if senha:
-                user.set_password(senha)  # Atualiza a senha somente se foi preenchida
+                user.set_password(senha)   
 
             user.save()
             funcionario_form.save()
 
-            return redirect('listar_funcionarios')
+            return redirect('listar_funcionarios') 
         else:
             print("Erros nos formulários:")
             print(user_form.errors)
@@ -89,12 +114,15 @@ def editar_funcionario(request, funcionario_id):
         'edicao': True,
         'funcionario': funcionario,
     })
-        
+
+# deletar um funcionário        
 @login_required
 def deletar_funcionario(request, funcionario_id):
     if not is_dono(request.user):
         return redirect('login')
 
     funcionario = get_object_or_404(Funcionario, id=funcionario_id)
+    
     funcionario.delete()
-    return redirect('listar_funcionarios')
+    return redirect('listar_funcionarios') 
+

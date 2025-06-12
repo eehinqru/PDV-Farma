@@ -11,4 +11,11 @@ class FuncionarioForm(forms.ModelForm):
     
     class Meta:
         model = Funcionario
-        fields = ['telefone', 'cpf', 'endereco', 'sexo', 'data_nascimento', 'foto', 'observacao']
+        fields = ['telefone', 
+                  'cpf', 
+                  'endereco', 
+                  'sexo', 
+                  'data_nascimento', 
+                  'foto', 
+                  'observacao'
+                  ]

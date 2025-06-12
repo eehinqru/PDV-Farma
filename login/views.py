@@ -1,28 +1,28 @@
-# login/views.py
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
+# aplicação de login para autenticar usuários
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        senha = request.POST.get('password')
+        user = authenticate(request, username=username, password=senha)
 
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
+        if user:
             login(request, user)
-
-            # Redirecionamento com base no grupo do usuário
-            if user.groups.filter(name='dono').exists():
-                return redirect('estoque')  # redireciona pra tela de estoque
-            elif user.groups.filter(name='funcionario').exists():
-                return redirect('vendas')   # redireciona pra tela de vendas
-
-            return redirect('home')  # fallback
-
+            return redirect('listar_produtos')  
         else:
-            messages.error(request, "Usuário ou senha inválidos.")
+            messages.error(request, 'Usuário ou senha inválidos.')
 
     return render(request, 'login/login.html')
+
+# logout_view para desconectar o usuário
+@login_required 
+def logout_view(request):
+    logout(request) 
+    messages.success(request, "Você foi desconectado com sucesso.")
+    return redirect('login:login')  
+

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - PDV Pharmacy</title>
     <link rel="stylesheet" href="{% static 'css/style_login.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <form method="POST">
             {% csrf_token %}
             <div class="form-group">
-                <label for="username">Usuário:</label>
+                <label for="username">Email:</label>
                 <input type="text" name="username" required>
             </div>
             <div class="form-group">
@@ -34,7 +35,7 @@
             </div>
 
             {% if form.errors %}
-                <p style="color: red;">Usuário ou senha inválidos.</p>
+                <p style="color: red;">Email ou senha inválidos.</p>
             {% endif %}
 
             <button type="submit" class="btn-login">Entrar</button>
