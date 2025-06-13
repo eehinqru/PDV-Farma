@@ -271,13 +271,16 @@ def dashboard(request):
     # Indicadores principais do estoque
     # 1. Contagem de Lotes Vencidos
     vencidos_count = Lote.objects.filter(
+        produto__ativo=True,
         data_validade__lt=hoje
     ).count()
 
     # 2. Contagem de Lotes Perto da Validade (dentro dos próximos 90 dias)
     perto_validade_count = Lote.objects.filter(
+        produto__ativo=True,
         data_validade__gte=hoje,
-        data_validade__lte=limite_validade_dashboard
+        data_validade__lte=limite_validade_dashboard,
+        
     ).count()
 
     # 3. Contagem de Produtos com Baixo Estoque (<= 5 unidades)
@@ -291,13 +294,11 @@ def dashboard(request):
 
     # 5. Quantidade Total de Itens em Estoque (considera apenas lotes não vencidos de produtos ativos)
     quantidade_total_itens = Lote.objects.filter(
-        produto__ativo=True,
         data_validade__gte=hoje
     ).aggregate(total=Coalesce(Sum('quantidade'), 0))['total']
 
     # 6. Valor Total do Estoque (considera apenas produtos ativos e lotes não vencidos)
     valor_total_estoque = Lote.objects.filter(
-        produto__ativo=True,
         data_validade__gte=hoje
     ).annotate(
         valor_lote=ExpressionWrapper(F('quantidade') * F('produto__preco'), output_field=DecimalField())
