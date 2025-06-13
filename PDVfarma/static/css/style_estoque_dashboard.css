@@ -1,0 +1,260 @@
+/* Estilos Gerais para a Página */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    display: flex; /* Para o layout de sidebar e conteúdo principal */
+    min-height: 100vh;
+}
+
+/* Sidebar - Mantenha a consistência com suas outras telas */
+.sidebar {
+    width: 250px;
+    background-color: #343a40; /* Cor de fundo escura */
+    color: white;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+.sidebar-top {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centraliza logo e texto */
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.sidebar-top .logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.sidebar-top .logo-text {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #007bff; /* Cor para o texto do logo */
+}
+
+.sidebar a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre ícone e texto */
+    transition: background-color 0.3s ease;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background-color: #007bff; /* Cor de destaque ao passar o mouse ou ativo */
+    color: white;
+}
+
+.sidebar a i {
+    width: 20px; /* Garante que os ícones tenham largura consistente */
+    text-align: center;
+}
+
+/* Estilos para o perfil do usuário na sidebar */
+.user-profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+.user-profile-sidebar .profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #007bff;
+    margin-bottom: 10px;
+}
+
+.user-profile-sidebar .user-name {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+/* Estilos da Topbar (cabeçalho) */
+.main-content {
+    flex-grow: 1; /* Ocupa o restante do espaço */
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f7f6;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #ffffff; /* Fundo branco */
+    border-bottom: 1px solid #dee2e6;
+    color: #343a40;
+    font-size: 1.2em;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-info {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.user-info strong {
+    color: #007bff;
+}
+
+/* Estilos do Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Colunas responsivas */
+    gap: 20px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.card h3 {
+    font-size: 1.2em;
+    color: #343a40;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.card h3 i {
+    font-size: 1.5em;
+    color: #007bff; /* Cor padrão do ícone */
+}
+
+.card .metric-value {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #007bff; /* Cor padrão do valor */
+    margin: 0;
+}
+
+/* Cores específicas para os cards */
+.card-vencidos h3 i, .card-vencidos .metric-value { color: #dc3545; } /* Vermelho */
+.card-perto-vencer h3 i, .card-perto-vencer .metric-value { color: #ffc107; } /* Amarelo */
+.card-baixo-estoque h3 i, .card-baixo-estoque .metric-value { color: #fd7e14; } /* Laranja */
+.card-total-produtos h3 i, .card-total-produtos .metric-value { color: #28a745; } /* Verde */
+.card-total-itens h3 i, .card-total-itens .metric-value { color: #6f42c1; } /* Roxo */
+.card-valor-total h3 i, .card-valor-total .metric-value { color: #17a2b8; } /* Azul ciano */
+
+
+/* Estilos para a Distribuição por Categoria */
+.category-distribution {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 25px;
+    margin: 20px; /* Margem ao redor da tabela */
+}
+
+.category-distribution h2 {
+    font-size: 1.5em;
+    color: #343a40;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.category-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.category-table th, .category-table td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: left;
+}
+
+.category-table th {
+    background-color: #e9ecef;
+    font-weight: bold;
+    color: #495057;
+}
+
+.category-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.category-table tr:hover {
+    background-color: #e2f0fd;
+}
+
+/* Estilos para mensagens do Django */
+.messages {
+    list-style: none;
+    padding: 10px 20px;
+    margin: 0;
+}
+
+.messages li {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.messages .success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.messages .error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.messages .info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.messages .warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.messages .close-message {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 0 5px;
+}

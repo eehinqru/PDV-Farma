@@ -6,9 +6,12 @@ from .forms import ProdutoForm, LoteFormSet
 from django.core.paginator import Paginator
 from django.utils import timezone
 from datetime import timedelta
-from django.db.models import Q, Sum, F, ExpressionWrapper, DecimalField
+from django.db.models import Q, Sum, F, ExpressionWrapper, DecimalField, Count 
+from django.db.models.functions import Coalesce
 from django.db import transaction
 from django.contrib import messages
+from funcionario.models import Funcionario
+from decimal import Decimal
 
 # Redireciona para a listagem de produtos.
 def estoque(request):
@@ -265,29 +268,110 @@ def dashboard(request):
     hoje = timezone.localdate()
     limite_validade_dashboard = hoje + timedelta(days=90) 
     
-    perto_validade_count = Lote.objects.filter(
-        data_validade__gt=hoje,
-        data_validade__lte=limite_validade_dashboard
-    ).count()
-    
+    # Indicadores principais do estoque
+    # 1. Contagem de Lotes Vencidos
     vencidos_count = Lote.objects.filter(
         data_validade__lt=hoje
     ).count()
 
-    baixa_quantidade_count = Produto.objects.filter(
-        quantidade_estoque__lte=5
+    # 2. Contagem de Lotes Perto da Validade (dentro dos próximos 90 dias)
+    perto_validade_count = Lote.objects.filter(
+        data_validade__gte=hoje,
+        data_validade__lte=limite_validade_dashboard
     ).count()
 
+    # 3. Contagem de Produtos com Baixo Estoque (<= 5 unidades)
+    baixa_quantidade_count = Produto.objects.filter(
+        quantidade_estoque__lte=5,
+        ativo=True
+    ).count()
+
+    # 4. Total de Produtos Ativos
+    total_produtos_ativos = Produto.objects.filter(ativo=True).count()
+
+    # 5. Quantidade Total de Itens em Estoque (considera apenas lotes não vencidos de produtos ativos)
+    quantidade_total_itens = Lote.objects.filter(
+        produto__ativo=True,
+        data_validade__gte=hoje
+    ).aggregate(total=Coalesce(Sum('quantidade'), 0))['total']
+
+    # 6. Valor Total do Estoque (considera apenas produtos ativos e lotes não vencidos)
+    valor_total_estoque = Lote.objects.filter(
+        produto__ativo=True,
+        data_validade__gte=hoje
+    ).annotate(
+        valor_lote=ExpressionWrapper(F('quantidade') * F('produto__preco'), output_field=DecimalField())
+    ).aggregate(total=Coalesce(Sum('valor_lote'), Decimal('0.00')))['total']
+
+    # 7. Produtos por Categoria (para um gráfico ou tabela)
+    produtos_por_categoria = Produto.objects.filter(ativo=True).values('categoria').annotate(
+        count=Count('id')
+    ).order_by('categoria')
+
+    categorias_display = {k: v for k, v in Produto.CATEGORIAS}
+    produtos_por_categoria_display = [
+        {'nome': categorias_display.get(item['categoria'], item['categoria']), 'count': item['count']}
+        for item in produtos_por_categoria
+    ]
+    
+    # 8. Número de vendas no mês
+    vendas_no_mes = Venda.objects.filter(
+        data__year=hoje.year,
+        data__month=hoje.month
+    )
+    numero_vendas_mes = vendas_no_mes.count()
+
+    # 9. Dinheiro feito no mês (faturamento total)
+    dinheiro_feito_mes = vendas_no_mes.aggregate(total_faturado=Coalesce(Sum('total'), Decimal('0.00')))['total_faturado']
+
+    # 10. Funcionário que fez mais vendas no mês
+    funcionario_mais_vendas_mes = None
+    vendas_por_funcionario = vendas_no_mes.values('funcionario__first_name', 'funcionario__last_name').annotate(
+        num_vendas=Count('id')
+    ).order_by('-num_vendas') 
+
+    if vendas_por_funcionario:
+        top_vendedor = vendas_por_funcionario.first() 
+        nome_completo = top_vendedor['funcionario__first_name']
+        if top_vendedor['funcionario__last_name']:
+            nome_completo += f" {top_vendedor['funcionario__last_name']}"
+        funcionario_mais_vendas_mes = {
+            'nome': nome_completo,
+            'num_vendas': top_vendedor['num_vendas']
+        }
+
+    funcionario_logado = None
+    if request.user.is_authenticated:
+        try:
+            funcionario_logado = request.user.funcionario
+        except Funcionario.DoesNotExist:
+            pass
+
+    is_dono_context = eh_dono(request.user)
+
     context = {
+        # Métricas de Estoque
         'vencidos_count': vencidos_count, 
         'perto_validade_count': perto_validade_count,
         'baixa_quantidade_count': baixa_quantidade_count,
+        'total_produtos_ativos': total_produtos_ativos,
+        'quantidade_total_itens': quantidade_total_itens,
+        'valor_total_estoque': valor_total_estoque,
+        'produtos_por_categoria': produtos_por_categoria_display,
+        
+        # Métricas de Vendas
+        'numero_vendas_mes': numero_vendas_mes,
+        'dinheiro_feito_mes': dinheiro_feito_mes,
+        'funcionario_mais_vendas_mes': funcionario_mais_vendas_mes,
+
+        # Informações gerais do dashboard e usuário
         'hoje': hoje,
-        'limite_validade': limite_validade_dashboard,
+        'limite_validade_dashboard': limite_validade_dashboard,
+        'is_dono': is_dono_context,
+        'funcionario_logado': funcionario_logado,
     }
 
     return render(request, 'estoque/dashboard.html', context)
-
 
 # Nova lógica para a tela de vendas
 @login_required

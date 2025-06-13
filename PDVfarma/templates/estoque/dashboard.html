@@ -1,0 +1,152 @@
+{% load static %}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard do Estoque - PDV Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"> 
+    <link rel="stylesheet" href="{% static 'css/style_estoque_dashboard.css' %}">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <img src="{% static 'img/logo-icon.png' %}" alt="Logo PDV Farma" class="logo">
+            <span class="logo-text">PDV Pharmacy</span>
+        </div>
+
+        {% if user.is_authenticated and funcionario_logado %}
+        <div class="user-profile-sidebar">
+            {% if funcionario_logado.foto %}
+                <img src="{{ funcionario_logado.foto.url }}" alt="Foto de Perfil" class="profile-pic">
+            {% else %}
+                <img src="{% static 'img/default_profile_pic.png' %}" alt="Foto de Perfil Padrão" class="profile-pic">
+            {% endif %}
+            <span class="user-name">{{ user.first_name|default:user.username }}</span>
+        </div>
+        {% endif %}
+
+        <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Listar Produtos</span></a>
+        <a href="{% url 'dashboard' %}" class="active"><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
+        {% if is_dono %}
+            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <a href="#" class="logout-link"> 
+            <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+            <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
+                {% csrf_token %} 
+                <button type="submit" id="logout-button"></button> 
+            </form>
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            DASHBOARD DO ESTOQUE
+            {% if user.is_authenticated %}
+                <span class="user-info">Olá, <strong>{{ user.first_name|default:user.username }}</strong>!</span>
+            {% endif %}
+        </div>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="dashboard-grid">
+            {# Cards de Estoque Existentes #}
+            <div class="card card-vencidos">
+                <h3><i class="fas fa-calendar-times"></i> Lotes Vencidos</h3>
+                <p class="metric-value">{{ vencidos_count }}</p>
+            </div>
+            <div class="card card-perto-vencer">
+                <h3><i class="fas fa-exclamation-triangle"></i> Perto da Validade (90 dias)</h3>
+                <p class="metric-value">{{ perto_validade_count }}</p>
+            </div>
+            <div class="card card-baixo-estoque">
+                <h3><i class="fas fa-box-open"></i> Baixo Estoque</h3>
+                <p class="metric-value">{{ baixa_quantidade_count }}</p>
+            </div>
+            <div class="card card-total-produtos">
+                <h3><i class="fas fa-boxes"></i> Total de Produtos Ativos</h3>
+                <p class="metric-value">{{ total_produtos_ativos }}</p>
+            </div>
+            <div class="card card-total-itens">
+                <h3><i class="fas fa-boxes-stacked"></i> Quantidade Total de Itens</h3>
+                <p class="metric-value">{{ quantidade_total_itens }}</p>
+            </div>
+            <div class="card card-valor-total">
+                <h3><i class="fas fa-hand-holding-dollar"></i> Valor Total do Estoque</h3>
+                <p class="metric-value">R$ {{ valor_total_estoque|floatformat:2 }}</p>
+            </div>
+
+            {# --- NOVOS CARDS DE VENDAS NO MÊS --- #}
+            <div class="card card-vendas-mes">
+                <h3><i class="fas fa-receipt"></i> Vendas no Mês</h3>
+                <p class="metric-value">{{ numero_vendas_mes }}</p>
+            </div>
+            <div class="card card-faturamento-mes">
+                <h3><i class="fas fa-dollar-sign"></i> Faturamento Mês</h3>
+                <p class="metric-value">R$ {{ dinheiro_feito_mes|floatformat:2 }}</p>
+            </div>
+            <div class="card card-top-vendedor">
+                <h3><i class="fas fa-star"></i> Top Vendedor (Mês)</h3>
+                {% if funcionario_mais_vendas_mes %}
+                    <p class="metric-value-sm">{{ funcionario_mais_vendas_mes.nome }}</p>
+                    <p class="metric-subtitle">({{ funcionario_mais_vendas_mes.num_vendas }} vendas)</p>
+                {% else %}
+                    <p class="metric-value-sm">Nenhum</p>
+                    <p class="metric-subtitle">Vendedor ainda</p>
+                {% endif %}
+            </div>
+            {# --- FIM DOS NOVOS CARDS --- #}
+
+        </div>
+
+        <div class="category-distribution">
+            <h2>Distribuição por Categoria</h2>
+            {% if produtos_por_categoria %}
+                <table class="category-table">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Nº de Produtos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria_data in produtos_por_categoria %}
+                            <tr>
+                                <td>{{ categoria_data.nome }}</td>
+                                <td>{{ categoria_data.count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Nenhum produto encontrado para exibir por categoria.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.querySelector('.logout-link');
+            const logoutForm = document.getElementById('logout-form'); 
+
+            if (logoutLink && logoutForm) {
+                logoutLink.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    logoutForm.submit(); 
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
