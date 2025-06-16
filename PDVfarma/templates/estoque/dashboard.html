@@ -15,23 +15,24 @@
             <span class="logo-text">PDV Pharmacy</span>
         </div>
 
-        {% if user.is_authenticated and funcionario_logado %}
-        <div class="user-profile-sidebar">
-            {% if funcionario_logado.foto %}
-                <img src="{{ funcionario_logado.foto.url }}" alt="Foto de Perfil" class="profile-pic">
-            {% else %}
-                <img src="{% static 'img/default_profile_pic.png' %}" alt="Foto de Perfil Padrão" class="profile-pic">
-            {% endif %}
-            <span class="user-name">{{ user.first_name|default:user.username }}</span>
-        </div>
-        {% endif %}
-
+          {#  INICIO DOS LINKS DA SIDEBAR  #}
+        
         <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
-        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Listar Produtos</span></a>
-        <a href="{% url 'dashboard' %}" class="active"><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a>  
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
         {% if is_dono %}
             <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
         {% endif %}
+        {% if user.is_authenticated and funcionario_logado %}
+    <div class="user-profile-sidebar">
+        {% if funcionario_logado.foto %}
+            <img src="{{ funcionario_logado.foto.url }}" alt="Foto de Perfil" class="profile-pic">
+        {% else %}
+            <img src="{% static 'img/default_profile_pic.png' %}" alt="Foto de Perfil Padrão" class="profile-pic">
+        {% endif %}
+        <span class="user-name">{{ user.first_name|default:user.username }}</span>
+    </div>
+    {% endif %}
         {% if user.is_authenticated %}
         <a href="#" class="logout-link"> 
             <i class="fas fa-sign-out-alt"></i><span>Sair</span>
@@ -42,13 +43,13 @@
         </a>
         {% endif %}
     </div>
+   {# FIM DOS LINKS DA SIDEBAR  #}
+    
 
     <div class="main-content">
         <div class="topbar">
             DASHBOARD DO ESTOQUE
-            {% if user.is_authenticated %}
-                <span class="user-info">Olá, <strong>{{ user.first_name|default:user.username }}</strong>!</span>
-            {% endif %}
+    
         </div>
 
         {% if messages %}
@@ -109,30 +110,7 @@
 
         </div>
 
-        <div class="category-distribution">
-            <h2>Distribuição por Categoria</h2>
-            {% if produtos_por_categoria %}
-                <table class="category-table">
-                    <thead>
-                        <tr>
-                            <th>Categoria</th>
-                            <th>Nº de Produtos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for categoria_data in produtos_por_categoria %}
-                            <tr>
-                                <td>{{ categoria_data.nome }}</td>
-                                <td>{{ categoria_data.count }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>Nenhum produto encontrado para exibir por categoria.</p>
-            {% endif %}
-        </div>
-    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

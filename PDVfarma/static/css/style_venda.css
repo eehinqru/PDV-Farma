@@ -5,7 +5,7 @@
     height: 80px; /* Altura da imagem */
     border-radius: 50%; /* Faz a imagem ficar redonda (se for quadrada) */
     object-fit: cover;  /* Garante que a imagem preencha o espaço sem distorcer */
-    border: 2px solid #007bff; /* Adiciona uma borda */
+    border: 2px solid #007b80; /* Adiciona uma borda */
     margin-bottom: 10px; /* Espaçamento abaixo da imagem */
 }
 
@@ -30,88 +30,133 @@ body {
 
 /* --- Sidebar --- */
 .sidebar {
-    width: 13.75rem; /* 220px */
+    width: 220px;
     background-color: #2d2d2d;
     color: white;
     display: flex;
     flex-direction: column;
     height: 100vh;
-    justify-content: space-between;
+    justify-content: flex-start; /* Os links normais começam no topo */
+    gap: 5px; /* Espaçamento entre os links */
+    padding-top: 60px; /* Adiciona padding para o topo da sidebar (altura da topbar) */
     flex-shrink: 0; /* Impede que a sidebar encolha */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra para destacar */
 }
 
+/* Área da logo com fundo #025255 */
 .sidebar-top {
     background-color: #025255;
-    height: 3.75rem; /* 60px */
-    width: 100%;
+    height: 60px;
+    width: 220px;
     display: flex;
     align-items: center;
-    gap: 0.625rem; /* 10px */
-    padding: 0 1.25rem; /* 20px */
-    flex-shrink: 0;
+    gap: 10px;
+    padding: 0 20px;
+    position: fixed; /* Fixa no topo e na esquerda */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Garante que fique acima de outros elementos */
 }
 
 .sidebar-top .logo {
-    width: 80px;
-    height: 80px;
+    width: 5rem; /* 80px / 16px = 5rem */
+    height: 5rem; /* 80px / 16px = 5rem */
     object-fit: contain;
 }
 
 .sidebar-top .logo-text {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 1rem; /* 16px / 16px = 1rem */
     color: white;
 }
+
+/* Links normais da sidebar */
 .sidebar a {
     display: flex;
     align-items: center;
-    gap: 0.625rem; /* 10px */
+    gap: 10px;
     color: white;
     text-decoration: none;
-    font-size: 1rem; /* 16px */
-    padding: 0.625rem 0.9375rem; /* 10px 15px */
-    border-radius: 0.5rem; /* 8px */
+    font-size: 1rem; /* Ajustado para rem para consistência */
+    border-radius: 0px;
+    padding: 10px 15px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
+/* Ícones nos links da sidebar */
 .sidebar a i {
-    font-size: 1.875rem; /* 30px */
-    width: 2rem; /* 32px */
+    font-size: 30px;
+    width: 32px;
     text-align: center;
 }
 
+/* Hover nos links da sidebar */
 .sidebar a:hover {
     background-color: #007b80;
 }
 
-
-/* Estilos para o link de Sair */
-.sidebar .logout-link {
-    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
+/* Seção de Perfil do Usuário na Sidebar */
+.user-profile-sidebar {
+    display: flex;
+    flex-direction: column; /* Organiza itens em coluna: imagem, nome, etc. */
+    align-items: center; /* Centraliza horizontalmente os itens */
+    padding: 20px 0; /* Espaçamento interno */
+    margin-top: auto; /* IMPORTANTE: Empurra esta seção e o logout para o final */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha divisória sutil */
+    padding-top: 20px; /* Espaçamento após a linha */
 }
 
-.sidebar .logout-link form {
-    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
+.user-profile-sidebar .profile-pic {
+    width: 80px; /* Largura da imagem */
+    height: 80px; /* Altura da imagem */
+    border-radius: 50%; /* Faz a imagem ficar redonda (se for quadrada) */
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+    border: 2px solid #007b80; /* Adiciona uma borda */
+    margin-bottom: 10px; /* Espaçamento abaixo da imagem */
 }
 
-.sidebar .logout-link button {
-    /* Basicamente zera o estilo padrão do botão para que o <a> pai o estilize */
+.user-profile-sidebar .user-name {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* Espaçamento abaixo do nome de usuário */
+}
+
+/* Estilos para o link de Sair (agora um botão dentro de um formulário) */
+.logout-link {
+    width: 100%; /* Garante que o container ocupe a largura completa */
+    padding: 10px 0; /* Adiciona um pouco de padding */
+    text-align: center; /* Centraliza o botão dentro do container */
+}
+
+.logout-link form {
+    display: flex; /* Para centralizar o botão de submit */
+    justify-content: center; /* Centraliza horizontalmente o botão */
+    width: 100%; /* Ocupa a largura total para centralização */
+}
+
+.logout-link .logout-button-styled { /* Nova classe para o botão de sair */
     background: none;
     border: none;
-    padding: 0;
-    margin: 0;
-    color: inherit; /* Herda a cor do texto do link pai */
-    font-size: inherit; /* Herda o tamanho da fonte do link pai */
+    padding: 10px 15px; /* Aumenta o padding do botão para ser clicável */
+    color: white; /* Garante que a cor seja branca */
+    font-size: 1rem; /* Ajusta o tamanho da fonte */
     font-weight: inherit;
-    cursor: inherit; /* Herda o cursor do link pai */
+    cursor: pointer; /* Indica que é clicável */
     text-align: left; /* Alinha o texto do botão à esquerda */
-    display: flex; /* Permite que o botão se comporte como flex item para alinhamento */
+    display: flex;
     align-items: center;
-    gap: 10px; /* Mantém o gap com o ícone, se houver */
-    flex-grow: 1; /* Ocupa o espaço restante */
+    gap: 10px;
+    width: 100%; /* Faz o botão preencher o container, mas ainda permitindo justify-content */
+    max-width: 220px; /* Garante que o botão não ultrapasse a largura da sidebar */
+    transition: background-color 0.3s ease;
 }
+
+.logout-link .logout-button-styled:hover {
+    background-color: #007b80; /* Cor de hover para o botão de sair */
+}
+
 
 
 /* --- Conteúdo Principal --- */
@@ -543,570 +588,30 @@ body {
     .sidebar a span {
         display: none;
     }
-
-    
-    .topbar {
-        font-size: 1.125rem; /* 18px */
-        text-align: center;
-        justify-content: center; /* Garante que 'NOVA VENDA' fica centralizado */
+ /* Ajuste para o perfil em modo responsivo */
+    .user-profile-sidebar {
+        padding: 10px 0; /* Menos padding */
+        border-top: none; /* Remove a borda superior se não for necessária */
+        margin-top: auto; /* Mantém empurrado para baixo */
     }
 
-    #form-venda {
-        grid-template-columns: 1fr; /* Uma única coluna em telas pequenas */
-        gap: 1rem; /* 16px */
-        padding: 1rem; /* 16px */
+    .user-profile-sidebar .profile-pic {
+        width: 50px; /* Reduz o tamanho da imagem de perfil */
+        height: 50px;
+        margin-bottom: 5px; /* Menos margem */
     }
 
-    .products-section,
-    .summary-section {
-        grid-column: 1 / 2; /* Ocupam a única coluna */
-        height: auto; /* Remove altura fixa para flexibilidade */
-        min-height: 25rem; /* Exemplo: altura mínima */
+    .user-profile-sidebar .user-name { /* Mudei para user-name conforme seu HTML */
+        display: none; /* Esconde o nome do usuário em telas pequenas */
     }
 
-    .search-container,
-    .add-item-area {
-        width: 90%; /* Ocupa a largura total em telas pequenas */
-        max-width: none; /* Remove limite máximo em telas pequenas */
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-/* style_nova_venda.css */
-
-/* Reset e Base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    font-size: 16px; /* Tamanho base para a unidade rem */
-}
-
-body {
-    display: flex;
-    height: 100vh;
-    background-color: #f0f0f0;
-    font-family: 'Arial', sans-serif;
-    color: #333;
-}
-
-/* --- Sidebar --- */
-.sidebar {
-    width: 13.75rem; /* 220px */
-    background-color: #2d2d2d;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    justify-content: space-between;
-    flex-shrink: 0; /* Impede que a sidebar encolha */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra para destacar */
-}
-
-.sidebar-top {
-    background-color: #025255;
-    height: 3.75rem; /* 60px */
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.625rem; /* 10px */
-    padding: 0 1.25rem; /* 20px */
-    flex-shrink: 0;
-}
-
-.sidebar-top .logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
-.sidebar-top .logo-text {
-    font-weight: bold;
-    font-size: 16px;
-    color: white;
-}
-.sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem; /* 10px */
-    color: white;
-    text-decoration: none;
-    font-size: 1rem; /* 16px */
-    padding: 0.625rem 0.9375rem; /* 10px 15px */
-    border-radius: 0.5rem; /* 8px */
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.sidebar a i {
-    font-size: 1.875rem; /* 30px */
-    width: 2rem; /* 32px */
-    text-align: center;
-}
-
-.sidebar a:hover {
-    background-color: #007b80;
-}
-
-
-/* Estilos para o link de Sair */
-.sidebar .logout-link {
-    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
-}
-
-.sidebar .logout-link form {
-    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
-}
-
-.sidebar .logout-link button {
-    /* Basicamente zera o estilo padrão do botão para que o <a> pai o estilize */
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    color: inherit; /* Herda a cor do texto do link pai */
-    font-size: inherit; /* Herda o tamanho da fonte do link pai */
-    font-weight: inherit;
-    cursor: inherit; /* Herda o cursor do link pai */
-    text-align: left; /* Alinha o texto do botão à esquerda */
-    display: flex; /* Permite que o botão se comporte como flex item para alinhamento */
-    align-items: center;
-    gap: 10px; /* Mantém o gap com o ícone, se houver */
-    flex-grow: 1; /* Ocupa o espaço restante */
-}
-
-
-/* --- Conteúdo Principal --- */
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #f9f9f9;
-    overflow-y: auto; /* Permite rolagem interna do conteúdo principal */
-}
-
-/* --- Topbar --- */
-.topbar {
-    background-color: #007b80;
-    height: 3.75rem; /* 60px */
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; /* Centralizado como na imagem */
-    font-size: 1.5rem; /* 24px */
-    font-weight: bold;
-    padding: 0 1.25rem; /* 20px */
-    flex-shrink: 0;
-}
-
-/* --- Mensagens do Django --- */
-.messages {
-    list-style: none;
-    padding: 0.625rem 1.25rem; /* 10px 20px */
-    margin: 0;
-}
-
-.messages li {
-    padding: 0.625rem; /* 10px */
-    margin-bottom: 0.625rem; /* 10px */
-    border-radius: 0.3125rem; /* 5px */
-    font-weight: bold;
-    text-align: center;
-}
-
-.messages .success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.messages .error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-/* --- Formulário de Venda --- */
-#form-venda {
-    display: grid;
-    grid-template-columns: 1fr 0.4fr; /* Coluna para a lista de produtos/pesquisa e outra para o resumo da venda */
-    gap: 1.25rem; /* 20px */
-    padding: 1.25rem; /* 20px */
-    height: calc(100% - 3.75rem); /* Ocupa o restante da altura do main-content após a topbar */
-}
-
-/* Seção da Esquerda (produtos e pesquisa) */
-.products-section {
-    grid-column: 1 / 2; /* Ocupa a primeira coluna */
-    display: flex;
-    flex-direction: column; /* Organiza os elementos verticalmente */
-    background-color: white; /* Fundo branco para a seção principal */
-    border-radius: 0.625rem; /* 10px */
-    padding: 1.25rem; /* 20px */
-    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
-    flex-grow: 1; /* Permite que a seção de produtos ocupe o máximo de altura */
-    gap: 1.5rem; /* Aumenta o espaçamento entre a tabela e as seções de pesquisa/adição */
-}
-
-/* Seção da Direita (Totais) */
-.summary-section {
-    grid-column: 2 / 3; /* Ocupa a segunda coluna */
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    border-radius: 0.625rem; /* 10px */
-    padding: 1.25rem; /* 20px */
-    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
-}
-
-/* Tabela de Itens da Venda */
-#itens-venda {
-    width: 100%; /* Garante que a tabela ocupe 100% da largura do pai */
-    border-collapse: collapse;
-    flex-grow: 1;
-    max-height: 100%;
-    border: 1px solid #ddd;
-    border-radius: 0.625rem;
-    display: table; /* Faz a tabela se comportar como uma tabela real */
-    table-layout: fixed; /* Fundamental para fixar as larguras das colunas */
-}
-
-#itens-venda thead {
-    background-color: #007b80; /* Cor de fundo do cabeçalho */
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    display: table-header-group; /* Faz o thead se comportar como um cabeçalho de tabela */
-    width: 100%; /* Garante que o thead ocupe 100% da largura */
-}
-
-#itens-venda tbody {
-    display: table-row-group; /* Faz o tbody se comportar como o corpo de uma tabela */
-    max-height: calc(100% - 3.75rem); /* Ajuste dinâmico da altura do tbody */
-    overflow-y: auto; /* Adiciona scroll se a tabela for muito longa */
-    width: 100%; /* Garante que o tbody ocupe 100% da largura */
-}
-
-#itens-venda tr {
-    display: table-row; /* Garante que as linhas se comportem como linhas de tabela */
-    width: 100%; /* Garante que a linha ocupe 100% da largura */
-}
-
-
-#itens-venda th,
-#itens-venda td {
-    padding: 0.75rem; /* 12px */
-    border: 1px solid #ddd;
-    text-align: left;
-    font-size: 0.9375rem; /* 15px */
-    white-space: nowrap; /* Impede quebras de linha que poderiam afetar o alinhamento */
-    overflow: hidden; /* Oculta conteúdo que transborda */
-    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
-}
-
-#itens-venda th {
-    background-color: #007b80; /* Garante a cor de fundo do cabeçalho */
-    font-weight: bold;
-    color: white; /* Cor do texto do cabeçalho */
-}
-
-/* Definição das larguras das colunas para garantir alinhamento */
-#itens-venda th:nth-child(1),
-#itens-venda td:nth-child(1) { width: 30%; } /* Nome */
-#itens-venda th:nth-child(2),
-#itens-venda td:nth-child(2) { width: 15%; } /* Categoria */
-#itens-venda th:nth-child(3),
-#itens-venda td:nth-child(3) { width: 15%; } /* Preço Unit. */
-#itens-venda th:nth-child(4),
-#itens-venda td:nth-child(4) { width: 10%; } /* Quantidade */
-#itens-venda th:nth-child(5),
-#itens-venda td:nth-child(5) { width: 15%; } /* Subtotal */
-#itens-venda th:nth-child(6),
-#itens-venda td:nth-child(6) { width: 15%; } /* Ações */
-
-
-#itens-venda tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-#itens-venda tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-#itens-venda td button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 0.375rem 0.625rem; /* 6px 10px */
-    border-radius: 0.3125rem; /* 5px */
-    cursor: pointer;
-    font-size: 0.875rem; /* 14px */
-    transition: background-color 0.2s ease;
-}
-
-#itens-venda td button:hover {
-    background-color: #c0392b;
-}
-
-/* Área de pesquisa e resultados */
-.search-container {
-    position: relative;
-    /* margin-top: 1rem; O gap do products-section cuida disso */
-    margin-bottom: 0.5rem; /* Espaço antes da próxima seção */
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem; /* 8px */
-    width: 60%; /* Ajustado para um tamanho fixo, ou porcentagem menor */
-    max-width: 400px; /* Limite máximo para não ficar gigante em telas grandes */
-    margin-left: auto; /* Centraliza horizontalmente */
-    margin-right: auto; /* Centraliza horizontalmente */
-    padding: 1rem; /* Padding interno um pouco maior */
-    background-color: #ffffff; /* Fundo branco para as caixas */
-    border: 1px solid #e0e0e0; /* Borda sutil */
-    border-radius: 0.625rem; /* Arredondamento */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Sombra suave para destacar a caixa */
-}
-
-.search-container label {
-    font-weight: bold;
-    font-size: 0.95rem; /* Fonte levemente maior */
-    color: #555;
-}
-
-.search-container input[type="text"] {
-    width: 100%;
-    padding: 0.5rem 0.9375rem; /* Padding ajustado */
-    border: 1px solid #ccc;
-    border-radius: 1.25rem; /* 20px */
-    font-size: 0.95rem; /* Fonte ajustada */
-    outline: none;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.search-container #search-results {
-    list-style: none;
-    position: absolute;
-    top: calc(100% + 0.3125rem); /* Abaixo do input, 5px de espaçamento */
-    left: 0;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 0.3125rem; /* 5px */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 1000;
-    max-height: 12.5rem; /* 200px */
-    overflow-y: auto;
-    display: none; /* Escondido por padrão, JavaScript mostra */
-}
-
-.search-container #search-results li {
-    padding: 0.5rem 0.75rem; /* Padding menor */
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-    font-size: 0.9rem; /* Fonte um pouco menor */
-}
-
-.search-container #search-results li:last-child {
-    border-bottom: none;
-}
-
-.search-container #search-results li:hover {
-    background-color: #f0f0f0;
-}
-
-/* Área de Adição de Item */
-.add-item-area {
-    background-color: #ffffff; /* Fundo branco para as caixas */
-    border: 1px solid #e0e0e0; /* Borda sutil */
-    border-radius: 0.625rem; /* 10px */
-    padding: 1rem; /* Padding interno um pouco maior */
-    /* margin-bottom: 0.5rem; O gap do products-section cuida disso */
-    margin-top: 0.5rem; /* Espaço acima desta seção, ajustável */
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem; /* Espaçamento entre elementos internos */
-    width: 80%; /* Ajustado para ser maior que o search-container */
-    max-width: 500px; /* Limite máximo */
-    margin-left: auto; /* Centraliza horizontalmente */
-    margin-right: auto; /* Centraliza horizontalmente */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Sombra suave para destacar a caixa */
-}
-
-.add-item-area label {
-    font-weight: bold;
-    font-size: 0.95rem; /* Fonte levemente maior */
-    color: #555;
-    margin-bottom: 0.2rem; /* Pequena margem para o label */
-}
-
-.add-item-area input[type="text"][readonly] {
-    width: 100%;
-    padding: 0.5rem 0.75rem; /* Padding ajustado */
-    border: 1px solid #ccc;
-    border-radius: 0.3125rem; /* 5px */
-    font-size: 0.95rem; /* Fonte ajustada */
-    background-color: #e9ecef; /* Cor mais clara para readonly */
-    color: #495057;
-}
-
-/* Nova div para quantidade e botão na mesma linha */
-.quantity-add-wrapper {
-    display: flex;
-    align-items: flex-end; /* Alinha itens pela base */
-    gap: 0.75rem; /* Espaçamento entre quantidade e botão */
-    margin-top: 0.5rem; /* Pequeno espaçamento acima deste grupo */
-}
-
-.quantity-add-wrapper label {
-    margin-bottom: 0.4rem; /* Pequena margem para alinhar com o input */
-    white-space: nowrap; /* Evita quebra de linha do label */
-    align-self: center; /* Centraliza verticalmente o label */
-    font-size: 0.95rem; /* Consistente com outros labels */
-}
-
-.add-item-area #quantity-input {
-    width: 5rem; /* Largura para o campo de quantidade */
-    min-width: 4rem; /* Garante que não encolhe muito */
-    padding: 0.5rem 0.6rem; /* Padding ajustado */
-    border: 1px solid #ccc;
-    border-radius: 0.3125rem; /* 5px */
-    font-size: 0.95rem; /* Fonte ajustada */
-    text-align: center;
-    height: 2.2rem; /* Altura fixa para alinhar com o botão */
-}
-
-.add-item-area #add-to-sale-btn {
-    flex-grow: 1; /* Permite que o botão ocupe o espaço restante */
-    padding: 0.5rem 1rem; /* Padding ajustado */
-    border: none;
-    border-radius: 0.3125rem; /* 5px */
-    cursor: pointer;
-    font-size: 0.95rem; /* Fonte ajustada */
-    transition: background-color 0.2s ease;
-    background-color: #00c084;
-    color: white;
-    height: 2.2rem; /* Altura fixa para alinhar com o input */
-    flex-shrink: 0; /* Garante que o botão não encolha */
-}
-
-.add-item-area #add-to-sale-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-
-/* Estilos para a seção de Resumo (direita) */
-.right-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem; /* 16px */
-    margin-bottom: auto; /* Empurra os botões para baixo */
-}
-
-.summary-line-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.8rem; /* Aprox. 28px */
-    color: #007b80;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #007b80; /* Linha mais grossa para o total */
-}
-
-.summary-line-total span:last-child {
-    font-size: 2.2rem; /* Tamanho maior para o valor total */
-    color: #2d2d2d;
-}
-
-
-.summary-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.125rem; /* 18px */
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #eee;
-}
-
-.summary-line:last-of-type { /* Seleciona o último .summary-line, que será o troco */
-    border-bottom: none;
-    font-weight: bold;
-    margin-top: 1rem; /* Espaço para o troco */
-    font-size: 1.3rem; /* Aprox. 21px */
-}
-
-.summary-line input[type="number"] {
-    width: 60%; /* Ajustado para caber o valor */
-    padding: 0.4rem 0.625rem; /* 6.4px 10px */
-    border: 1px solid #ddd;
-    border-radius: 0.3125rem; /* 5px */
-    font-size: 1rem; /* 16px */
-    text-align: right;
-}
-
-/* Estilo para botões Cancelar e Confirmar (inferior) */
-.action-buttons {
-    display: flex;
-    gap: 1rem; /* Espaçamento entre os botões */
-    margin-top: auto; /* Empurra os botões para o final da summary-section */
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-}
-
-.action-buttons button {
-    flex: 1; /* Faz com que os botões tenham a mesma largura */
-    padding: 0.75rem 1.25rem;
-    border: none;
-    border-radius: 0.3125rem;
-    cursor: pointer;
-    font-size: 1rem; /* 16px */
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
-
-.button-cancel {
-    background-color: #e74c3c;
-    color: white;
-}
-
-.button-cancel:hover {
-    background-color: #c0392b;
-}
-
-.button-confirm {
-    background-color: #00c084;
-    color: white;
-}
-
-.button-confirm:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.button-confirm:hover:not(:disabled) {
-    background-color: #00a870;
-}
-
-
-/* Media Queries para responsividade */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 4.375rem; /* 70px */
-        padding: 0.625rem; /* 10px */
-        gap: 0.625rem; /* 10px */
+    .logout-link { /* Apenas o container do logout, não o botão */
+        padding: 5px 0; /* Reduz padding */
     }
 
-    .sidebar-top .logo-text {
-        display: none;
-    }
-
-    .sidebar a span {
-        display: none;
+    .logout-link .logout-button-styled { /* O botão de sair estilizado */
+        padding: 8px 0; /* Ajusta o padding do botão para o ícone centralizar */
+        justify-content: center; /* Centraliza o ícone do botão Sair */
     }
 
     

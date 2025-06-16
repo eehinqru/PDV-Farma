@@ -16,7 +16,16 @@
         <span class="logo-text">PDV Pharmacy</span>
     </div>
 
-     {% if user.is_authenticated and funcionario_logado %}
+      {#  INICIO DOS LINKS DA SIDEBAR  #}
+        
+        
+        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
+        <a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i><span>Dashboard</span></a> 
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
+        {% if is_dono %}
+            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
+        {% endif %}
+        {% if user.is_authenticated and funcionario_logado %}
     <div class="user-profile-sidebar">
         {% if funcionario_logado.foto %}
             <img src="{{ funcionario_logado.foto.url }}" alt="Foto de Perfil" class="profile-pic">
@@ -26,23 +35,17 @@
         <span class="user-name">{{ user.first_name|default:user.username }}</span>
     </div>
     {% endif %}
-
-    {# Links da sidebar #}
-        <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
-        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> 
-        {% if is_dono %}
-            <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
-        {% endif %}
         {% if user.is_authenticated %}
         <a href="#" class="logout-link"> 
-        <i class="fas fa-sign-out-alt"></i><span>Sair</span>
-        <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
-            {% csrf_token %} 
-            <button type="submit" id="logout-button"></button> 
-        </form>
+            <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+            <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
+                {% csrf_token %} 
+                <button type="submit" id="logout-button"></button> 
+            </form>
         </a>
         {% endif %}
-</div>
+    </div>
+   {# FIM DOS LINKS DA SIDEBAR  #}
 
 {# --- Conteúdo Principal --- #}
 <div class="main-content">

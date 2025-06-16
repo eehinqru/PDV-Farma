@@ -17,23 +17,36 @@
             <span class="logo-text">PDV Pharmacy</span>
         </div>
 
+          {#  INICIO DOS LINKS DA SIDEBAR  #}
+        
         <a href="{% url 'nova_venda' %}"><i class="fas fa-exchange-alt"></i><span>Transação</span></a>
         <a href="{% url 'historico_vendas' %}"><i class="fas fa-solid fa-table"></i><span>Histórico de vendas</span></a> 
-        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a> {# Link para a página de estoque #}
+        <a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i><span>Dashboard</span></a> 
+        <a href="{% url 'listar_produtos' %}"><i class="fas fa-boxes"></i><span>Estoque</span></a>
         {% if is_dono %}
             <a href="{% url 'listar_funcionarios' %}"> <i class="fas fa-users"></i> <span>Funcionários</span></a>
         {% endif %}
-        
+        {% if user.is_authenticated and funcionario_logado %}
+    <div class="user-profile-sidebar">
+        {% if funcionario_logado.foto %}
+            <img src="{{ funcionario_logado.foto.url }}" alt="Foto de Perfil" class="profile-pic">
+        {% else %}
+            <img src="{% static 'img/default_profile_pic.png' %}" alt="Foto de Perfil Padrão" class="profile-pic">
+        {% endif %}
+        <span class="user-name">{{ user.first_name|default:user.username }}</span>
+    </div>
+    {% endif %}
         {% if user.is_authenticated %}
         <a href="#" class="logout-link"> 
-        <i class="fas fa-sign-out-alt"></i><span>Sair</span>
-        <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
-            {% csrf_token %} 
-            <button type="submit" id="logout-button"></button> 
-        </form>
+            <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+            <form action="{% url 'login:logout' %}" method="post" style="display: none;" id="logout-form"> 
+                {% csrf_token %} 
+                <button type="submit" id="logout-button"></button> 
+            </form>
         </a>
         {% endif %}
     </div>
+   {# FIM DOS LINKS DA SIDEBAR  #}
 
     <div class="main-content">
         <div class="topbar">
@@ -157,6 +170,7 @@
                                             {% else %}
                                                 <button type="button" class="remove-new-lote-button">Remover Lote</button>
                                             {% endif %}
+                                              <button type="button" id="add-lote">Adicionar Novo Lote</button>
                                         </div>
 
                                         {% if lote_form.non_field_errors %}
@@ -170,8 +184,8 @@
                                 {% endfor %}
                             </div> {# Fecha a div formset-container #}
                             
-                            {# Botão Adicionar Novo Lote fora da lote-actions, alinhado à esquerda na seção #}
-                            <button type="button" id="add-lote">Adicionar Novo Lote</button>
+                            
+                           
 
                         </fieldset>
                         {# Total Quantity display #}

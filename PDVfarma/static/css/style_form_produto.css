@@ -13,7 +13,7 @@ body {
     overflow: hidden; /* Evita que o corpo role, o main-content cuidará disso */
 }
 
-/* Sidebar */
+/* --- Sidebar --- */
 .sidebar {
     width: 220px;
     background-color: #2d2d2d;
@@ -21,9 +21,11 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    justify-content: flex-start; /* Garante que os itens se alinhem ao topo */
-    gap: 5px; /* Espaço entre os itens flex */
+    justify-content: flex-start; /* Os links normais começam no topo */
+    gap: 5px; /* Espaçamento entre os links */
     padding-top: 60px; /* Adiciona padding para o topo da sidebar (altura da topbar) */
+    flex-shrink: 0; /* Impede que a sidebar encolha */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra para destacar */
 }
 
 /* Área da logo com fundo #025255 */
@@ -35,21 +37,21 @@ body {
     align-items: center;
     gap: 10px;
     padding: 0 20px;
-    position: fixed;
+    position: fixed; /* Fixa no topo e na esquerda */
     top: 0;
     left: 0;
-    z-index: 1000;
+    z-index: 1000; /* Garante que fique acima de outros elementos */
 }
 
 .sidebar-top .logo {
-    width: 80px;
-    height: 80px;
+    width: 5rem; /* 80px / 16px = 5rem */
+    height: 5rem; /* 80px / 16px = 5rem */
     object-fit: contain;
 }
 
 .sidebar-top .logo-text {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 1rem; /* 16px / 16px = 1rem */
     color: white;
 }
 
@@ -60,7 +62,7 @@ body {
     gap: 10px;
     color: white;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 1rem; /* Ajustado para rem para consistência */
     border-radius: 0px;
     padding: 10px 15px;
     cursor: pointer;
@@ -79,32 +81,66 @@ body {
     background-color: #007b80;
 }
 
-/* Estilos para o link de Sair */
-.sidebar .logout-link {
-    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
+/* Seção de Perfil do Usuário na Sidebar */
+.user-profile-sidebar {
+    display: flex;
+    flex-direction: column; /* Organiza itens em coluna: imagem, nome, etc. */
+    align-items: center; /* Centraliza horizontalmente os itens */
+    padding: 20px 0; /* Espaçamento interno */
+    margin-top: auto; /* IMPORTANTE: Empurra esta seção e o logout para o final */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha divisória sutil */
+    padding-top: 20px; /* Espaçamento após a linha */
 }
 
-.sidebar .logout-link form {
-    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
+.user-profile-sidebar .profile-pic {
+    width: 80px; /* Largura da imagem */
+    height: 80px; /* Altura da imagem */
+    border-radius: 50%; /* Faz a imagem ficar redonda (se for quadrada) */
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+    border: 2px solid #007b80; /* Adiciona uma borda */
+    margin-bottom: 10px; /* Espaçamento abaixo da imagem */
 }
 
-.sidebar .logout-link button {
-    /* Basicamente zera o estilo padrão do botão para que o <a> pai o estilize */
+.user-profile-sidebar .user-name {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* Espaçamento abaixo do nome de usuário */
+}
+
+/* Estilos para o link de Sair (agora um botão dentro de um formulário) */
+.logout-link {
+    width: 100%; /* Garante que o container ocupe a largura completa */
+    padding: 10px 0; /* Adiciona um pouco de padding */
+    text-align: center; /* Centraliza o botão dentro do container */
+}
+
+.logout-link form {
+    display: flex; /* Para centralizar o botão de submit */
+    justify-content: center; /* Centraliza horizontalmente o botão */
+    width: 100%; /* Ocupa a largura total para centralização */
+}
+
+.logout-link .logout-button-styled { /* Nova classe para o botão de sair */
     background: none;
     border: none;
-    padding: 0;
-    margin: 0;
-    color: inherit; /* Herda a cor do texto do link pai */
-    font-size: inherit; /* Herda o tamanho da fonte do link pai */
+    padding: 10px 15px; /* Aumenta o padding do botão para ser clicável */
+    color: white; /* Garante que a cor seja branca */
+    font-size: 1rem; /* Ajusta o tamanho da fonte */
     font-weight: inherit;
-    cursor: inherit; /* Herda o cursor do link pai */
+    cursor: pointer; /* Indica que é clicável */
     text-align: left; /* Alinha o texto do botão à esquerda */
-    display: flex; /* Permite que o botão se comporte como flex item para alinhamento */
+    display: flex;
     align-items: center;
-    gap: 10px; /* Mantém o gap com o ícone, se houver */
-    flex-grow: 1; /* Ocupa o espaço restante */
+    gap: 10px;
+    width: 100%; /* Faz o botão preencher o container, mas ainda permitindo justify-content */
+    max-width: 220px; /* Garante que o botão não ultrapasse a largura da sidebar */
+    transition: background-color 0.3s ease;
 }
 
+.logout-link .logout-button-styled:hover {
+    background-color: #007b80; /* Cor de hover para o botão de sair */
+}
 
 /* Main content (ao lado da sidebar) */
 .main-content {
@@ -399,7 +435,7 @@ a.action-button.red:hover {
 
 #add-lote:hover {
     background-color: #00a070;
-    transform: translateY(-2px);
+
 }
 
 
@@ -408,14 +444,15 @@ a.action-button.red:hover {
 .remove-new-lote-button {
     background-color: #dc3545; 
     color: #ffffff;
-    padding: 10px 20px;
     border-radius: 10px;
-    font-size: 15px;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.3s ease;
+    padding: 10px 20px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    
+    margin-top: 15px;
+    width: fit-content;
+    align-self: flex-start; 
 }
+
 
 .remove-existing-lote-button:hover,
 .remove-new-lote-button:hover {

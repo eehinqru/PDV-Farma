@@ -16,7 +16,6 @@ body {
     height: 100vh;
     background-color: #f0f0f0;
     font-family: 'Arial', sans-serif; /* Família da fonte para o body */
-    /* Removido: margin do body, pois o layout é controlado por flexbox e main-content */
 }
 
 /* Sidebar */
@@ -27,8 +26,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    justify-content: flex-start;
-    gap: 5px;
+    justify-content: flex-start; /* Os links normais começam no topo */
+    gap: 5px; /* Espaçamento entre os links */
     padding-top: 60px; /* Adiciona padding para o topo da sidebar (altura da topbar) */
 }
 
@@ -66,7 +65,7 @@ body {
     gap: 10px;
     color: white;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 1rem; /* Ajustado para rem para consistência */
     border-radius: 0px;
     padding: 10px 15px;
     cursor: pointer;
@@ -85,29 +84,66 @@ body {
     background-color: #007b80;
 }
 
-/* Estilos para o link de Sair */
-.sidebar .logout-link {
-    margin-top: auto; /* Empurra o link 'Sair' para o final da sidebar */
+/* --- ESTILO: Seção de Perfil do Usuário na Sidebar --- */
+.user-profile-sidebar {
+    display: flex;
+    flex-direction: column; /* Organiza itens em coluna: imagem, nome, etc. */
+    align-items: center; /* Centraliza horizontalmente os itens */
+    padding: 20px 0; /* Espaçamento interno */
+    margin-top: auto; /* IMPORTANTE: Empurra esta seção e o logout para o final */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Linha divisória sutil */
+    padding-top: 20px; /* Espaçamento após a linha */
 }
 
-.sidebar .logout-link form {
-    display: contents; /* Faz com que o formulário não crie uma nova linha ou espaço */
+.user-profile-sidebar .profile-pic {
+    width: 80px; /* Largura da imagem */
+    height: 80px; /* Altura da imagem */
+    border-radius: 50%; /* Faz a imagem ficar redonda (se for quadrada) */
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+    border: 2px solid #007bff; /* Adiciona uma borda */
+    margin-bottom: 10px; /* Espaçamento abaixo da imagem */
 }
 
-.sidebar .logout-link button {
+.user-profile-sidebar .user-name { /* Mudei para user-name conforme seu HTML */
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px; /* Espaçamento abaixo do nome de usuário */
+}
+
+/* Estilos para o link de Sair (agora um botão dentro de um formulário) */
+.logout-link {
+    width: 100%; /* Garante que o container ocupe a largura completa */
+    /* Removido margin-top: auto; daqui, pois .user-profile-sidebar já faz isso */
+    padding: 10px 0; /* Adiciona um pouco de padding */
+    text-align: center; /* Centraliza o botão dentro do container */
+}
+
+.logout-link form {
+    display: flex; /* Para centralizar o botão de submit */
+    justify-content: center; /* Centraliza horizontalmente o botão */
+    width: 100%; /* Ocupa a largura total para centralização */
+}
+
+.logout-link .logout-button-styled { /* Nova classe para o botão de sair */
     background: none;
     border: none;
-    padding: 0;
-    margin: 0;
-    color: inherit;
-    font-size: inherit;
+    padding: 10px 15px; /* Aumenta o padding do botão para ser clicável */
+    color: white; /* Garante que a cor seja branca */
+    font-size: 1rem; /* Ajusta o tamanho da fonte */
     font-weight: inherit;
-    cursor: inherit;
-    text-align: left;
+    cursor: pointer; /* Indica que é clicável */
+    text-align: left; /* Alinha o texto do botão à esquerda */
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-grow: 1;
+    width: 100%; /* Faz o botão preencher o container, mas ainda permitindo justify-content */
+    max-width: 220px; /* Garante que o botão não ultrapasse a largura da sidebar */
+    transition: background-color 0.3s ease;
+}
+
+.logout-link .logout-button-styled:hover {
+    background-color: #007b80; /* Cor de hover para o botão de sair */
 }
 
 /* Main content (ao lado da sidebar) */
@@ -132,16 +168,102 @@ body {
     font-size: 1.5rem; /* 24px / 16px = 1.5rem */
     font-weight: bold;
     padding: 0 1.25rem; /* 20px */
-    
+
     position: fixed; /* Fixa o elemento na tela */
-    top: 0;          /* Alinha ao topo da viewport */
-    left: 220px;     /* Começa após a sidebar fixa */
+    top: 0;            /* Alinha ao topo da viewport */
+    left: 220px;       /* Começa após a sidebar fixa */
     width: calc(100% - 220px); /* Ocupa a largura restante da tela */
-    z-index: 999;    /* Garante que fique acima de outros elementos */
-    flex-shrink: 0; 
+    z-index: 999;      /* Garante que fique acima de outros elementos */
+    flex-shrink: 0;
 }
 
-/* Conteúdo específico para o Histórico de Vendas */
+/* --- FORMULÁRIO DE FILTROS --- */
+.filter-section {
+    background-color: #fff;
+    padding: 1.5rem; /* Aumenta o padding para um visual mais espaçoso */
+    margin: 1.25rem; /* Margem ao redor da seção */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Sombra mais suave */
+}
+
+.filter-section h2 {
+    color: #333;
+    font-size: 1.6rem; /* Tamanho do título do filtro */
+    margin-bottom: 1.2rem;
+    text-align: center; /* Centraliza o título */
+}
+
+.filter-form {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os itens quebrem linha */
+    gap: 1rem; /* Espaçamento entre os grupos de formulário */
+    align-items: flex-end; /* Alinha os itens do formulário pela base */
+}
+
+.filter-form .form-group {
+    flex: 1; /* Permite que os grupos de formulário cresçam e ocupem espaço */
+    min-width: 200px; /* Largura mínima para cada grupo */
+    display: flex;
+    flex-direction: column; /* Organiza label e input em coluna */
+}
+
+.filter-form label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.filter-form input[type="date"],
+.filter-form select {
+    padding: 0.75rem 1rem; /* Padding interno */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%; /* Ocupa a largura total do seu container */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Sombra interna sutil */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filter-form input[type="date"]:focus,
+.filter-form select:focus {
+    border-color: #007b80; /* Cor da borda ao focar */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 128, 0.25); /* Sombra suave ao focar */
+    outline: none; /* Remove o outline padrão do navegador */
+}
+
+/* Estilos para os botões dentro do formulário de filtro */
+.filter-form .button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: none; /* Remove a borda padrão */
+}
+
+.filter-form .button-primary {
+    background-color: #007b80; /* Cor primária mais forte */
+    color: white;
+}
+
+.filter-form .button-primary:hover {
+    background-color: #005f63; /* Tom mais escuro no hover */
+    transform: translateY(-2px);
+}
+
+.filter-form .button-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.filter-form .button-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Conteúdo específico para o Histórico de Vendas (ESTES DEVE ESTAR FORA DA MEDIA QUERY) */
 .history-container {
     padding: 1.25rem; /* Espaçamento geral do conteúdo do histórico */
     flex-grow: 1; /* Permite que o container preencha o espaço restante */
@@ -522,6 +644,33 @@ body {
         margin: 0 auto; /* Centraliza o ícone quando o texto está escondido */
     }
 
+    /* Ajuste para o perfil em modo responsivo */
+    .user-profile-sidebar {
+        padding: 10px 0; /* Menos padding */
+        border-top: none; /* Remove a borda superior se não for necessária */
+        margin-top: auto; /* Mantém empurrado para baixo */
+    }
+
+    .user-profile-sidebar .profile-pic {
+        width: 50px; /* Reduz o tamanho da imagem de perfil */
+        height: 50px;
+        margin-bottom: 5px; /* Menos margem */
+    }
+
+    .user-profile-sidebar .user-name { /* Mudei para user-name conforme seu HTML */
+        display: none; /* Esconde o nome do usuário em telas pequenas */
+    }
+
+    .logout-link { /* Apenas o container do logout, não o botão */
+        padding: 5px 0; /* Reduz padding */
+    }
+
+    .logout-link .logout-button-styled { /* O botão de sair estilizado */
+        padding: 8px 0; /* Ajusta o padding do botão para o ícone centralizar */
+        justify-content: center; /* Centraliza o ícone do botão Sair */
+    }
+
+
     .main-content {
         margin-top: 3.75rem; /* Mantém a margem superior */
     }
@@ -533,6 +682,28 @@ body {
         padding: 0 10px;
         left: 4.375rem; /* 70px - Ajusta a posição para a sidebar menor */
         width: calc(100% - 4.375rem); /* Ocupa a largura restante */
+    }
+
+    /* Responsividade para o formulário de filtro */
+    .filter-section {
+        margin: 10px; /* Reduz margem em mobile */
+        padding: 1rem; /* Reduz padding em mobile */
+    }
+
+    .filter-form {
+        flex-direction: column; /* Empilha os campos em telas menores */
+        align-items: stretch; /* Estica os itens para preencher a largura */
+        gap: 0.8rem; /* Espaçamento menor entre os campos */
+    }
+
+    .filter-form .form-group {
+        min-width: unset; /* Remove a largura mínima para flexibilidade total */
+        width: 100%; /* Ocupa a largura total */
+    }
+
+    .filter-form .button {
+        width: 100%; /* Botões ocupam a largura total em mobile */
+        margin-top: 0.5rem; /* Espaçamento entre botões empilhados */
     }
 
     .indicators {
@@ -563,13 +734,13 @@ body {
         width: 100%;
         text-align: left;
     }
-    
+
     .products {
         grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); /* Cards menores em telas pequenas */
         padding: 0 10px 10px;
     }
 
-    /* Ajustes específicos para o histórico de vendas em mobile */
+    /* Ajustes específicos para o histórico de vendas em mobile (AQUI DENTRO!) */
     .history-container {
         padding: 10px; /* Reduz o padding em mobile */
     }
